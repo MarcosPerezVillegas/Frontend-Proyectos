@@ -83,5 +83,13 @@
 <script>
 export default {
   name: 'IndexPage',
+
+  middleware: 'auth',
+
+  beforeMount() {
+    this.$store.commit('setTitle', 'Bienvenido/a!!')
+
+  }
+
 }
 </script>

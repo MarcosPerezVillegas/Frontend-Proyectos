@@ -4,6 +4,7 @@
             <v-spacer />
             <v-btn to="/proyectos/create">Alta proyecto</v-btn>
         </v-row>
+        <br>
         <v-card>
             <v-data-table :items="proyectos" :headers="headers">
                 <template v-slot:item.actions="{ i, item }">
@@ -31,6 +32,7 @@ export default {
             { text: 'Objetivos', value: 'objetivos' },
             { text: 'Fecha de inicio', value: 'fechainicio' },
             { text: 'Fecha final', value: 'fechafinal' },
+            { text: 'Carrera', value: 'carrera_clave' },
         ]
     }),
 

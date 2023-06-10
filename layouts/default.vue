@@ -34,6 +34,9 @@
     <v-footer :absolute="!fixed" app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
+    <v-snackbar v-model="snackbar" :color="snackbarColor">
+      {{ snackbarMessage }}
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -42,6 +45,9 @@ export default {
   name: 'DefaultLayout',
   data() {
     return {
+      snackbarColor: '',
+      snackbarMessage: '',
+      snackbar: false,
       clipped: false,
       drawer: false,
       fixed: false,
@@ -61,10 +67,27 @@ export default {
           title: 'Proyectos',
           to: '/Proyectos',
         },
+        {
+          icon: 'mdi-account',
+          title: 'Usuarios',
+          to: '/Usuarios',
+        },
       ],
     };
   },
+
+  beforeMount() {
+    this.$nuxt.$on('show-snackbar', this.showSnackbar)
+  },
+
   methods: {
+
+    showSnackbar(color: string, message: string) {
+      this.snackbar = true
+      this.snackbarColor = color
+      this.snackbarMessage = message
+    },
+
     logout() {
       this.$auth.logout();
       this.$router.push('/login');

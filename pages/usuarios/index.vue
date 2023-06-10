@@ -7,11 +7,10 @@
         <br>
         <v-card>
             <v-data-table :items="usuarios" :headers="headers">
-                <template v-slot:item.actions="{ i, item }">
-                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Usuarios/${item.id}`"/>
-                    <DeleteDialog 
-                        :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`" 
-                        :itemUrl="`/Usuarios/${item.id}`"/>
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Usuarios/${item.codigo}`" />
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
+                        :itemUrl="`/Usuarios/${item.codigo}`" :index="index" />
                 </template>
             </v-data-table>
         </v-card>
@@ -22,7 +21,12 @@
 
 export default {
     name: 'Usuarios',
+
+
+
     middleware: 'auth',
+
+
 
     data: () => ({
         usuarios: [],
@@ -32,6 +36,7 @@ export default {
             { text: 'Email', value: 'email' },
             { text: 'Rol_id', value: 'rol_id' },
             { text: 'Telefono', value: 'telefono' },
+            { text: 'Acciones', value: 'actions' },
         ]
     }),
 
@@ -49,6 +54,7 @@ export default {
 
     methods: {
         deleteElement(index: number) {
+            console.log(index)
             this.usuarios.pop(index)
         }
     }

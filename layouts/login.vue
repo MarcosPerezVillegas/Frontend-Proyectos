@@ -19,7 +19,7 @@
     name: 'LoginLayout',
 
     data: () => ({
-        title: 'Iniciar sesión'
+        title: 'Inicia sesión o registrate!!'
     })
   }
   </script>

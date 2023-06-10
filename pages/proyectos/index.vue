@@ -2,6 +2,7 @@
     <v-container>
         <v-row>
             <v-spacer />
+            <v-btn to="/proyectos/_id">Editar proyecto</v-btn>
             <v-btn to="/proyectos/create">Alta proyecto</v-btn>
         </v-row>
         <br>

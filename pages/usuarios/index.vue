@@ -2,7 +2,7 @@
     <v-container>
         <v-row>
             <v-spacer />
-            <v-btn to="/Usuarios/Create">Registrar usuarios</v-btn>
+            <v-btn to="/Usuarios/create">Registrar usuarios</v-btn>
         </v-row>
         <br>
         <v-card>
@@ -20,13 +20,10 @@
 <script lang="ts">
 
 export default {
+
     name: 'Usuarios',
 
-
-
     middleware: 'auth',
-
-
 
     data: () => ({
         usuarios: [],
@@ -40,6 +37,7 @@ export default {
         ]
     }),
 
+
     async beforeMount() {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
 
@@ -50,6 +48,7 @@ export default {
         } catch (error) {
 
         }
+        
     },
 
     methods: {

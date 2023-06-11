@@ -3,7 +3,7 @@
         <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
-                    Crear laboratorio
+                    Registrate!!
                 </v-card-title>
                 <v-card-text>
                     <v-text-field v-model="usuario.codigo" label="Codigo"></v-text-field>
@@ -16,6 +16,9 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
+                    <v-btn @click="cancelar()">
+                        Cancelar
+                    </v-btn>
                     <v-btn type="submit">
                         Guardar
                     </v-btn>
@@ -29,7 +32,7 @@
 
 export default {
     name: 'UsuariosCreate',
-    middleware: 'auth',
+
 
     data: () => ({
         usuario: {
@@ -52,6 +55,10 @@ export default {
                 this.$router.push('/usuarios')
             } catch (error) {
             }
+        },
+
+        cancelar() {
+            this.$router.push('/usuarios')
         }
     }
 }

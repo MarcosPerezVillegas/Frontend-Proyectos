@@ -57,7 +57,7 @@ export default {
             try {
                 const response = await this.$axios.put(`/usuarios/${this.usuario.id}`, this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/proyectos')
+                this.$router.push('/usuarios')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

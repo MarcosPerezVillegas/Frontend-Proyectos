@@ -72,6 +72,11 @@ export default {
           title: 'Usuarios',
           to: '/Usuarios',
         },
+        {
+          icon: 'mdi-clock-alert',
+          title: 'Tareas',
+          to: '/Tareas',
+        },
       ],
     };
   },

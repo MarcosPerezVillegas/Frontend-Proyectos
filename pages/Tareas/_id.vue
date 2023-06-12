@@ -3,14 +3,16 @@
         <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
-                    Editar usuario
+                    Editar tarea
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
-                    <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"></v-text-field>
-                    <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
-
+                    <v-text-field v-model="tarea.id" label="ID"></v-text-field>
+                    <v-text-field v-model="tarea.Proyecto_id" label="Proyecto_Id"></v-text-field>
+                    <v-text-field v-model="tarea.nombre" label="Nombre"></v-text-field>
+                    <v-text-field v-model="tarea.descripcion" label="Descripcion"></v-text-field>
+                    <v-text-field v-model="tarea.comentarios" label="Comentarios"></v-text-field>
+                    <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"></v-text-field>
+                    <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -29,14 +31,18 @@
 <script lang="ts">
 
 export default {
-    name: 'UsuariosUpdate',
+    name: 'TareasUpdate',
     middleware: 'auth',
     data: () => ({
-        usuario: {
-            codigo: "",
+        tarea: {
+            id: "",
+            Proyecto_id: "",
             nombre: "",
-            email: "",
-            telefono: "",
+            descripcion: "",
+            comentarios: "",
+            fecha_limite: "",
+            hora_limite: "",
+            
         }
     }),
 
@@ -44,9 +50,9 @@ export default {
         const id = this.$route.params.id
         
         try {
-            const response = await this.$axios.get(`/usuarios/${id}`)
+            const response = await this.$axios.get(`/tareas/${id}`)
 
-            this.usuario = response.data.data
+            this.tarea = response.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -55,16 +61,16 @@ export default {
     methods: {
         async guardar() {
             try {
-                const response = await this.$axios.put(`/usuarios/${this.usuario.codigo}`, this.usuario)
+                const response = await this.$axios.put(`/tareas/${this.tarea.id}`, this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/usuarios')
+                this.$router.push('/tareas')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
 
         cancelar() {
-            this.$router.push('/usuarios')
+            this.$router.push('/tareas')
         }
     }
 }

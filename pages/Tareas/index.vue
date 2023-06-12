@@ -1,50 +1,64 @@
 <template>
-    <v-app>
-      <v-content>
-        <v-container fluid>
-          <v-row justify="center">
-            <v-col cols="12" sm="8" md="6" lg="4">
-              <v-card class="login-card">
-                <v-card-title class="text-center">Bienvenido!!</v-card-title>
-                <v-card-text>
-                  <v-form @submit.prevent="login">
-                    <v-text-field v-model="email" label="Correo electrónico" required></v-text-field>
-                    <v-text-field v-model="password" label="Contraseña" type="password" required></v-text-field>
-                    <v-btn type="submit" color="primary" block>Iniciar sesión</v-btn>
-                  </v-form>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-content>
-      <v-footer app>
-        <span class="white--text">&copy; 2023 Tu Empresa</span>
-      </v-footer>
-    </v-app>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        email: '',
-        password: ''
+  <v-container>
+      <v-row>
+          <v-spacer />
+          <v-btn to="/Tareas/create">Crear Tarea</v-btn>
+      </v-row>
+      <br>
+      <v-card>
+          <v-data-table :items="tareas" :headers="headers">
+              <template v-slot:item.actions="{ item, index }">
+                  <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                  <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
+                      :itemUrl="`/Tareas/${item.id}`" :index="index" />
+              </template>
+          </v-data-table>
+      </v-card>
+  </v-container>
+</template>
+
+<script lang="ts">
+
+export default {
+
+  name: 'Usuarios',
+
+  middleware: 'auth',
+
+  data: () => ({
+      tareas: [],
+      headers: [
+          { text: 'Id de tarea', value: 'id' },
+          { text: 'Id del proyecto', value: 'Proyecto_id' },
+          { text: 'Nombre', value: 'nombre' },
+          { text: 'Descripcion', value: 'descripcion' },
+          { text: 'Comentarios del profesor', value: 'comentarios' },
+          { text: 'Fecha de entrega', value: 'fecha_limite' },
+          { text: 'Hora de entrega', value: 'hora_limite' },
+          { text: 'Acciones', value: 'actions' },
+      ]
+  }),
+
+
+  async beforeMount() {
+      this.$nuxt.$on('remove-from-list', this.deleteElement)
+
+      this.$store.commit('setTitle', 'Tareas')
+      try {
+          const response = await this.$axios.get('/Tareas')
+          this.tareas = response.data.data
+      } catch (error) {
+
       }
-    },
-    methods: {
-      login() {
-        // Lógica para iniciar sesión
-        console.log('Iniciando sesión...')
+      
+  },
+
+  methods: {
+      deleteElement(index: number) {
+          console.log(index)
+          this.tareas.pop(index)
       }
-    }
   }
-  </script>
-  
-  <style scoped>
-  .login-card {
-    margin-top: 100px;
-    padding: 24px;
-  }
-  </style>
-  
+}
+
+</script>

@@ -2,17 +2,16 @@
     <v-container>
         <v-row>
             <v-spacer />
-            <v-btn to="/proyectos/_id">Editar proyecto</v-btn>
-            <v-btn to="/proyectos/create">Alta proyecto</v-btn>
+            <v-btn to="/proyectos/create">Crear proyecto</v-btn>
         </v-row>
         <br>
         <v-card>
             <v-data-table :items="proyectos" :headers="headers">
                 <template v-slot:item.actions="{ i, item }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
-                    <DeleteDialog 
-                        :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
-                        :itemUrl="`/proyectos/${item.id}`"/>
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
+                        :itemUrl="`/proyectos/${item.id}`" :index="index"/>
+                    <v-btn v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -33,7 +32,9 @@ export default {
             { text: 'Objetivos', value: 'objetivos' },
             { text: 'Fecha de inicio', value: 'fechainicio' },
             { text: 'Fecha final', value: 'fechafinal' },
-            { text: 'Carrera', value: 'carrera_clave' },
+            { text: 'Carrera', value: 'carrera.nombre' },
+            { text: 'Status', value: 'status[0].Estado' },
+            { text: 'Acciones', value: 'actions' }
         ]
     }),
 
@@ -45,7 +46,7 @@ export default {
             const response = await this.$axios.get('/proyectos')
             this.proyectos = response.data.data
         } catch (error) {
-
+            this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     },
 

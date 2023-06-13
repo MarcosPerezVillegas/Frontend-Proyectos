@@ -19,6 +19,9 @@
                     <v-btn type="submit">
                         Guardar
                     </v-btn>
+                    <v-btn @click="cancelar()" color="red">
+                        Cancelar
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-form>
@@ -63,6 +66,9 @@ export default {
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
+        },
+        cancelar() {
+            this.$router.push('/proyectos')
         }
     }
 }

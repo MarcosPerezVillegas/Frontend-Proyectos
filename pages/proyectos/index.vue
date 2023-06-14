@@ -7,7 +7,7 @@
         <br>
         <v-card>
             <v-data-table :items="proyectos" :headers="headers">
-                <template v-slot:item.actions="{ i, item }">
+                <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>

@@ -58,11 +58,6 @@ export default {
           to: '/',
         },
         {
-          icon: 'mdi-checkbox-marked',
-          title: 'Iniciar Sesión',
-          to: '/login',
-        },
-        {
           icon: 'mdi-compass',
           title: 'Proyectos',
           to: '/Proyectos',

@@ -3,7 +3,7 @@
         <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
-                    Registrate!!
+                    Registrar Usuario
                 </v-card-title>
                 <v-card-text>
                     <v-text-field v-model="usuario.codigo" label="Codigo"></v-text-field>
@@ -16,10 +16,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn @click="cancelar()">
+                    <v-btn to="/Usuarios" color="red">
                         Cancelar
                     </v-btn>
-                    <v-btn type="submit">
+                    <v-btn type="submit" color="green">
                         Guardar
                     </v-btn>
                 </v-card-actions>
@@ -56,10 +56,6 @@ export default {
             } catch (error) {
             }
         },
-
-        cancelar() {
-            this.$router.push('/usuarios')
-        }
     }
 }
 

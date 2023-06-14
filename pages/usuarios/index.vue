@@ -1,8 +1,11 @@
 <template>
     <v-container>
+        <v-card-title>
+            Lista de todos los usuarios
+        </v-card-title>
         <v-row>
             <v-spacer />
-            <v-btn to="/Usuarios/create">Registrar usuarios</v-btn>
+            <v-btn color="green" to="/Usuarios/Create">Registrar usuarios</v-btn>
         </v-row>
         <br>
         <v-card>

@@ -8,18 +8,21 @@
                 <v-card-text>
                     <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
                     <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"></v-text-field>
+                    <v-text-field v-model="usuario.email" label="Email"
+                    :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
+                    <v-text-field v-model="usuario.password" label="Contraseña"></v-text-field>
+                    <v-text-field v-model="usuario.Rol_Usuario.id" label="Rol_ID" type="number"></v-text-field>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
-
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn type="submit">
-                        Guardar
-                    </v-btn>
-                    <v-btn @click="cancelar()" color="red">
+                    <v-btn color="red" to="/Usuarios">
                         Cancelar
                     </v-btn>
+                    <v-btn color="green" type="submit">
+                        Guardar
+                    </v-btn>
+                    
                 </v-card-actions>
             </v-card>
         </v-form>
@@ -36,6 +39,12 @@ export default {
             codigo: "",
             nombre: "",
             email: "",
+            password: "",
+            usuario: "",
+            Rol_Usuario: {
+                id: "",
+            },
+            rol_id: "",
             telefono: "",
         }
     }),
@@ -44,10 +53,11 @@ export default {
         const id = this.$route.params.id
         
         try {
-            const response = await this.$axios.get(`/usuarios/${id}`)
+            const response = await this.$axios.get(`/Usuarios/${id}`)
 
             this.usuario = response.data.data
-        } catch (error) {
+            this.usuario.rol_id=this.usuario.Rol_Usuario.id
+        } catch (error) {   
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     },
@@ -55,17 +65,14 @@ export default {
     methods: {
         async guardar() {
             try {
-                const response = await this.$axios.put(`/usuarios/${this.usuario.codigo}`, this.usuario)
+                console.log(this.usuario)
+                const response = await this.$axios.put(`/Usuarios/${this.usuario.codigo}`, this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/usuarios')
+                this.$router.push('/Usuarios')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
-
-        cancelar() {
-            this.$router.push('/usuarios')
-        }
     }
 }
 

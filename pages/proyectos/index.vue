@@ -12,6 +12,7 @@
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
                     <v-btn v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
+                    <v-btn v-text="'Constancia'" color="green" text small :to="`/proyectos/cons`"/>
                 </template>
             </v-data-table>
         </v-card>

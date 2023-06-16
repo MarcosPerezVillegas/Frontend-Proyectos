@@ -21,7 +21,7 @@
                                         :rules="[$validations.notEmpty]" />
                                 </v-card-text>
                                 <v-card-actions>
-                                    <v-btn type="submit" color="primary" block>Iniciar Sección</v-btn>
+                                    <v-btn type="submit" color="primary" block>Iniciar Sesión</v-btn>
                                 </v-card-actions>
                                 <div class="text-center" style="margin: .5cm;">
                                     <a :href="''"><p>¿Olvidaste tu contraseña?</p></a>

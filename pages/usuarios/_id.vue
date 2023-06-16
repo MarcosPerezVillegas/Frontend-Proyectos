@@ -10,7 +10,6 @@
                     <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
-                    <v-text-field v-model="usuario.password" label="Contraseña"></v-text-field>
                     <v-text-field v-model="usuario.Rol_Usuario.id" label="Rol_ID" type="number"></v-text-field>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
@@ -39,7 +38,6 @@ export default {
             codigo: "",
             nombre: "",
             email: "",
-            password: "",
             usuario: "",
             Rol_Usuario: {
                 id: "",

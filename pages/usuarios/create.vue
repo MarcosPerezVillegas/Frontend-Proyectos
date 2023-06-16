@@ -11,7 +11,7 @@
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
                     <v-text-field v-model="usuario.password" label="Contraseña" type="password"></v-text-field>
-                    <v-text-field v-model="usuario.rol_id" label="Rol_ID" type="number"></v-text-field>
+                    <v-combobox v-model="usuario.rol_id" label="Rol_ID" :items="[1,2,3]"></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>

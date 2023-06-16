@@ -1,18 +1,17 @@
 <template>
     <v-container>
         <v-card-title>
-            Lista de todos los usuarios
+            Lista de todos los usuarios que han sido eliminados
         </v-card-title>
         <v-row>
             <v-spacer />
-            <v-btn color="orange" to="/Usuarios/Restore">Recuperar usuarios</v-btn>
-            <v-btn color="green" to="/Usuarios/Create">Registrar usuarios</v-btn>
+            <v-btn color="green" to="/Usuarios">Cancelar</v-btn>
         </v-row>
         <br>
         <v-card>
             <v-data-table :items="usuarios" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Usuarios/${item.codigo}`" />
+                    <v-btn v-text="'Restaurar'" color="blue" text small  @click="restoreUser(index,item.codigo)"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
                         :itemUrl="`/Usuarios/${item.codigo}`" :index="index" />
                 </template>
@@ -38,7 +37,7 @@ export default {
             { text: 'Rol_id', value: 'rol_id' },
             { text: 'Telefono', value: 'telefono' },
             { text: 'Acciones', value: 'actions' },
-        ]
+        ],
     }),
 
 
@@ -47,7 +46,7 @@ export default {
 
         this.$store.commit('setTitle', 'Usuarios')
         try {
-            const response = await this.$axios.get('/Usuarios')
+            const response = await this.$axios.get('/Usuarios/Deleted')
             this.usuarios = response.data.data
         } catch (error) {
 
@@ -57,7 +56,18 @@ export default {
 
     methods: {
         deleteElement(index: number) {
+            console.log(index)
             this.usuarios.splice(index,1)
+        },
+        async restoreUser(index: number, codigo:string){
+            try {
+                const response = await this.$axios.get(`/Usuarios/Restaurar/${codigo}`)
+                this.usuarios.splice(index,1)
+                console.log(index)
+            } catch (error) {   
+                this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            }
+            
         }
     }
 }

@@ -11,7 +11,7 @@
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
                     <v-text-field v-model="usuario.password" label="Contraseña" type="password" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="usuario.rol_id" label="Rol_ID" :items="['Administrador','Maestro','Alumno']" ></v-combobox>
+                    <v-combobox v-model="usuario.rol_id" label="Rol_ID" :items="['Maestro','Alumno']" ></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -33,6 +33,7 @@
 
 export default {
     name: 'UsuariosCreate',
+    layout: 'singIn',
     data: () => ({
         usuario: {
             codigo: "",
@@ -57,13 +58,12 @@ export default {
                 || this.usuario.password==="" || this.usuario.rol_id===null){
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
-                if(this.roles.rol==='Administrador'){
-                    this.usuario.rol_id=1
-                }else if (this.roles.rol==='Maestro') {
+                if (this.roles.rol==='Maestro') {
                     this.usuario.rol_id=2
                 }else{
                     this.usuario.rol_id=3
                 }
+                
                 const response = await this.$axios.post('/Usuarios', this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/Usuarios')

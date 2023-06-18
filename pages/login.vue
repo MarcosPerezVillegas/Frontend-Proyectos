@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-content>
+        <v-main>
             <v-container fluid>
                 <v-row justify="center">
                     <v-col cols="12" sm="8" md="6" lg="4">
@@ -25,7 +25,7 @@
                                 </v-card-actions>
                                 <div class="text-center" style="margin: .5cm;">
                                     <a :href="''"><p>¿Olvidaste tu contraseña?</p></a>
-                                    <a :href="'/usuarios/create'"><p>¿Aun no estás registrado?</p></a>
+                                    <a :href="'/Usuarios/Register'"><p>¿Aun no estás registrado?</p></a>
                                     <br>
                                 </div>
                             </v-card>
@@ -33,7 +33,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-        </v-content>
+        </v-main>
     </v-app>
 </template>
   

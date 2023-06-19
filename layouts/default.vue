@@ -41,6 +41,7 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 export default {
   name: 'DefaultLayout',
   data() {
@@ -89,6 +90,8 @@ export default {
     },
 
     logout() {
+      localStorage.removeItem('user')
+      localStorage.removeItem('rol')
       this.$auth.logout();
       this.$router.push('/login');
     },

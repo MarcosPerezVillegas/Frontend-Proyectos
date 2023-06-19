@@ -62,8 +62,8 @@ export default {
         token: {
           property: 'token',
           global: true,
-          // required: true,
-          // type: 'Bearer'
+           required: true,
+           type: 'Bearer'
         },
         endpoints: {
           login: { url: '/login', method: 'post' },

@@ -38,6 +38,7 @@
 </template>
   
 <script lang="ts">
+import axios from 'axios';
 
 export default {
 
@@ -75,12 +76,13 @@ export default {
             if (!this.validForm) return
             try {
                 const response = await this.$auth.loginWith('local', { data: this.login })
+                localStorage.setItem('user', JSON.stringify({ data: this.login}))
                 this.$router.push('/')
             } catch (error) {
                 this.hasError = true
             }
 
-        },
+        }
     }
 }
 </script>

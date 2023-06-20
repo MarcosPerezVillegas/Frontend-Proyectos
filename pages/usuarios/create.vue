@@ -11,7 +11,7 @@
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
                     <v-text-field v-model="usuario.password" label="Contraseña" type="password" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="usuario.rol_id" label="Rol_ID" :items="['Administrador','Maestro','Alumno']" ></v-combobox>
+                    <v-combobox v-model="roles.rol" label="Rol" :items="['Administrador','Maestro','Alumno']" ></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -54,7 +54,7 @@ export default {
 
             try {
                 if(this.usuario.codigo==="" || this.usuario.email==="" || this.usuario.nombre===""
-                || this.usuario.password==="" || this.usuario.rol_id===null){
+                || this.usuario.password==="" || this.roles.rol===null){
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
                 if(this.roles.rol==='Administrador'){

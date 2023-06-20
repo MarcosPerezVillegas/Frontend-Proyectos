@@ -68,6 +68,7 @@ export default {
         if (this.$auth.loggedIn) {
             this.$router.push('/')
         }
+        
     },
 
     methods: {
@@ -77,6 +78,10 @@ export default {
             try {
                 const response = await this.$auth.loginWith('local', { data: this.login })
                 localStorage.setItem('user', JSON.stringify({ data: this.login}))
+                const user = JSON.parse(localStorage.getItem('user'))
+                const email = user.data.email
+                const response2 = await this.$axios.get(`/Usuarios/Email/${email}`)
+                localStorage.setItem('rol', JSON.stringify(response2.data.data))
                 this.$router.push('/')
             } catch (error) {
                 this.hasError = true

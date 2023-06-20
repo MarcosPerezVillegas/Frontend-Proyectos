@@ -73,6 +73,7 @@ export default {
           title: 'Tareas',
           to: '/Tareas',
         },
+        
       ],
     };
   },

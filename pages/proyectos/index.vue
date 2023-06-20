@@ -2,8 +2,7 @@
     <v-container>
         <v-row>
             <v-spacer />
-            <v-btn @click="logeo()">Render docx</v-btn>
-            <v-btn to="/proyectos/create">Crear proyecto</v-btn>
+            <v-btn color="green" to="/proyectos/create">Crear proyecto</v-btn>
         </v-row>
         <br>
         <v-card>
@@ -37,22 +36,17 @@ export default {
             { text: 'Fecha de inicio', value: 'fechainicio' },
             { text: 'Fecha final', value: 'fechafinal' },
             { text: 'Carrera', value: 'carrera.nombre' },
-            { text: 'Status', value: 'status[0].Estado' },
+            { text: 'Status', value: 'status' },
             { text: 'Acciones', value: 'actions' }
         ]
     }),
 
     async beforeMount() {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
-        const user = JSON.parse(localStorage.getItem('user'))
-        const email = user.data.email
         this.$store.commit('setTitle', 'Proyectos')
         try {
-            console.log(email)
             const response = await this.$axios.get('/proyectos')
             this.proyectos = response.data.data
-            const response2 = await this.$axios.get(`/Usuarios/${email}`)
-            localStorage.setItem('rol', JSON.stringify(response2.data.data))
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }

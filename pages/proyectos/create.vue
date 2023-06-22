@@ -11,6 +11,7 @@
                     <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
                     <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
                     <v-combobox v-model="encargado_nombre" label="Encargado" :items="encargados"></v-combobox>
+                    <v-text-field v-model="proyecto.espacios" label="Espacios de registro" type="integer"></v-text-field>
                     <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras"></v-combobox>
                 </v-card-text>
                 <v-card-actions>
@@ -28,7 +29,6 @@
 </template>
 
 <script lang="ts">
-import { onBeforeMount } from 'vue'
 
 
 export default {
@@ -42,8 +42,9 @@ export default {
             fechainicio: "",
             fechafinal: "",
             encargado_codigo: "",
+            espacios:null,
             carrera_clave: "",
-            alumnos_codigos: null,
+            alumnos_codigos: [],
         },
         encargado_nombre: "",
         carrera_nombre: "",

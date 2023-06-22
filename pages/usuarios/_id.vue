@@ -10,7 +10,7 @@
                     <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
-                    <v-text-field v-model="usuario.Rol_Usuario.id" label="Rol_ID" type="number"></v-text-field>
+                    <v-text-field v-model="Rol_Usuario" label="Rol_ID" type="number"></v-text-field>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -39,12 +39,10 @@ export default {
             nombre: "",
             email: "",
             usuario: "",
-            Rol_Usuario: {
-                id: "",
-            },
-            rol_id: "",
+            rol_id: null,
             telefono: "",
-        }
+        },
+        Rol_Usuario:null
     }),
 
     async beforeMount() {
@@ -63,7 +61,8 @@ export default {
     methods: {
         async guardar() {
             try {
-                console.log(this.usuario)
+                console.log(this.Rol_Usuario)
+                this.usuario.rol_id=this.Rol_Usuario
                 const response = await this.$axios.put(`/Usuarios/${this.usuario.codigo}`, this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/Usuarios')

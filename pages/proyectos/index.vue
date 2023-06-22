@@ -32,11 +32,13 @@ export default {
         headers: [
             { text: 'ID', value: 'id' },
             { text: 'Nombre', value: 'nombre' },
+            { text: 'Carrera', value: 'carrera.nombre' },
+            { text: 'Encargado', value: 'encargado_codigo' },
             { text: 'Objetivos', value: 'objetivos' },
             { text: 'Fecha de inicio', value: 'fechainicio' },
             { text: 'Fecha final', value: 'fechafinal' },
-            { text: 'Carrera', value: 'carrera.nombre' },
             { text: 'Status', value: 'status' },
+            { text: 'Alumnos', value: 'encargado_codigo' },
             { text: 'Acciones', value: 'actions' }
         ]
     }),

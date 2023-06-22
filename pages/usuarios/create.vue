@@ -51,8 +51,8 @@ export default {
 
     methods: {
         async guardar() {
-
             try {
+                console.log(this.roles.rol)
                 if(this.usuario.codigo==="" || this.usuario.email==="" || this.usuario.nombre===""
                 || this.usuario.password==="" || this.roles.rol===null){
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')

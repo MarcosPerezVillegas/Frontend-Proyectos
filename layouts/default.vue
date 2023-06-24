@@ -91,8 +91,9 @@ export default {
     },
 
     logout() {
+      localStorage.removeItem('maestro')
+      localStorage.removeItem('alumno')
       localStorage.removeItem('user')
-      localStorage.removeItem('rol')
       this.$auth.logout();
       this.$router.push('/login');
     },

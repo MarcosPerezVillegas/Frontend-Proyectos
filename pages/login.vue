@@ -80,9 +80,19 @@ export default {
                 localStorage.setItem('user', JSON.stringify({ data: this.login}))
                 const user = JSON.parse(localStorage.getItem('user'))
                 const email = user.data.email
-                const response2 = await this.$axios.get(`/Usuarios/Email/${email}`)
-                localStorage.setItem('rol', JSON.stringify(response2.data.data))
+                try {
+                    console.log(email)
+                    const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
+                    if(responseM){
+                        localStorage.setItem('maestro', JSON.stringify(responseM.data.data))
+                        return this.$router.push('/')
+                    }
+                }catch (error) {
+                    const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
+                localStorage.setItem('alumno', JSON.stringify(responseA.data.data))
                 this.$router.push('/')
+                }
+                
             } catch (error) {
                 this.hasError = true
             }

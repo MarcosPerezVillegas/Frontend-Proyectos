@@ -41,10 +41,7 @@ export default {
             objetivos: "",
             fechainicio: "",
             fechafinal: "",
-            encargado_codigo: "",
-            espacios:null,
-            carrera_clave: "",
-            alumnos_codigos: [],
+            carrera_clave: ""
         },
         encargado_nombre: "",
         carrera_nombre: "",
@@ -61,9 +58,9 @@ export default {
     methods: {
         async guardar() {
             try {
-                const resEnca = await this.$axios.get(`/Usuarios/Nombre/${this.encargado_nombre}`)
+                const resEnca = await this.$axios.get(`/Maestros/Nombre/${this.encargado_nombre}`)
                 const Encargado = resEnca.data.data
-                this.proyecto.encargado_codigo= Encargado.codigo
+                //this.proyecto.encargado_codigo= Encargado.codigo
                 const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
                 const Carrera = resCar.data.data
                 this.proyecto.carrera_clave=Carrera.clave
@@ -79,10 +76,9 @@ export default {
         },
         async getEncargados() {
             try{
-                const response = await this.$axios.get('/Usuarios')
+                const response = await this.$axios.get('/Maestros')
                 const usuarios = response.data.data
-                const encargados = usuarios.filter((us)=> us.rol_id === 2)
-                const encargadosItems = encargados.map(usuario => usuario.nombre)
+                const encargadosItems = usuarios.map(usuario => usuario.nombre)
                 return encargadosItems
             }catch(error){
                 console.log(error)

@@ -85,11 +85,15 @@ export default {
                     const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
                     if(responseM){
                         localStorage.setItem('maestro', JSON.stringify(responseM.data.data))
+                        localStorage.setItem('rol', 'maestro')
+                        location. reload() 
                         return this.$router.push('/')
                     }
                 }catch (error) {
                     const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
                 localStorage.setItem('alumno', JSON.stringify(responseA.data.data))
+                localStorage.setItem('rol', 'alumno')
+                location. reload()
                 this.$router.push('/')
                 }
                 

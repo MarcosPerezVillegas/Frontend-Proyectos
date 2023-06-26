@@ -3,21 +3,15 @@
         <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
-                    Editar proyecto
+                    {{proyecto.nombre}}
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="proyecto.id" label="ID"></v-text-field>
-                    <v-text-field v-model="proyecto.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="proyecto.objetivos" label="Objetivos"></v-text-field>
-                    <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
-                    <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
-                    <v-text-field v-model="proyecto.carrera_clave" label="Carrera"></v-text-field>
+                    {{proyecto.objetivos}}
+                    <v-spacer />
+                    {{proyecto.carrera_clave}}
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn type="submit">
-                        Guardar
-                    </v-btn>
                     <v-btn @click="cancelar()" color="red">
                         Cancelar
                     </v-btn>
@@ -44,11 +38,10 @@ export default {
     }),
 
     async beforeMount() {
-        const id = this.$route.params.id
+        const id = localStorage.getItem('proId')
         
         try {
             const response = await this.$axios.get(`/proyectos/${id}`)
-
             this.proyecto = response.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
@@ -56,15 +49,6 @@ export default {
     },
 
     methods: {
-        async guardar() {
-            try {
-                const response = await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
-                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/proyectos')
-            } catch (error) {
-                this.$nuxt.$emit('show-snackbar', 'red', error.message)
-            }
-        },
         cancelar() {
             this.$router.push('/proyectos')
         }

@@ -2,18 +2,18 @@
     <v-container>
         <v-row>
             <v-spacer />
-            <v-btn color="green" to="/proyectos/create">Crear proyecto</v-btn>
+            <v-btn v-if="rol() == 'maestro'" color="green" to="/proyectos/create">Crear proyecto</v-btn>
         </v-row>
         <br>
         <v-card>
             <v-data-table :items="proyectos" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-if="rol() == 1" v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
-                    <DeleteDialog v-if="rol() == 1" :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
+                    <v-btn v-if="rol() == 'maestro'" v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
+                    <DeleteDialog v-if="rol() == 'maestro'" :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
-                    <v-btn v-if="rol() == 1" v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
-                    <v-btn v-if="rol() == 1" v-text="'Constancia'" color="green" text small :to="`/proyectos/cons`"/>
-                    <v-btn v-if="rol() == 3" v-text="'Seleccionar proyecto'" color="green" text small :to="`/proyectos/cons`"/>
+                    <v-btn v-if="rol() == 'maestro'" v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
+                    <v-btn v-if="rol() == 'maestro'" v-text="'Constancia'" color="green" text small :to="`/proyectos/cons`"/>
+                    <v-btn v-if="rol() == 'alumno'" @click="selecID(item.id)" v-text="'Seleccionar proyecto'" color="green" text small />
                 </template>
             </v-data-table>
         </v-card>
@@ -32,13 +32,9 @@ export default {
         headers: [
             { text: 'ID', value: 'id' },
             { text: 'Nombre', value: 'nombre' },
-            { text: 'Carrera', value: 'carrera.nombre' },
-            { text: 'Encargado', value: 'encargado_codigo' },
             { text: 'Objetivos', value: 'objetivos' },
             { text: 'Fecha de inicio', value: 'fechainicio' },
             { text: 'Fecha final', value: 'fechafinal' },
-            { text: 'Status', value: 'status' },
-            { text: 'Alumnos', value: 'encargado_codigo' },
             { text: 'Acciones', value: 'actions' }
         ]
     }),
@@ -47,6 +43,7 @@ export default {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Proyectos')
         try {
+            console.log(localStorage.getItem('rol'))
             const response = await this.$axios.get('/proyectos')
             this.proyectos = response.data.data
         } catch (error) {
@@ -57,7 +54,11 @@ export default {
 
     methods: {
         rol (){
-            return JSON.parse(localStorage.getItem('rol')).rol_id
+            return localStorage.getItem('rol')
+        },
+        selecID (index: number){
+            localStorage.setItem('proId',index)
+            this.$router.push('/proyectos/seleccion')
         },
         deleteElement(index: number) {
             this.proyectos.pop(index)

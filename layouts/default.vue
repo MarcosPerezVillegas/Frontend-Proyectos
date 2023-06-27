@@ -65,6 +65,7 @@
 import Cookies from 'js-cookie';
 export default {
   name: 'DefaultLayout',
+  
   data() {
     return {
       snackbarColor: '',
@@ -124,6 +125,7 @@ export default {
   },
   beforeMount() {
     this.$nuxt.$on('show-snackbar', this.showSnackbar)
+    console.log(localStorage.getItem('rol'))
   },
 
 

@@ -8,14 +8,47 @@
             <v-btn to="/Usuarios">Cancelar</v-btn>
         </v-row>
         <br>
+        <v-card-title>
+            Administradores
+        </v-card-title>
         <v-card>
-            <v-data-table :items="usuarios" :headers="headers">
+            <v-data-table :items="administradores" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
                     <RestoreDialog :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Usuarios/Restaurar/${item.codigo}`" :index="index" />
+                        :itemUrl="`/Administradores/Restaurar/${item.codigo}`" :index="index" list="administradores"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
-                    esta acción no se puede deshacer`"
-                    :itemUrl="`/Usuarios/Eliminados/${item.codigo}`" :index="index" />
+                    esta acción no se puede deshacer`" :itemUrl="`/Administradores/Eliminados/${item.codigo}`"
+                        :index="index" list="administradores" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card-title>
+            Maestros
+        </v-card-title>
+        <v-card>
+            <v-data-table :items="maestros" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <RestoreDialog :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
+                        :itemUrl="`/Maestros/Restaurar/${item.codigo}`" :index="index" list="maestros"/>
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
+                    esta acción no se puede deshacer`" :itemUrl="`/Maestros/Eliminados/${item.codigo}`" :index="index"
+                        list="maestros" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card-title>
+            Alumnos
+        </v-card-title>
+        <v-card>
+            <v-data-table :items="alumnos" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <RestoreDialog :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
+                        :itemUrl="`/Alumnos/Restaurar/${item.codigo}`" :index="index" list="alumnos"/>
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
+                    esta acción no se puede deshacer`" :itemUrl="`/Alumnos/Eliminados/${item.codigo}`" :index="index"
+                        list="alumnos" />
                 </template>
             </v-data-table>
         </v-card>
@@ -27,16 +60,16 @@
 export default {
 
     name: 'Usuarios',
-
     middleware: 'auth',
 
     data: () => ({
-        usuarios: [],
+        administradores: [],
+        maestros: [],
+        alumnos: [],
         headers: [
             { text: 'Codigo', value: 'codigo' },
             { text: 'Nombre', value: 'nombre' },
             { text: 'Email', value: 'email' },
-            { text: 'Rol_id', value: 'rol_id' },
             { text: 'Telefono', value: 'telefono' },
             { text: 'Acciones', value: 'actions' },
         ],
@@ -48,28 +81,42 @@ export default {
 
         this.$store.commit('setTitle', 'Usuarios')
         try {
-            const response = await this.$axios.get('/Usuarios/Eliminados')
-            this.usuarios = response.data.data
+            const response = await this.$axios.get('/Administradores/Eliminados')
+            this.administradores = response.data.data
         } catch (error) {
-
+            this.$nuxt.$emit('show-snackbar', 'red', error)
         }
-        
+        try {
+            const response = await this.$axios.get('/Maestros/Eliminados')
+            this.maestros = response.data.data
+        } catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error)
+        }
+        try {
+            const response = await this.$axios.get('/Alumnos/Eliminados')
+            this.alumnos = response.data.data
+        } catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error)
+        }
+
     },
 
     methods: {
-        deleteElement(index: number) {
-            console.log(index)
-            this.usuarios.splice(index,1)
-        },
-        async deleteUser(index: number, codigo:string){
-            try {
-                const response = await this.$axios.delete(`/Usuarios/Eliminados/${codigo}`)
-                this.usuarios.splice(index,1)
-            } catch (error) {   
-                this.$nuxt.$emit('show-snackbar', 'red', error.message)
+        deleteElement(index: number, list: string) {
+            switch (list) {
+                case 'administradores':
+                    this.administradores.splice(index, 1);
+                    break;
+                case 'maestros':
+                    this.maestros.splice(index, 1);
+                    break;
+                case 'alumnos':
+                    this.alumnos.splice(index, 1);
+                    break;
+                default:
+                    break;
             }
-            
-        }
+        },
     }
 }
 

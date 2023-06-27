@@ -1,7 +1,28 @@
 <template>
   <v-app dark>
     <v-navigation-drawer v-model="drawer" :clipped="clipped" fixed app>
-      <v-list>
+      <v-list v-if="admin">
+        <v-list-item v-for="(item, i) in itemsAdmin" :key="i" :to="item.to" router exact>
+          <v-list-item-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="logout">
+          <v-list-item-action>
+            <v-icon>
+              mdi-logout
+            </v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            Logout
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+      <v-list v-else>
         <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -41,7 +62,7 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
+import Cookies from 'js-cookie';
 export default {
   name: 'DefaultLayout',
   data() {
@@ -75,12 +96,36 @@ export default {
         },
         
       ],
+      itemsAdmin: [
+        {
+          icon: 'mdi-apps',
+          title: 'Inicio',
+          to: '/',
+        },
+        {
+          icon: 'mdi-compass',
+          title: 'Proyectos',
+          to: '/Proyectos',
+        },
+        {
+          icon: 'mdi-account',
+          title: 'Usuarios',
+          to: '/Usuarios',
+        },
+      ],
     };
   },
 
+  computed: {
+    admin(){
+      const rol = Cookies.get('rol')
+      return rol ==='administrador'
+    }
+  },
   beforeMount() {
     this.$nuxt.$on('show-snackbar', this.showSnackbar)
   },
+
 
   methods: {
 
@@ -91,9 +136,9 @@ export default {
     },
 
     logout() {
-      localStorage.removeItem('maestro')
-      localStorage.removeItem('alumno')
-      localStorage.removeItem('user')
+      Cookies.remove('alumno')
+      Cookies.remove('administrador')
+      Cookies.remove('maestro')
       this.$auth.logout();
       this.$router.push('/login');
     },

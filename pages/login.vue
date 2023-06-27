@@ -38,7 +38,7 @@
 </template>
   
 <script lang="ts">
-import axios from 'axios';
+import Cookies from 'js-cookie';
 
 export default {
 
@@ -46,14 +46,16 @@ export default {
     auth: 'guest',
     layout: 'login',
 
-    data: () => ({
-        validForm: true,
-        hasError: false,
-        login: {
+    data() {
+        return {
+            validForm: true,
+            hasError: false,
+            login: {
             email: "",
             password: ""
         }
-    }),
+        }
+    },
 
     watch: {
         login: {
@@ -77,26 +79,24 @@ export default {
             if (!this.validForm) return
             try {
                 const response = await this.$auth.loginWith('local', { data: this.login })
-                localStorage.setItem('user', JSON.stringify({ data: this.login}))
-                const user = JSON.parse(localStorage.getItem('user'))
-                const email = user.data.email
+                const email = this.login.email
                 try {
-                    console.log(email)
-                    const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
-                    if(responseM){
-                        localStorage.setItem('maestro', JSON.stringify(responseM.data.data))
-                        return this.$router.push('/')
-                    }
+                    const responseA = await this.$axios.get(`/Administradores/Email/${email}`)
+                    Cookies.set('rol','administrador',{secure: true})
                 }catch (error) {
-                    const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
-                localStorage.setItem('alumno', JSON.stringify(responseA.data.data))
-                this.$router.push('/')
+                    try {
+                        const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
+                        Cookies.set('rol','maestro',{secure: true})
+                    } catch (error) {
+                        const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
+                        Cookies.set('rol','alumno',{secure: true})
+                    }
                 }
                 
             } catch (error) {
                 this.hasError = true
             }
-
+            this.$router.push('/')
         }
     }
 }

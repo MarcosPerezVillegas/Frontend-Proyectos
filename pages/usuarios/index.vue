@@ -9,12 +9,41 @@
             <v-btn color="green" to="/Usuarios/Create">Registrar usuarios</v-btn>
         </v-row>
         <br>
+        <v-card-title>
+            Administradores
+        </v-card-title>
         <v-card>
-            <v-data-table :items="usuarios" :headers="headers">
+            <v-data-table :items="administradores" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Usuarios/${item.codigo}`" />
+                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Administradores/${item.codigo}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Usuarios/${item.codigo}`" :index="index" />
+                        :itemUrl="`/Administradores/${item.codigo}`" :index="index" list="administradores" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card-title>
+            Maestros
+        </v-card-title>
+        <v-card>
+            <v-data-table :items="maestros" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Maestros/${item.codigo}`" />
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
+                        :itemUrl="`/Maestros/${item.codigo}`" :index="index" list="maestros" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card-title>
+            Alumnos
+        </v-card-title>
+        <v-card>
+            <v-data-table :items="alumnos" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Alumnos/${item.codigo}`" />
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
+                        :itemUrl="`/Alumnos/${item.codigo}`" :index="index" list="alumnos" />
                 </template>
             </v-data-table>
         </v-card>
@@ -26,38 +55,63 @@
 export default {
 
     name: 'Usuarios',
-
     middleware: 'auth',
 
     data: () => ({
-        usuarios: [],
+        administradores: [],
+        maestros: [],
+        alumnos: [],
         headers: [
             { text: 'Codigo', value: 'codigo' },
             { text: 'Nombre', value: 'nombre' },
             { text: 'Email', value: 'email' },
-            { text: 'Rol_id', value: 'rol_id' },
             { text: 'Telefono', value: 'telefono' },
             { text: 'Acciones', value: 'actions' },
-        ]
-    }),
+        ],
+    }
+    ),
 
 
     async beforeMount() {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
-
         this.$store.commit('setTitle', 'Usuarios')
         try {
-            const response = await this.$axios.get('/Usuarios')
-            this.usuarios = response.data.data
+            const response = await this.$axios.get('/Administradores')
+            this.administradores = response.data.data
         } catch (error) {
-
+            this.$nuxt.$emit('show-snackbar', 'red', error)
         }
-        
+        try {
+            const response = await this.$axios.get('/Maestros')
+            this.maestros = response.data.data
+        } catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error)
+        }
+        try {
+            const response = await this.$axios.get('/Alumnos')
+            this.alumnos = response.data.data
+        } catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error)
+        }
+
+
     },
 
     methods: {
-        deleteElement(index: number) {
-            this.usuarios.splice(index,1)
+        deleteElement(index: number, list: string) {
+            switch (list) {
+                case 'administradores':
+                    this.administradores.splice(index, 1);
+                    break;
+                case 'maestros':
+                    this.maestros.splice(index, 1);
+                    break;
+                case 'alumnos':
+                    this.alumnos.splice(index, 1);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

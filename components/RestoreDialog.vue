@@ -38,7 +38,11 @@ export default {
         index: {
             type: Number,
             required: true,
-        }
+        },
+        list: {
+            type: String,
+            required: true,
+        },
     },
 
     data: () => ({
@@ -54,7 +58,7 @@ export default {
                 const response = await this.$axios.get(this.itemUrl,this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.restoreDialog = false
-                this.$nuxt.$emit('remove-from-list', this.index)
+                this.$nuxt.$emit('remove-from-list', this.index, this.list)
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

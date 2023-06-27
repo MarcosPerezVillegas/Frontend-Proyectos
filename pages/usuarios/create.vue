@@ -11,7 +11,7 @@
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
                     <v-text-field v-model="usuario.password" label="Contraseña" type="password" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="roles.rol" label="Rol" :items="['Administrador','Maestro','Alumno']" ></v-combobox>
+                    <v-combobox v-model="roles" label="Rol" :items="['Administrador','Maestro','Alumno']" ></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -33,42 +33,55 @@
 
 export default {
     name: 'UsuariosCreate',
+    layout: 'singIn',
     data: () => ({
         usuario: {
             codigo: "",
             nombre: "",
             email: "",
             password: "",
-            rol_id: null,
             telefono: "",
             
         },
-        roles: {
-            rol: "",
-        },
-        layout: "",
+        roles: ""
     }),
 
     methods: {
         async guardar() {
+
             try {
-                console.log(this.roles.rol)
                 if(this.usuario.codigo==="" || this.usuario.email==="" || this.usuario.nombre===""
-                || this.usuario.password==="" || this.roles.rol===null){
+                || this.usuario.password==="" || this.roles===null){
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
-                if(this.roles.rol==='Administrador'){
-                    this.usuario.rol_id=1
-                }else if (this.roles.rol==='Maestro') {
-                    this.usuario.rol_id=2
-                }else{
-                    this.usuario.rol_id=3
+                if (this.roles==='Administrador') {
+                    try {
+                        const response = await this.$axios.post('/Administradores', this.usuario)
+                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+                        this.$router.push('/Usuarios')
+                        return
+                    } catch (error) {
+                        this.$nuxt.$emit('show-snackbar', 'green', error)
+                    }
                 }
-                const response = await this.$axios.post('/Usuarios', this.usuario)
-                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/Usuarios')
+                if (this.roles==='Maestro') {
+                    try {
+                        const response = await this.$axios.post('/Maestros', this.usuario)
+                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+                    } catch (error) {
+                        this.$nuxt.$emit('show-snackbar', 'green', error)
+                    }
+                }else {
+                    try {
+                        const response = await this.$axios.post('/Alumnos', this.usuario)
+                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+                    } catch (error) {
+                        this.$nuxt.$emit('show-snackbar', 'green', error)
+                    }
+                }
             } catch (error) {
             }
+            this.$router.push('/Usuarios')
         },
     }
 }

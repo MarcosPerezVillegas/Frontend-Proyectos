@@ -38,7 +38,11 @@ export default {
         index: {
             type: Number,
             required: true,
-        }
+        },
+        list: {
+            type: String,
+            required: true,
+        },
     },
 
     data: () => ({
@@ -49,10 +53,9 @@ export default {
         async eliminar() {
             try {
                 const response = await this.$axios.delete(this.itemUrl)
-
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.deleteDialog = false
-                this.$nuxt.$emit('remove-from-list', this.index)
+                this.$nuxt.$emit('remove-from-list', this.index, this.list)
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

@@ -16,9 +16,24 @@
 
 <script>
 
-export default {
-  name: 'InspirePage',
+import Cookies from 'js-cookie';
 
+export default {
+  name: 'Index',
+  layout:'default',
   middleware: 'auth',
+  data() {
+    return {
+      hasError: false,
+      layout: "default"
+    }
+  },
+
+  beforeMount(){
+    this.$store.commit('setTitle', 'CUValles')
+  },
+
+  methods: {
+  },
 }
 </script>

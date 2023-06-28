@@ -98,6 +98,7 @@ export default {
             } catch (error) {
                 this.hasError = true
             }
+            location. reload()
             this.$router.push('/')
         }
     }

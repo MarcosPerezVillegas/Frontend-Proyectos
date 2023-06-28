@@ -12,7 +12,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn @click="cancelar()" color="red">
+                    <v-btn v-if="roles.rol == 'maestro'" @click="cancelar()" color="red">
                         Cancelar
                     </v-btn>
                 </v-card-actions>
@@ -27,6 +27,7 @@ export default {
     name: 'ProyectosUpdate',
     middleware: 'auth',
     data: () => ({
+        roles: {},
         proyecto: {
             id: "",
             nombre: "",
@@ -43,6 +44,8 @@ export default {
         try {
             const response = await this.$axios.get(`/proyectos/${id}`)
             this.proyecto = response.data.data
+            const responseR = await this.$axios.get('/login')
+            this.roles = responseR.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }

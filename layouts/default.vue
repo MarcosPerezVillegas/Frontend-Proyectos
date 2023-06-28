@@ -75,6 +75,7 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
+      rol: "",
       items: [
         {
           icon: 'mdi-apps',
@@ -88,8 +89,8 @@ export default {
         },
         {
           icon: 'mdi-account',
-          title: 'Usuarios',
-          to: '/Usuarios',
+          title: 'Perfil',
+          to: '/Usuarios/Perfil',
         },
         {
           icon: 'mdi-clock-alert',
@@ -119,15 +120,14 @@ export default {
   },
 
   computed: {
-    admin(){
-      const rol = Cookies.get('rol')
-      return rol ==='administrador'
+     admin(){
+      return this.rol ==='administrador'
     }
   },
+
   beforeMount() {
+    this.getRol()
     this.$nuxt.$on('show-snackbar', this.showSnackbar)
-    console.log(localStorage.getItem('rol'))
-    console.log(localStorage.getItem('rol'))
   },
 
 
@@ -138,7 +138,10 @@ export default {
       this.snackbarColor = color
       this.snackbarMessage = message
     },
-
+    async getRol(){
+      const resRol = await this.$axios.get('/Login')
+      this.rol = resRol.data.rol
+    },
     logout() {
       Cookies.remove('alumno')
       Cookies.remove('administrador')

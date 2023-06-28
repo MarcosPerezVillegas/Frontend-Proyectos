@@ -38,7 +38,6 @@
 </template>
   
 <script lang="ts">
-import Cookies from 'js-cookie';
 
 export default {
 
@@ -81,33 +80,19 @@ export default {
                 const response = await this.$auth.loginWith('local', { data: this.login })
                 const email = this.login.email
                 try {
-<<<<<<< HEAD
                     const responseA = await this.$axios.get(`/Administradores/Email/${email}`)
-                    Cookies.set('rol','administrador',{secure: true})
+                    const resRol = await this.$axios.get('/Login')
+                    const rol = resRol.data.rol
                 }catch (error) {
                     try {
                         const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
-                        Cookies.set('rol','maestro',{secure: true})
+                        const resRol = await this.$axios.get('/Login')
+                        const rol = resRol.data.rol
                     } catch (error) {
                         const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
-                        Cookies.set('rol','alumno',{secure: true})
+                        const resRol = await this.$axios.get('/Login')
+                        const rol = resRol.data.rol
                     }
-=======
-                    console.log(email)
-                    const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
-                    if(responseM){
-                        localStorage.setItem('maestro', JSON.stringify(responseM.data.data))
-                        localStorage.setItem('rol', 'maestro')
-                        location. reload() 
-                        return this.$router.push('/')
-                    }
-                }catch (error) {
-                    const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
-                localStorage.setItem('alumno', JSON.stringify(responseA.data.data))
-                localStorage.setItem('rol', 'alumno')
-                location. reload()
-                this.$router.push('/')
->>>>>>> 892bc3900e4d2ddc950e22e1f80937b7e082c4ab
                 }
                 
             } catch (error) {

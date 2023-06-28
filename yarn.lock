@@ -3890,6 +3890,7 @@ __metadata:
     jest: ^29.1.2
     jest-environment-jsdom: ^29.1.2
     js-cookie: ^3.0.5
+    jsonwebtoken: ^9.0.0
     nuxt: ^2.15.8
     pizzip: ^3.1.4
     prettier: ^2.7.1
@@ -4977,6 +4978,13 @@ __metadata:
   dependencies:
     node-int64: ^0.4.0
   checksum: 9ba4dc58ce86300c862bffc3ae91f00b2a03b01ee07f3564beeeaf82aa243b8b03ba53f123b0b842c190d4399b94697970c8e7cf7b1ea44b61aa28c3526a4449
+  languageName: node
+  linkType: hard
+
+"buffer-equal-constant-time@npm:1.0.1":
+  version: 1.0.1
+  resolution: "buffer-equal-constant-time@npm:1.0.1"
+  checksum: 80bb945f5d782a56f374b292770901065bad21420e34936ecbe949e57724b4a13874f735850dd1cc61f078773c4fb5493a41391e7bda40d1fa388d6bd80daaab
   languageName: node
   linkType: hard
 
@@ -6592,6 +6600,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ecdsa-sig-formatter@npm:1.0.11":
+  version: 1.0.11
+  resolution: "ecdsa-sig-formatter@npm:1.0.11"
+  dependencies:
+    safe-buffer: ^5.0.1
+  checksum: 207f9ab1c2669b8e65540bce29506134613dd5f122cccf1e6a560f4d63f2732d427d938f8481df175505aad94583bcb32c688737bb39a6df0625f903d6d93c03
+  languageName: node
+  linkType: hard
+
 "editorconfig@npm:^0.15.3":
   version: 0.15.3
   resolution: "editorconfig@npm:0.15.3"
@@ -8158,17 +8175,17 @@ __metadata:
   linkType: hard
 
 "glob@npm:^10.2.2":
-  version: 10.3.0
-  resolution: "glob@npm:10.3.0"
+  version: 10.3.1
+  resolution: "glob@npm:10.3.1"
   dependencies:
     foreground-child: ^3.1.0
     jackspeak: ^2.0.3
     minimatch: ^9.0.1
     minipass: ^5.0.0 || ^6.0.2
-    path-scurry: ^1.7.0
+    path-scurry: ^1.10.0
   bin:
     glob: dist/cjs/src/bin.js
-  checksum: 6fa4ac0a86ffec1c5715a2e6fbdd63e1e7f1c2c8f5db08cc3256cdfcb81093678e7c80a3d100b502a1b9d141369ecf87bc24fe2bcb72acec7b14626d358a4eb0
+  checksum: 19c8c2805658b1002fecf0722cd609a33153d756a0d5260676bd0e9c5e6ef889ec9cce6d3dac0411aa90bce8de3d14f25b6f5589a3292582cccbfeddd0e98cc4
   languageName: node
   linkType: hard
 
@@ -10132,6 +10149,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonwebtoken@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "jsonwebtoken@npm:9.0.0"
+  dependencies:
+    jws: ^3.2.2
+    lodash: ^4.17.21
+    ms: ^2.1.1
+    semver: ^7.3.8
+  checksum: b9181cecf9df99f1dc0253f91ba000a1aa4d91f5816d1608c0dba61a5623726a0bfe200b51df25de18c1a6000825d231ad7ce2788aa54fd48dcb760ad9eb9514
+  languageName: node
+  linkType: hard
+
+"jwa@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "jwa@npm:1.4.1"
+  dependencies:
+    buffer-equal-constant-time: 1.0.1
+    ecdsa-sig-formatter: 1.0.11
+    safe-buffer: ^5.0.1
+  checksum: ff30ea7c2dcc61f3ed2098d868bf89d43701605090c5b21b5544b512843ec6fd9e028381a4dda466cbcdb885c2d1150f7c62e7168394ee07941b4098e1035e2f
+  languageName: node
+  linkType: hard
+
+"jws@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "jws@npm:3.2.2"
+  dependencies:
+    jwa: ^1.4.1
+    safe-buffer: ^5.0.1
+  checksum: f0213fe5b79344c56cd443428d8f65c16bf842dc8cb8f5aed693e1e91d79c20741663ad6eff07a6d2c433d1831acc9814e8d7bada6a0471fbb91d09ceb2bf5c2
+  languageName: node
+  linkType: hard
+
 "jwt-decode@npm:^3.1.2":
   version: 3.1.2
   resolution: "jwt-decode@npm:3.1.2"
@@ -10449,10 +10499,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^9.1.1":
-  version: 9.1.2
-  resolution: "lru-cache@npm:9.1.2"
-  checksum: d3415634be3908909081fc4c56371a8d562d9081eba70543d86871b978702fffd0e9e362b83921b27a29ae2b37b90f55675aad770a54ac83bb3e4de5049d4b15
+"lru-cache@npm:^9.1.1 || ^10.0.0":
+  version: 10.0.0
+  resolution: "lru-cache@npm:10.0.0"
+  checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
   languageName: node
   linkType: hard
 
@@ -11797,13 +11847,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-scurry@npm:^1.7.0":
-  version: 1.9.2
-  resolution: "path-scurry@npm:1.9.2"
+"path-scurry@npm:^1.10.0":
+  version: 1.10.0
+  resolution: "path-scurry@npm:1.10.0"
   dependencies:
-    lru-cache: ^9.1.1
+    lru-cache: ^9.1.1 || ^10.0.0
     minipass: ^5.0.0 || ^6.0.2
-  checksum: 92888dfb68e285043c6d3291c8e971d5d2bc2f5082f4d7b5392896f34be47024c9d0a8b688dd7ae6d125acc424699195474927cb4f00049a9b1ec7c4256fa8e0
+  checksum: 3b66a4a6ab66e45755b577c966ecf0da92d3e068b3c992d8f69aa2cc908ef4eda9358253e9b4f86cad43d3ad810ec445be164105975f5cb3fdab68459c59dc6e
   languageName: node
   linkType: hard
 

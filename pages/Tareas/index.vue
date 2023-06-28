@@ -21,7 +21,7 @@
 
 export default {
 
-  name: 'Usuarios',
+  name: 'Carreras',
 
   middleware: 'auth',
 

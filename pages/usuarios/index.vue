@@ -17,7 +17,7 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/Administradores/${item.codigo}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Administradores/${item.codigo}`" :index="index" list="administradores" />
+                        :itemUrl="`/Administradores/${item.codigo}`" :index="index" list="administradores" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -30,7 +30,7 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/Maestros/${item.codigo}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Maestros/${item.codigo}`" :index="index" list="maestros" />
+                        :itemUrl="`/Maestros/${item.codigo}`" :index="index" list="maestros" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -43,7 +43,7 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/Alumnos/${item.codigo}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Alumnos/${item.codigo}`" :index="index" list="alumnos" />
+                        :itemUrl="`/Alumnos/${item.codigo}`" :index="index" list="alumnos" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>

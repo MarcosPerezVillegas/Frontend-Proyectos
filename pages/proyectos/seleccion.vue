@@ -39,6 +39,7 @@ export default {
     }),
 
     async beforeMount() {
+        this.$store.commit('setTitle', 'Proyectos')
         const id = localStorage.getItem('proId')
         
         try {

@@ -24,7 +24,7 @@
 <script lang="ts">
 
 export default {
-    name: 'ProyectosUpdate',
+    name: 'ProyectosSelect',
     middleware: 'auth',
     data: () => ({
         roles: {},

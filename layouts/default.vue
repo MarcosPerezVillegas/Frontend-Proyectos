@@ -128,12 +128,6 @@ export default {
           title: 'Proyectos',
           to: '/Proyectos',
         },
-        {
-          icon: 'mdi-clock-alert',
-          title: 'Tareas',
-          to: '/Tareas',
-        },
-        
       ],
       itemsAdmin: [
         {

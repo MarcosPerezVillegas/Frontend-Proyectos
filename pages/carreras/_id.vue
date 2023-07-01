@@ -6,16 +6,12 @@
                     Editar usuario
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
-                    <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"
-                    :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
-                    <v-text-field v-model="Rol_Usuario" label="Rol_ID" type="number"></v-text-field>
-                    <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
+                    <v-text-field v-model="carrera.clave" label="Clave"></v-text-field>
+                    <v-text-field v-model="carrera.nombre" label="Nombre"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn color="red" to="/Usuarios">
+                    <v-btn color="red" to="/Carreras">
                         Cancelar
                     </v-btn>
                     <v-btn color="green" type="submit">
@@ -34,25 +30,20 @@ export default {
     name: 'UsuariosUpdate',
     middleware: 'auth',
     data: () => ({
-        usuario: {
-            codigo: "",
+        clave: "",
+        carrera: {
+            clave: "",
             nombre: "",
-            email: "",
-            usuario: "",
-            rol_id: null,
-            telefono: "",
         },
-        Rol_Usuario:null
     }),
 
     async beforeMount() {
-        const id = this.$route.params.id
+        this.clave = this.$route.params.id
         
         try {
-            const response = await this.$axios.get(`/Usuarios/${id}`)
+            const response = await this.$axios.get(`/Carreras/${this.clave}`)
 
-            this.usuario = response.data.data
-            this.usuario.rol_id=this.usuario.Rol_Usuario.id
+            this.carrera = response.data.data
         } catch (error) {   
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -61,11 +52,9 @@ export default {
     methods: {
         async guardar() {
             try {
-                console.log(this.Rol_Usuario)
-                this.usuario.rol_id=this.Rol_Usuario
-                const response = await this.$axios.put(`/Usuarios/${this.usuario.codigo}`, this.usuario)
+                const response = await this.$axios.put(`/Carreras/${this.clave}`, this.carrera)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/Usuarios')
+                this.$router.push('/Carreras')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

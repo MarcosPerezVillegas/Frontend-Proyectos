@@ -23,7 +23,7 @@
       </v-list>
 
       <v-list v-if="roles.rol == 'maestro'">
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+        <v-list-item v-for="(item, i) in itemsMaes" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -171,12 +171,12 @@ export default {
     const responseR = await this.$axios.get('/login')
     this.roles = responseR.data
 
-    if(this.roles.rol == 'alumno'){
+
+    if(this.roles.rol === 'alumno'){
       const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
       this.alum = responseA.data.data
       localStorage.setItem('proId', this.alum.proyecto_id)
     }
-    console.log(this.roles.rol)
   },
 
 

@@ -81,17 +81,11 @@ export default {
                 const email = this.login.email
                 try {
                     const responseA = await this.$axios.get(`/Administradores/Email/${email}`)
-                    const resRol = await this.$axios.get('/Login')
-                    const rol = resRol.data.rol
                 }catch (error) {
                     try {
                         const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
-                        const resRol = await this.$axios.get('/Login')
-                        const rol = resRol.data.rol
                     } catch (error) {
                         const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
-                        const resRol = await this.$axios.get('/Login')
-                        const rol = resRol.data.rol
                     }
                 }
                 

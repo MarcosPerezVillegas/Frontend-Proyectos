@@ -15,9 +15,9 @@
             <v-data-table :items="administradores" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
                     <RestoreDialog :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Administradores/Restaurar/${item.codigo}`" :index="index" list="administradores"/>
+                        :itemUrl="`/Maestros/Restaurar/${item.codigo}`" :index="index" list="administradores"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
-                    esta acción no se puede deshacer`" :itemUrl="`/Administradores/Eliminados/${item.codigo}`"
+                    esta acción no se puede deshacer`" :itemUrl="`/Maestros/Eliminados/${item.codigo}`"
                         :index="index" list="administradores" :item="item.codigo"/>
                 </template>
             </v-data-table>
@@ -81,7 +81,7 @@ export default {
 
         this.$store.commit('setTitle', 'Usuarios')
         try {
-            const response = await this.$axios.get('/Administradores/Eliminados')
+            const response = await this.$axios.get('/Maestros/Admins/Eliminados')
             this.administradores = response.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)

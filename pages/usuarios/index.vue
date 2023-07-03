@@ -16,9 +16,9 @@
             <v-data-table :items="administradores" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="{ path: `/Usuarios/${item.codigo}`,
-                    query: { url: `/Administradores/${item.codigo}`, rol_usuario: 'Administrador' } }" />
+                    query: { url: `/Maestros/${item.codigo}`, rol_usuario: 'Administrador' } }" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Administradores/${item.codigo}`" :index="index" list="administradores" :item="item.codigo"/>
+                        :itemUrl="`/Maestros/${item.codigo}`" :index="index" list="administradores" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -79,7 +79,7 @@ export default {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Usuarios')
         try {
-            const response = await this.$axios.get('/Administradores')
+            const response = await this.$axios.get('/Maestros/Admins')
             this.administradores = response.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)

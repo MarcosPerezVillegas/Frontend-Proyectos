@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-form @submit.prevent="guardar">
-            <v-card>
+            <v-card v-if="rol_usuario!== 'Alumno'">
                 <v-card-title>
                     Editar usuario
                 </v-card-title>
@@ -11,7 +11,29 @@
                     <v-text-field v-model="usuario.email" label="Email"
                         :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
                     <v-combobox v-model="rol_usuario" label="Rol"
-                        :items="['Administrador', 'Maestro', 'Alumno']"></v-combobox>
+                        :items="['Administrador', 'Maestro']"></v-combobox>
+                    <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn color="red" to="/Usuarios">
+                        Cancelar
+                    </v-btn>
+                    <v-btn color="green" type="submit">
+                        Guardar
+                    </v-btn>
+
+                </v-card-actions>
+            </v-card>
+            <v-card v-else>
+                <v-card-title>
+                    Editar usuario
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
+                    <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
+                    <v-text-field v-model="usuario.email" label="Email"
+                        :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -41,6 +63,7 @@ export default {
             email: "",
             usuario: "",
             telefono: "",
+            admin: 0,
         },
         rol_usuario: "",
         rol: "",
@@ -76,39 +99,13 @@ export default {
                 return this.$nuxt.$emit('show-snackbar', 'red', "Algo salió mal: ", error.message)
             }
             try {
-                console.log(this.rol_inicial,this.rol_usuario)
                 if (this.rol_inicial !== this.rol_usuario) {
                     if (this.rol_inicial === "Administrador" && this.rol_usuario === "Maestro") {
-                        const response = await this.$axios.get(`/Roles/AdminToMaest/${this.usuario.codigo}`)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
+                        this.usuario.admin = 0
                     }
-                    if (this.rol_inicial === "Administrador" && this.rol_usuario === "Alumno") {
-                        const response = await this.$axios.get(`/Roles/AdminToAlumn/${this.usuario.codigo}`)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
-                    }
-                    if (this.rol_inicial === "Maestro" && this.rol_usuario === "Administrador") {
-                        const response = await this.$axios.get(`/Roles/MaestToAdmin/${this.usuario.codigo}`)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
-                    }
-                    if (this.rol_inicial === "Maestro" && this.rol_usuario === "Alumno") {
-                        const response = await this.$axios.get(`/Roles/MaestToAlumn/${this.usuario.codigo}`)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
-                    }
-                    if (this.rol_inicial === "Alumno" && this.rol_usuario === "Administrador") {
-                        const response = await this.$axios.get(`/Roles/AlumnToAdmin/${this.usuario.codigo}`)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
-                    }
-                    if (this.rol_inicial === "Alumno" && this.rol_usuario === "Maestro") {
-                        const response = await this.$axios.get(`/Roles/AlumnToMaest/${this.usuario.codigo}`)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
-                    }
-                    return
+                }
+                if (this.rol_inicial === "Maestro" && this.rol_usuario === "Administrador") {
+                    this.usuario.admin = 1
                 }
                 const response = await this.$axios.put(`${this.$route.query.url}`, this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)

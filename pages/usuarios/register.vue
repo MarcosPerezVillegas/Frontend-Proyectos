@@ -41,6 +41,7 @@ export default {
             email: "",
             password: "",
             telefono: "",
+            admin: 0,
             
         },
         roles: ""

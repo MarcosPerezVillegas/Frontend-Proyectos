@@ -43,7 +43,7 @@
         </v-list-item>
       </v-list>
 
-      <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id != null">
+      <v-list v-if="roles.rol == 'alumno'">
         <v-list-item v-for="(item, i) in itemsAlum" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>

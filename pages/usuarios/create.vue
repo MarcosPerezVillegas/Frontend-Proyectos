@@ -41,6 +41,7 @@ export default {
             email: "",
             password: "",
             telefono: "",
+            admin: 0,
             
         },
         roles: ""
@@ -55,28 +56,21 @@ export default {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
                 if (this.roles==='Administrador') {
-                    try {
-                        const response = await this.$axios.post('/Administradores', this.usuario)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                        this.$router.push('/Usuarios')
-                        return
-                    } catch (error) {
-                        this.$nuxt.$emit('show-snackbar', 'green', error)
-                    }
+                    this.usuario.admin = 1
                 }
-                if (this.roles==='Maestro') {
+                if (this.roles==='Maestro' || this.roles==='Administrador') {
                     try {
                         const response = await this.$axios.post('/Maestros', this.usuario)
                         this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                     } catch (error) {
-                        this.$nuxt.$emit('show-snackbar', 'green', error)
+                        this.$nuxt.$emit('show-snackbar', 'red', error.message)
                     }
                 }else {
                     try {
                         const response = await this.$axios.post('/Alumnos', this.usuario)
                         this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                     } catch (error) {
-                        this.$nuxt.$emit('show-snackbar', 'green', error)
+                        this.$nuxt.$emit('show-snackbar', 'red', error)
                     }
                 }
             } catch (error) {

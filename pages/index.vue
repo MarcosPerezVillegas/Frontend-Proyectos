@@ -16,8 +16,6 @@
 
 <script>
 
-import Cookies from 'js-cookie';
-
 export default {
   name: 'Index',
   layout:'default',

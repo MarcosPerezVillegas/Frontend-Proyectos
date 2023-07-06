@@ -6,33 +6,10 @@
                     {{proyecto.nombre}}
                 </v-card-title>
                 <v-card-text>
-                    Objetivos:
-                    <v-spacer />
                     {{proyecto.objetivos}}
                     <v-spacer />
-                    Carrera:
-                    <v-spacer />
-                    {{carrera}}
-                    <v-spacer />
-                    Fecha de inicio:
-                    <v-spacer />
-                    {{proyecto.fechainicio}}
-                    <v-spacer />
-                    Fecha de termino:
-                    <v-spacer />
-                    {{proyecto.fechafinal}}
-                    <v-spacer />
-                    Cupos:
-                    <v-spacer />
-                    {{proyecto.alumnos}}
+                    {{proyecto.carrera_clave}}
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn @click="cancelar()" color="red">
-                        Cancelar
-                    </v-btn>
-                    <ConfirmDialog v-if="roles.rol == 'alumno'" :description="`¿Está seguro de querer eliminar el proyecto '${proyecto.nombre}'? Esta acción no se puede deshacer.`" />
-                </v-card-actions>
             </v-card>
         </v-form>
     </v-container>
@@ -45,8 +22,13 @@ export default {
     middleware: 'auth',
     data: () => ({
         roles: {},
-        proyecto: {},
-        carrera: ""
+        proyecto: {
+            id: "",
+            nombre: "",
+            objetivos: "",
+            fechainicio: "",
+            fechafinal: "",
+        }
     }),
 
     async beforeMount() {
@@ -56,7 +38,6 @@ export default {
         try {
             const response = await this.$axios.get(`/proyectos/${id}`)
             this.proyecto = response.data.data
-            this.carrera = this.proyecto.Carrera.nombre
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
         } catch (error) {

@@ -43,7 +43,28 @@
         </v-list-item>
       </v-list>
 
-      <v-list v-if="roles.rol == 'alumno'">
+      <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id == null">
+        <v-list-item v-for="(item, i) in itemsAlum2" :key="i" :to="item.to" router exact>
+          <v-list-item-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="logout">
+          <v-list-item-action>
+            <v-icon>
+              mdi-logout
+            </v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            Logout
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+      <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id != null">
         <v-list-item v-for="(item, i) in itemsAlum" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
@@ -96,7 +117,6 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      rol: "",
       itemsAdmin: [
         {
           icon: 'mdi-apps',
@@ -150,7 +170,7 @@ export default {
         {
           icon: 'mdi-compass',
           title: 'Proyectos',
-          to: '/Proyectos/seleccion',
+          to: '/Proyectos/datos',
         },
         {
           icon: 'mdi-clock-alert',
@@ -158,8 +178,26 @@ export default {
           to: '/Tareas',
         },
       ],
+      itemsAlum2: [
+        {
+          icon: 'mdi-apps',
+          title: 'Inicio',
+          to: '/',
+        },
+        {
+          icon: 'mdi-account',
+          title: 'Perfil',
+          to: '/Usuarios/Perfil',
+        },
+        {
+          icon: 'mdi-compass',
+          title: 'Proyectos',
+          to: '/Proyectos',
+        },
+      ],
       roles:{},
       alum: {},
+      rol: "",
     };
   },
 
@@ -170,7 +208,6 @@ export default {
     this.$nuxt.$on('show-snackbar', this.showSnackbar)
     const responseR = await this.$axios.get('/login')
     this.roles = responseR.data
-
 
     if(this.roles.rol === 'alumno'){
       const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)

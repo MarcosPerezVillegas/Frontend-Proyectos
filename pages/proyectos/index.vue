@@ -13,8 +13,7 @@
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
                     <v-btn v-if="roles.rol == 'maestro'" v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
                     <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small :to="`/proyectos/cons`"/>
-                    <v-btn v-if="roles.rol == 'alumno'" @click="selecID(item.id)" v-text="'Seleccionar proyecto'" color="green" text small />
-                    <v-btn v-if="roles.rol == 'maestro'" @click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
+                    <v-btn v-if="item.alumnos != 0" @click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
             </v-data-table>
         </v-card>
@@ -33,11 +32,9 @@ export default {
         alum: {},
         proyectos: [],
         headers: [
-            { text: 'ID', value: 'id' },
             { text: 'Nombre', value: 'nombre' },
-            { text: 'Objetivos', value: 'objetivos' },
-            { text: 'Fecha de inicio', value: 'fechainicio' },
-            { text: 'Fecha final', value: 'fechafinal' },
+            { text: 'Status', value: 'statuses[0].Estado' },
+            { text: 'Cupos', value: 'alumnos' },
             { text: 'Acciones', value: 'actions' }
         ]
     }),
@@ -58,15 +55,6 @@ export default {
 
     methods: {
         async selecID (index: number){
-            const rol = this.roles
-            if(rol.rol == 'alumno'){
-                const responseA = await this.$axios.get(`/alumnos/${rol.codigo}`)
-                this.alum = responseA.data.data
-                this.alum.proyecto_id = index
-                const response = await this.$axios.put(`/alumnos/${rol.codigo}`, this.alum)
-                localStorage.setItem('proId',index)
-                location. reload()
-            }
             localStorage.setItem('proId',index)
             this.$router.push('/proyectos/seleccion')
         },

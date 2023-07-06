@@ -23,7 +23,7 @@
       </v-list>
 
       <v-list v-if="roles.rol == 'maestro'">
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+        <v-list-item v-for="(item, i) in itemsMaes" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -43,29 +43,8 @@
         </v-list-item>
       </v-list>
 
-      <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id != null">
+      <v-list v-if="roles.rol == 'alumno'">
         <v-list-item v-for="(item, i) in itemsAlum" :key="i" :to="item.to" router exact>
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item @click="logout">
-          <v-list-item-action>
-            <v-icon>
-              mdi-logout
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            Logout
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id == null">
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -117,18 +96,7 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Inicio',
-          to: '/',
-        },
-        {
-          icon: 'mdi-compass',
-          title: 'Proyectos',
-          to: '/Proyectos',
-        },
-      ],
+      rol: "",
       itemsAdmin: [
         {
           icon: 'mdi-apps',
@@ -144,6 +112,11 @@ export default {
           icon: 'mdi-account',
           title: 'Usuarios',
           to: '/Usuarios',
+        },
+        {
+          icon: 'mdi-tag',
+          title: 'Carreras',
+          to: '/Carreras',
         },
       ],
       itemsMaes: [
@@ -170,6 +143,11 @@ export default {
           to: '/',
         },
         {
+          icon: 'mdi-account',
+          title: 'Perfil',
+          to: '/Usuarios/Perfil',
+        },
+        {
           icon: 'mdi-compass',
           title: 'Proyectos',
           to: '/Proyectos/seleccion',
@@ -193,12 +171,12 @@ export default {
     const responseR = await this.$axios.get('/login')
     this.roles = responseR.data
 
-    if(this.roles.rol == 'alumno'){
+
+    if(this.roles.rol === 'alumno'){
       const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
       this.alum = responseA.data.data
       localStorage.setItem('proId', this.alum.proyecto_id)
     }
-    console.log(this.roles.rol)
   },
 
 
@@ -209,7 +187,10 @@ export default {
       this.snackbarColor = color
       this.snackbarMessage = message
     },
-
+    async getRol(){
+      const resRol = await this.$axios.get('/Login')
+      this.rol = resRol.data.rol
+    },
     logout() {
       localStorage.clear()
       this.$auth.logout();

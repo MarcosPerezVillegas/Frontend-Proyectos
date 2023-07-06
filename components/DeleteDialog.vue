@@ -34,6 +34,10 @@ export default {
             type: String,
             required: true,
         },
+        item: {
+            type: String,
+            required: true,
+        },
 
         index: {
             type: Number,
@@ -52,10 +56,28 @@ export default {
     methods: {
         async eliminar() {
             try {
+                const resRol = await this.$axios.get('/Login')
+                try {
+                    const response1 = await this.$axios.get(`Maestros/${resRol.data.codigo}`)
+                    if (this.item === response1.data.data.codigo) {
+                        this.deleteDialog = false
+                        return this.$nuxt.$emit('show-snackbar', 'red', "No puedes eliminar tu propio usuario")
+                    }
+                } catch{}
+                const response1 = await this.$axios.get(`Maestros/${resRol.data.codigo}`)
+                if (this.item === response1.data.data.codigo) {
+                    this.deleteDialog = false
+                    return this.$nuxt.$emit('show-snackbar', 'red', "No puedes eliminar tu propio usuario")
+                }
+                const res = await this.$axios.get(`${this.itemUrl}`)
                 const response = await this.$axios.delete(this.itemUrl)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.deleteDialog = false
-                this.$nuxt.$emit('remove-from-list', this.index, this.list)
+                if (this.list === "") {
+                    this.$nuxt.$emit('remove-from-list', this.index)
+                } else {
+                    this.$nuxt.$emit('remove-from-list', this.index, this.list)
+                }
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

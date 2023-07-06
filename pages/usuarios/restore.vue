@@ -15,10 +15,10 @@
             <v-data-table :items="administradores" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
                     <RestoreDialog :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Administradores/Restaurar/${item.codigo}`" :index="index" list="administradores"/>
+                        :itemUrl="`/Maestros/Restaurar/${item.codigo}`" :index="index" list="administradores"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
-                    esta acción no se puede deshacer`" :itemUrl="`/Administradores/Eliminados/${item.codigo}`"
-                        :index="index" list="administradores" />
+                    esta acción no se puede deshacer`" :itemUrl="`/Maestros/Eliminados/${item.codigo}`"
+                        :index="index" list="administradores" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -33,7 +33,7 @@
                         :itemUrl="`/Maestros/Restaurar/${item.codigo}`" :index="index" list="maestros"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
                     esta acción no se puede deshacer`" :itemUrl="`/Maestros/Eliminados/${item.codigo}`" :index="index"
-                        list="maestros" />
+                        list="maestros" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -48,7 +48,7 @@
                         :itemUrl="`/Alumnos/Restaurar/${item.codigo}`" :index="index" list="alumnos"/>
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}' de manera permanente?
                     esta acción no se puede deshacer`" :itemUrl="`/Alumnos/Eliminados/${item.codigo}`" :index="index"
-                        list="alumnos" />
+                        list="alumnos" :item="item.codigo"/>
                 </template>
             </v-data-table>
         </v-card>
@@ -81,7 +81,7 @@ export default {
 
         this.$store.commit('setTitle', 'Usuarios')
         try {
-            const response = await this.$axios.get('/Administradores/Eliminados')
+            const response = await this.$axios.get('/Maestros/Admins/Eliminados')
             this.administradores = response.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)

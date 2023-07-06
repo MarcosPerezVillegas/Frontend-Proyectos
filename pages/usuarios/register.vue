@@ -11,7 +11,7 @@
                     <v-text-field v-model="usuario.email" label="Email"
                     :rules="[$validations.notEmpty, $validations.isValidEmail]" ></v-text-field>
                     <v-text-field v-model="usuario.password" label="Contraseña" type="password" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="roles" label="Rol" :items="['Administrador','Maestro','Alumno']" ></v-combobox>
+                    <v-combobox v-model="roles" label="Rol" :items="['Maestro','Alumno']" ></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -41,6 +41,7 @@ export default {
             email: "",
             password: "",
             telefono: "",
+            admin: 0,
             
         },
         roles: ""
@@ -53,14 +54,6 @@ export default {
                 if(this.usuario.codigo==="" || this.usuario.email==="" || this.usuario.nombre===""
                 || this.usuario.password==="" || this.roles===null){
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
-                }
-                if (this.roles==='Administrador') {
-                    try {
-                        const response = await this.$axios.post('/Administradores', this.usuario)
-                        this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                    } catch (error) {
-                        this.$nuxt.$emit('show-snackbar', 'green', error)
-                    }
                 }
                 if (this.roles==='Maestro') {
                     try {

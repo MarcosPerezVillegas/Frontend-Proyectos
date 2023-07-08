@@ -16,7 +16,7 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn to="/Usuarios" color="red">
+                    <v-btn to="/login" color="red">
                         Cancelar
                     </v-btn>
                     <v-btn type="submit" color="green">
@@ -55,6 +55,17 @@ export default {
                 || this.usuario.password==="" || this.roles===null){
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
+                try {
+                    const responseM = await this.$axios.get(`/Maestros/Email/${this.usuario.email}`)
+                    return this.$nuxt.$emit('show-snackbar', 'red', 'El correo electrónico ya está registrado')
+                }catch{
+                    try {
+                        const responseA = await this.$axios.get(`/Alumnos/Email/${this.usuario.email}`)
+                        return this.$nuxt.$emit('show-snackbar', 'red', 'El correo electrónico ya está registrado')
+                    }catch{}
+                }
+                
+
                 if (this.roles==='Maestro') {
                     try {
                         const response = await this.$axios.post('/Maestros', this.usuario)
@@ -72,7 +83,7 @@ export default {
                 }
             } catch (error) {
             }
-            this.$router.push('/Usuarios')
+            this.$router.push('/login')
         },
     }
 }

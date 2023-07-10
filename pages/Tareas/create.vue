@@ -3,11 +3,11 @@
         <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
-                    Registrate!!
+                    Crear una tarea
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="tarea.id" label="ID"></v-text-field>
-                    <v-text-field v-model="tarea.Proyecto_id" label="Proyecto_Id"></v-text-field>
+                    <v-combobox v-model="proyecto" label="Proyecto al que quieras crear la tarea"
+                        :items="Proyectos"></v-combobox>
                     <v-text-field v-model="tarea.nombre" label="Nombre"></v-text-field>
                     <v-text-field v-model="tarea.descripcion" label="Descripcion"></v-text-field>
                     <v-text-field v-model="tarea.comentarios" label="Comentarios"></v-text-field>
@@ -36,31 +36,44 @@ export default {
 
     data: () => ({
         tarea: {
-            id: "",
             Proyecto_id: "",
             nombre: "",
             descripcion: "",
             comentarios: "",
             fecha_limite: "",
             hora_limite: "",
-            
-        }
-    }),
 
+        },
+        proyecto: "",
+        Proyectos: [""]
+    }),
+    async beforeMount() {
+        try {
+            const res = await this.$axios.get('/login')
+            const response = await this.$axios.get(`/proyectos/usuario/${res.data.codigo}`)
+            const proyectos = response.data.data.map(proyecto => proyecto.nombre)
+            this.Proyectos = proyectos
+        } catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error.message)
+        }
+    },
     methods: {
         async guardar() {
-
             try {
+                const resPro = await this.$axios.get(`/Proyectos/Nombre/${this.proyecto}`)
+                this.tarea.Proyecto_id = resPro.data.data.id
                 const response = await this.$axios.post('/tareas', this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/tareas')
             } catch (error) {
+                this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
 
         cancelar() {
             this.$router.push('/tareas')
-        }
+        },
+
     }
 }
 

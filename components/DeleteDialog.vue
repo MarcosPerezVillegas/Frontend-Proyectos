@@ -36,7 +36,8 @@ export default {
         },
         item: {
             type: String,
-            required: true,
+            required: false,
+            default: ""
         },
 
         index: {
@@ -45,7 +46,8 @@ export default {
         },
         list: {
             type: String,
-            required: true,
+            required: false,
+            default: ""
         },
     },
 
@@ -69,7 +71,6 @@ export default {
                     this.deleteDialog = false
                     return this.$nuxt.$emit('show-snackbar', 'red', "No puedes eliminar tu propio usuario")
                 }
-                const res = await this.$axios.get(`${this.itemUrl}`)
                 const response = await this.$axios.delete(this.itemUrl)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.deleteDialog = false

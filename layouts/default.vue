@@ -124,11 +124,6 @@ export default {
           to: '/',
         },
         {
-          icon: 'mdi-compass',
-          title: 'Proyectos',
-          to: '/Proyectos',
-        },
-        {
           icon: 'mdi-account',
           title: 'Usuarios',
           to: '/Usuarios',
@@ -137,6 +132,16 @@ export default {
           icon: 'mdi-tag',
           title: 'Carreras',
           to: '/Carreras',
+        },
+        {
+          icon: 'mdi-compass',
+          title: 'Proyectos',
+          to: '/Proyectos',
+        },
+        {
+          icon: 'mdi-clock-alert',
+          title: 'Tareas',
+          to: '/Tareas',
         },
       ],
       itemsMaes: [

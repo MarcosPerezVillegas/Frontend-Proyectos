@@ -49,7 +49,7 @@ export default {
         headers: [
             { text: 'Id de tarea', value: 'id' },
             { text: 'Proyecto', value: 'proyecto.nombre' },
-            { text: 'Nombre', value: 'nombre' },
+            { text: 'Nombre de la tarea', value: 'nombre' },
             { text: 'Descripcion', value: 'descripcion' },
             { text: 'Comentarios del profesor', value: 'comentarios' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
@@ -74,14 +74,24 @@ export default {
 
             const fecha = `${año}-${mes}-${dia}`;
             const hora = `${horas}:${minutos}:${segundos}`;
-            const date =  `${fecha} ${hora}`
-            const response = await this.$axios.get('/Tareas')
-            this.tareas = response.data.data
+            const date = `${fecha} ${hora}`
+
+            const usuario = await this.$axios.get('/Login')
+            const respro = await this.$axios.get(`/Proyectos/Usuario/${usuario.data.codigo}`)
+            const proyectos = respro.data.data
+    
+            for (const proyecto of proyectos) {
+                const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
+                this.tareas = this.tareas.concat(responseTareas.data.data);
+                console.log(responseTareas.data.data)
+            }
+
             this.tareasPen = this.tareas.filter((tarea) => {
                 const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                 const entrega = new Date(dateEntrega)
                 return entrega > new Date(date);
             });
+            
             this.headersPen = this.headers.slice();
             console.log(this.tareasPen)
         } catch (error) {
@@ -92,10 +102,9 @@ export default {
 
     methods: {
         deleteElement(index: number) {
-            console.log(index)
             this.tareas.pop(index)
+            location.reload();
         }
     }
 }
-
 </script>

@@ -7,12 +7,12 @@
                 </v-card-title>
                 <v-card-text>
                     <v-combobox v-model="proyecto" label="Proyecto al que quieras crear la tarea"
-                        :items="Proyectos"></v-combobox>
-                    <v-text-field v-model="tarea.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="tarea.descripcion" label="Descripcion"></v-text-field>
-                    <v-text-field v-model="tarea.comentarios" label="Comentarios"></v-text-field>
-                    <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"></v-text-field>
-                    <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"></v-text-field>
+                        :items="Proyectos" :rules="[$validations.notEmpty]"></v-combobox>
+                    <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="tarea.descripcion" label="Descripcion" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="tarea.comentarios" label="Comentarios" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time" :rules="[$validations.notEmpty]"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -59,7 +59,17 @@ export default {
     },
     methods: {
         async guardar() {
+            if(this.tarea.nombre === "" || this.tarea.descripcion === "" || this.tarea.comentarios === "" ||
+            this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.proyecto === null){
+                return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
+            }
             try {
+                try {
+                    const resTar = await this.$axios.get(`/Tareas/Nombre/${this.tarea.nombre}`)
+                    if (resTar) {
+                        return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
+                    }
+                } catch { }
                 const resPro = await this.$axios.get(`/Proyectos/Nombre/${this.proyecto}`)
                 this.tarea.Proyecto_id = resPro.data.data.id
                 const response = await this.$axios.post('/tareas', this.tarea)

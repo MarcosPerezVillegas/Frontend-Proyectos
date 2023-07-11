@@ -3,7 +3,7 @@
         <v-row>
             <v-spacer />
             <v-btn @click="renderDoc">Render docx</v-btn>
-            <v-btn @click="cancelar()" color="red">Cancelar</v-btn>
+            <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()" color="red">Cancelar</v-btn>
         </v-row>
         <br>
         <v-card>
@@ -26,6 +26,7 @@ function loadFile(url, callback) {
 
 export default {
     data: () => ({
+        roles: {},
         documento: [],
         headers: [
             { text: 'ID', value: 'id' },
@@ -36,6 +37,8 @@ export default {
     }),
     async beforeMount() {
         try {
+            const responseR = await this.$axios.get('/login')
+            this.roles = responseR.data
             const response = await this.$axios.get(`/documentos`)
             this.documento = response.data.data
         } catch (error) {

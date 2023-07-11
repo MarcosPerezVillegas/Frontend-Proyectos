@@ -10,7 +10,8 @@
                     <v-text-field v-model="proyecto.objetivos" label="Objetivos"></v-text-field>
                     <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
                     <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
-                    <v-combobox v-model="encargado_nombre" label="Encargado" :items="encargados"></v-combobox>
+                    <v-text-field v-if="roles.rol == 'maestro'" v-model="encargado_nombre" label="Encargado"></v-text-field>
+                    <v-combobox v-if="roles.rol == 'administrador'" v-model="encargado_nombre" label="Encargado" :items="encargados"></v-combobox>
                     <v-text-field v-model="proyecto.alumnos" label="Espacios de registro" type="integer"></v-text-field>
                     <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras"></v-combobox>
                 </v-card-text>
@@ -36,12 +37,14 @@ export default {
     middleware: 'auth',
 
     data: () => ({
+        roles: {},
         proyecto: {
             nombre: "",
             objetivos: "",
             fechainicio: "",
             fechafinal: "",
             carrera_clave: "",
+            codigo: "",
             alumnos: ""
         },
         encargado_nombre: "",
@@ -61,7 +64,7 @@ export default {
             try {
                 const resEnca = await this.$axios.get(`/Maestros/Nombre/${this.encargado_nombre}`)
                 const Encargado = resEnca.data.data
-                //this.proyecto.encargado_codigo= Encargado.codigo
+                this.proyecto.codigo= Encargado.codigo
                 const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
                 const Carrera = resCar.data.data
                 this.proyecto.carrera_clave=Carrera.clave
@@ -100,7 +103,16 @@ export default {
         },
         async cargarEncargados() {
             try {
-                this.encargados = await this.getEncargados();
+                const responseR = await this.$axios.get('/login')
+                this.roles = responseR.data
+                
+                if(this.roles.rol === 'maestro'){
+                    const responseA = await this.$axios.get(`/maestros/${this.roles.codigo}`)
+                    const usuarios = responseA.data.data
+                    this.encargado_nombre = usuarios.nombre
+                }else{
+                    this.encargados = await this.getEncargados();
+                }
             }catch(error) {
                 console.log(error);
                 this.encargados = [];

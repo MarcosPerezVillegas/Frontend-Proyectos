@@ -2,12 +2,13 @@
     <v-container fluid>
         <v-row>
             <v-spacer />
-            <v-btn to="/Tareas/create">Crear Tarea</v-btn>
+            <SelectDialog :proyectos="proyectos"/>
         </v-row>
         <br>
-        <v-card>
+        <v-title style="font-size: x-large;" class="text-center">Todas las tareas</v-title>
+        <v-card v-if="usuario.rol!== 'alumno'">
             <v-card-title>
-                Todas las tareas
+                Todas las tareas que tienes
             </v-card-title>
             <v-data-table :items="tareas" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
@@ -17,12 +18,24 @@
                 </template>
             </v-data-table>
         </v-card>
-        <br>
-        <v-card>
+        <v-card v-else>
             <v-card-title>
-                Tareas pendientes
+                Todas las tareas que tienes
             </v-card-title>
-            <v-data-table :items="tareasPen" :headers="headersPen">
+            <v-data-table :items="tareas" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
+                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card v-if="usuario.rol!=='alumno'">
+            <v-card-title>
+                Tareas pendientes de revisar
+            </v-card-title>
+            <v-data-table :items="tareasPen" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
@@ -30,7 +43,21 @@
                 </template>
             </v-data-table>
         </v-card>
-
+        <v-card v-else>
+            <v-card-title>
+                Tareas pendientes de entregar
+            </v-card-title>
+            <v-data-table :items="tareasPen" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
+                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-title v-if="usuario.rol!=='alumno' && proyectos.length!==0" style="font-size: x-large;">Tareas de cada proyecto</v-title>
+        <ProjectCard v-if="usuario.rol!=='alumno' && proyectos.length!==0" v-for="proyecto in proyectos" :key="proyecto.id" :proyecto="proyecto" />
     </v-container>
 </template>
 
@@ -38,17 +65,18 @@
 
 export default {
 
-    name: 'Carreras',
+    name: 'Tareas',
 
     middleware: 'auth',
 
     data: () => ({
+        usuario:"",
         tareas: [],
         tareasPen: [],
-        headersPen: [],
+        proyectos: [],
+        type: "",
         headers: [
             { text: 'Id de tarea', value: 'id' },
-            { text: 'Proyecto', value: 'proyecto.nombre' },
             { text: 'Nombre de la tarea', value: 'nombre' },
             { text: 'Descripcion', value: 'descripcion' },
             { text: 'Comentarios del profesor', value: 'comentarios' },
@@ -63,6 +91,8 @@ export default {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Tareas')
         try {
+            const res = await this.$axios.get('/Login')
+            this.usuario = res.data
             const hoy = new Date();
             const año = hoy.getFullYear();
             const mes = String(hoy.getMonth() + 1).padStart(2, '0');
@@ -76,24 +106,34 @@ export default {
             const hora = `${horas}:${minutos}:${segundos}`;
             const date = `${fecha} ${hora}`
 
-            const usuario = await this.$axios.get('/Login')
-            const respro = await this.$axios.get(`/Proyectos/Usuario/${usuario.data.codigo}`)
-            const proyectos = respro.data.data
-    
-            for (const proyecto of proyectos) {
-                const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
-                this.tareas = this.tareas.concat(responseTareas.data.data);
-                console.log(responseTareas.data.data)
+            if (this.usuario.rol === "alumno") {
+                const resusu = await this.$axios.get(`/Alumnos/${this.usuario.codigo}`)
+                const respro = await this.$axios.get(`/Proyectos/${resusu.data.data.proyecto_id}`)
+                this.proyectos = this.proyectos.concat(respro.data.data)
+            } else {
+                const respro = await this.$axios.get(`/Proyectos/Usuario/${this.usuario.codigo}`)
+                this.proyectos = respro.data.data
             }
 
-            this.tareasPen = this.tareas.filter((tarea) => {
-                const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
-                const entrega = new Date(dateEntrega)
-                return entrega > new Date(date);
-            });
-            
-            this.headersPen = this.headers.slice();
-            console.log(this.tareasPen)
+            for (const proyecto of this.proyectos) {
+                const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
+                this.tareas = this.tareas.concat(responseTareas.data.data);
+            }
+
+            if (this.usuario.rol === "alumno") {
+                this.tareasPen = this.tareas.filter((tarea) => {
+                    const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
+                    const entrega = new Date(dateEntrega)
+                    return entrega > new Date(date);
+                });
+            } else {
+                this.tareasPen = this.tareas.filter((tarea) => {
+                    const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
+                    const entrega = new Date(dateEntrega)
+                    return entrega < new Date(date);
+                });
+            }
+            this.type=typeof(this.proyectos)
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }

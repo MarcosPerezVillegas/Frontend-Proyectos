@@ -18,16 +18,20 @@
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/i18n": "^7.3.1",
     "core-js": "^3.25.3",
+    "docx": "^8.2.1",
     "docxtemplater": "^3.37.11",
     "file-saver": "^2.0.5",
+    "fs": "^0.0.1-security",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.0",
+    "jspdf": "^2.5.1",
     "nuxt": "^2.15.8",
     "pizzip": "^3.1.4",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10",
-    "vuetify": "^2.6.10"
+    "vuetify": "^2.6.10",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

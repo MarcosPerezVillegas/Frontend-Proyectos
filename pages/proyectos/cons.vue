@@ -2,7 +2,7 @@
     <v-container>
         <v-row>
             <v-spacer />
-            <v-btn @click="renderDoc">Render docx</v-btn>
+            <v-btn @click="createDoc">Render docx</v-btn>
             <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()" color="red">Cancelar</v-btn>
         </v-row>
         <br>
@@ -19,6 +19,7 @@ import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
+import jsPDF from 'jspdf';
 
 function loadFile(url, callback) {
     PizZipUtils.getBinaryContent(url, callback);
@@ -28,6 +29,7 @@ export default {
     data: () => ({
         roles: {},
         documento: [],
+        proyecto: {},
         headers: [
             { text: 'ID', value: 'id' },
             { text: 'Nombre', value: 'nombre' },
@@ -36,19 +38,31 @@ export default {
         ]
     }),
     async beforeMount() {
+        const id = localStorage.getItem('proId')
         try {
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
             const response = await this.$axios.get(`/documentos`)
             this.documento = response.data.data
+            const responseP = await this.$axios.get(`/proyectos/${id}`)
+            this.proyecto = responseP.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     },
 
     methods: {
+        createDoc(){
+            const pro = this.proyecto
+            const doc = new jsPDF();
+            doc.text(`El certificado en cuestion es otorgado por el proyecto ${pro.nombre} realizado
+            bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)
+            doc.save('Certificado.pdf')
+        },
+
         renderDoc() {
-            const docs = this.documento
+            const pro = this.proyecto
+            const docs = document.getElementById("doc");
             loadFile(
                 "https://docxtemplater.com/tag-example.docx",
                 function (error, content) {
@@ -64,10 +78,10 @@ export default {
                     //doc.setData(docid)
                     // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
                     doc.render({
-                        first_name: docs[0].nombre,
-                        last_name: docs[0].tipo_archivo,
-                        phone: docs[0].id,
-                        description: docs[0].descripcion,
+                        first_name: pro.nombre,
+                        last_name: pro.objetivos,
+                        phone: pro.alumnos,
+                        description: pro.Carrera.nombre,
                     });
 
                     const blob = doc.getZip().generate({

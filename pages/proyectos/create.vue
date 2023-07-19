@@ -105,12 +105,13 @@ export default {
             try {
                 const responseR = await this.$axios.get('/login')
                 this.roles = responseR.data
+                const responseA = await this.$axios.get(`/maestros/${this.roles.codigo}`)
+                const usuarios = responseA.data.data
                 
                 if(this.roles.rol === 'maestro'){
-                    const responseA = await this.$axios.get(`/maestros/${this.roles.codigo}`)
-                    const usuarios = responseA.data.data
                     this.encargado_nombre = usuarios.nombre
                 }else{
+                    this.encargado_nombre = usuarios.nombre
                     this.encargados = await this.getEncargados();
                 }
             }catch(error) {

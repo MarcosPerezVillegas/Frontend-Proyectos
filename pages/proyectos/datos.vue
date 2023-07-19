@@ -13,12 +13,18 @@
                     {{proyecto.nombre}}
                 </v-card-title>
                 <v-card-text>
-                    {{maestro}}
+                    Maestro encargado: {{maestro}}
                     <v-spacer />
-                    {{carrera}}
+                    Carrera: {{carrera}}
                 </v-card-text>
-                <v-card-text v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
-                    ALumnos Participantes: {{carrera}}
+                <v-card-text>
+                    ALumnos Participantes:
+                    <v-text v-if="participantes.length == 0"> Ninguno </v-text>
+                    <br> 
+                    <list v-for="item in participantes">
+                        {{item.nombre}}
+                        <br>
+                    </list>
                 </v-card-text>
             </v-card>
             <br>
@@ -61,6 +67,7 @@ export default {
         proyecto: {},
         maestro: "",
         carrera: "",
+        participantes: [],
         tareas: [],
         headers: [
             { text: 'Nombre', value: 'nombre' },
@@ -79,6 +86,7 @@ export default {
             this.proyecto = response.data.data
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
+            this.participantes = this.proyecto.Alumnos
             const responseT = await this.$axios.get(`/tareas/proyecto/${id}`)
             this.tareas = responseT.data.data
             console.log(this.tareas)

@@ -5,23 +5,23 @@
             <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" color="green" to="/proyectos/create">Crear proyecto</v-btn>
         </v-row>
         <br>
-        <v-card>
+        <v-card v-if="roles.rol == 'alumno' || roles.rol == 'administrador' ">
             <v-card-title>
                 Todos los Proyectos
-            </v-card-title>
+            </v-card-title >
             <v-data-table :items="proyectos" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-if="roles.rol == 'administrador'" v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
                     <DeleteDialog v-if="roles.rol == 'administrador'" :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
-                    <v-btn v-if="roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
-                    <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small :to="`/proyectos/cons`"/>
+                    <v-btn v-if="roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small @click="genProg(item.id)"/>
+                    <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small @click="contPro(item.id)"/>
                     <v-btn @click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="roles.rol == 'maestro' || roles.rol == 'administrador' ">
+        <v-card v-if="roles.rol == 'maestro' &&  proMaes.length > 0 || roles.rol == 'administrador' &&  proMaes.length > 0">
             <v-card-title>
                 Mis Proyectos
             </v-card-title>
@@ -30,17 +30,23 @@
                     <v-btn v-if="roles.rol == 'administrador'" v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
                     <DeleteDialog v-if="roles.rol == 'administrador'" :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
-                    <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small :to="`/proyectos/doc`"/>
-                    <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small :to="`/proyectos/cons`"/>
+                    <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small @click="selecPro(item.id)"/>
+                    <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small @click="contPro(item.id)"/>
                     <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
             </v-data-table>
+        </v-card>
+        <v-card v-if="roles.rol == 'maestro' && proMaes.length == 0 || roles.rol == 'administrador' && proMaes.length == 0">
+            <v-card-title>
+                No tienes ningun proyecto
+            </v-card-title>
         </v-card>
     </v-container>
 </template>
 
 <script lang="ts">
-import axios from 'axios';
+import XLSX from 'xlsx/dist/xlsx.full.min';
+import {jsPDF} from 'jspdf';
 
 export default {
     name: 'Proyectos',
@@ -73,11 +79,9 @@ export default {
             this.proyectos = response.data.data
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
-            if(this.roles.rol === 'maestro'){
+            if(this.roles.rol === 'maestro' || this.roles.rol === 'administrador'){
                 const resmaest = await this.$axios.get(`/proyectos/usuario/${this.roles.codigo}`)
                 this.proMaes = resmaest.data.data
-                console.log(this.proMaes)
-                console.log(resmaest.data)
             }
             
         } catch (error) {
@@ -94,6 +98,28 @@ export default {
         selecPro (index: number){
             localStorage.setItem('proId',index)
             this.$router.push('/proyectos/datos')
+        },
+        async contPro (index: number){
+            
+            const response = await this.$axios.get(`/proyectos/${index}`)
+            const pro = response.data.data
+            const doc = new jsPDF();
+            doc.text(`El certificado en cuestion es otorgado por el proyecto ${pro.nombre} realizado
+            bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)
+            doc.save('Certificado.pdf')
+        },
+        async genProg (index: number){
+            const response = await this.$axios.get(`/proyectos/${index}`)
+            const pro = response.data.data
+            const datEx = [
+                { Nombre: pro.nombre, Objetivo: pro.objetivos, Status: pro.statuses[0].Estado,
+                Encargado: pro.encargado.nombre, Carrera: pro.Carrera.nombre, Cupos: pro.alumnos }
+            ]
+            const data = XLSX.utils.json_to_sheet(datEx)
+            const workbook = XLSX.utils.book_new()
+            const filename = 'Progreso'
+            XLSX.utils.book_append_sheet(workbook, data, filename)
+            XLSX.writeFile(workbook, `${filename}.xlsx`)
         },
         deleteElement(index: number) {
             this.proyectos.pop(index)

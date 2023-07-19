@@ -40,6 +40,7 @@ export default {
             comentarios: "",
             fecha_limite: "",
             hora_limite: "",
+            activo: "0"
 
         },
     }),
@@ -73,6 +74,7 @@ export default {
                         }
                     }
                 } catch { }
+
                 const response = await this.$axios.post('/tareas', this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/tareas')

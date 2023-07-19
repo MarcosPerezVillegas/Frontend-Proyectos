@@ -72,7 +72,8 @@ export default {
                 const responseB = await this.$axios.put(`/alumnos/${rol.codigo}`, this.alum)
                 this.proyecto.alumnos = pro.alumnos - 1
                 const responseC = await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
-                this.$router.push('/proyectos/datos')     
+                location.replace('/proyectos/datos');
+                this.$router.push()     
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

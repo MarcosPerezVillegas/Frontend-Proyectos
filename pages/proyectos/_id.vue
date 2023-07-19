@@ -11,6 +11,7 @@
                     <v-text-field v-model="proyecto.objetivos" label="Objetivos"></v-text-field>
                     <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
                     <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
+                    <v-text-field v-model="proyecto.alumnos" label="Cupos"></v-text-field>
                     <v-text-field v-model="proyecto.carrera_clave" label="Carrera"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -40,6 +41,7 @@ export default {
             fechainicio: "",
             fechafinal: "",
             carrera_clave: "",
+            alumnos: "",
         }
     }),
 

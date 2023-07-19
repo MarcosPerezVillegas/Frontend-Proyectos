@@ -21,10 +21,10 @@
                     ALumnos Participantes:
                     <v-text v-if="participantes.length == 0"> Ninguno </v-text>
                     <br> 
-                    <list v-for="item in participantes">
+                    <li v-for="item in participantes">
                         {{item.nombre}}
                         <br>
-                    </list>
+                    </li>
                 </v-card-text>
             </v-card>
             <br>
@@ -43,11 +43,23 @@
                 </v-card-text>
             </v-card>
             <br>
-            <v-card>
+            <v-card v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <v-card-title>
                     Tareas
                 </v-card-title>
                 <v-data-table :items="tareas" :headers="headers">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="`/Tareas/entrega`" />
+                        <v-btn v-if="item.activo == 0" v-text="'Activar'" color="green" text small @click="activar(item.id)" />
+                        <v-btn v-if="item.activo == 1" v-text="'Desactivar'" color="red" text small @click="desactivar(item.id)" />
+                    </template>
+                </v-data-table>
+            </v-card>
+            <v-card v-if="roles.rol == 'alumno'">
+                <v-card-title>
+                    Tareas
+                </v-card-title>
+                <v-data-table :items="tareas2" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Ver tarea'" color="blue" text small :to="`/Tareas/entrega`" />
                     </template>
@@ -69,6 +81,7 @@ export default {
         carrera: "",
         participantes: [],
         tareas: [],
+        tareas2: [],
         headers: [
             { text: 'Nombre', value: 'nombre' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
@@ -89,8 +102,8 @@ export default {
             this.participantes = this.proyecto.Alumnos
             const responseT = await this.$axios.get(`/tareas/proyecto/${id}`)
             this.tareas = responseT.data.data
-            console.log(this.tareas)
-            console.log(responseT.data)
+            const ta2 = this.tareas.filter(item => item.activo == 1)
+            this.tareas2 = ta2
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
         } catch (error) {
@@ -99,6 +112,20 @@ export default {
     },
 
     methods: {
+        async activar(index: number){
+            const responseT = await this.$axios.get(`/tareas/${index}`)
+            const tar = responseT.data.data
+            tar.activo = 1
+            const response = await this.$axios.put(`/tareas/${index}`, tar)
+            location.reload();
+        },
+        async desactivar(index: number){
+            const responseT = await this.$axios.get(`/tareas/${index}`)
+            const tar = responseT.data.data
+            tar.activo = 0
+            const response = await this.$axios.put(`/tareas/${index}`, tar)
+            location.reload();
+        },
         cancelar() {
             this.$router.push('/proyectos')
         }

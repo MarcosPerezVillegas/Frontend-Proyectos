@@ -30,7 +30,7 @@
                     <v-btn v-if="roles.rol == 'administrador'" v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
                     <DeleteDialog v-if="roles.rol == 'administrador'" :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
-                    <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small @click="selecPro(item.id)"/>
+                    <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small @click="genProg(item.id)"/>
                     <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small @click="contPro(item.id)"/>
                     <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
@@ -100,7 +100,6 @@ export default {
             this.$router.push('/proyectos/datos')
         },
         async contPro (index: number){
-            
             const response = await this.$axios.get(`/proyectos/${index}`)
             const pro = response.data.data
             const doc = new jsPDF();
@@ -108,21 +107,13 @@ export default {
             bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)
             doc.save('Certificado.pdf')
         },
-        async genProg (index: number){
-            const response = await this.$axios.get(`/proyectos/${index}`)
-            const pro = response.data.data
-            const datEx = [
-                { Nombre: pro.nombre, Objetivo: pro.objetivos, Status: pro.statuses[0].Estado,
-                Encargado: pro.encargado.nombre, Carrera: pro.Carrera.nombre, Cupos: pro.alumnos }
-            ]
-            const data = XLSX.utils.json_to_sheet(datEx)
-            const workbook = XLSX.utils.book_new()
-            const filename = 'Progreso'
-            XLSX.utils.book_append_sheet(workbook, data, filename)
-            XLSX.writeFile(workbook, `${filename}.xlsx`)
+        genProg (index: number){
+            localStorage.setItem('proId',index)
+            this.$router.push('/proyectos/doc')
         },
         deleteElement(index: number) {
             this.proyectos.pop(index)
+            location.reload();
         }
     }
 }

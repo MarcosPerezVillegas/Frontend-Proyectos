@@ -2,7 +2,7 @@
     <v-container fluid>
         <v-row>
             <v-spacer />
-            <SelectDialog :proyectos="proyectos"/>
+            <SelectDialog v-if="usuario.rol!== 'alumno'" :proyectos="proyectos"/>
         </v-row>
         <br>
         <v-title style="font-size: x-large;" class="text-center">Todas las tareas</v-title>
@@ -24,7 +24,7 @@
             </v-card-title>
             <v-data-table :items="tareas" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
                         :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
                 </template>
@@ -49,9 +49,21 @@
             </v-card-title>
             <v-data-table :items="tareasPen" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
+                    query: { id: item.id } }" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
                         :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card v-if="usuario.rol==='alumno'">
+            <v-card-title>
+                Tareas entregadas
+            </v-card-title>
+            <v-data-table :items="tareasEnt" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'ver'" color="blue" text small :to="'/Tareas'" />
                 </template>
             </v-data-table>
         </v-card>
@@ -74,7 +86,7 @@ export default {
         tareas: [],
         tareasPen: [],
         proyectos: [],
-        type: "",
+        tareasEnt: [],
         headers: [
             { text: 'Id de tarea', value: 'id' },
             { text: 'Nombre de la tarea', value: 'nombre' },
@@ -85,8 +97,6 @@ export default {
             { text: 'Acciones', value: 'actions' },
         ]
     }),
-
-
     async beforeMount() {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Tareas')
@@ -121,11 +131,13 @@ export default {
             }
 
             if (this.usuario.rol === "alumno") {
+                this.tareas = this.tareas.filter((tarea) => tarea.activo === 1);
                 this.tareasPen = this.tareas.filter((tarea) => {
                     const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                     const entrega = new Date(dateEntrega)
-                    return entrega > new Date(date);
+                    return entrega > new Date(date) && tarea.entregada !== 1;
                 });
+                this.tareasEnt = this.tareas.filter((tarea) => tarea.entregada === 1);
             } else {
                 this.tareasPen = this.tareas.filter((tarea) => {
                     const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
@@ -133,7 +145,6 @@ export default {
                     return entrega < new Date(date);
                 });
             }
-            this.type=typeof(this.proyectos)
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }

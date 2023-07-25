@@ -65,7 +65,7 @@ export default {
             this.$router.push('/Tareas')
         },
         cancelar() {
-            this.$router.push('/Tareas')
+            window.history.back();
         }
     }
 }

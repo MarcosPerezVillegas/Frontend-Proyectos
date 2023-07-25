@@ -24,7 +24,7 @@
             </v-card-title>
             <v-data-table :items="tareas" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas`" />
+                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas/entrega`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
                         :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
                 </template>
@@ -63,7 +63,7 @@
             </v-card-title>
             <v-data-table :items="tareasEnt" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="'/Tareas'" />
+                    <v-btn v-text="'ver'" color="blue" text small :to="'/Tareas/entrega'" />
                 </template>
             </v-data-table>
         </v-card>

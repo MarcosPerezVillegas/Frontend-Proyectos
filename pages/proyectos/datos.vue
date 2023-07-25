@@ -19,7 +19,7 @@
                 </v-card-text>
                 <v-card-text>
                     ALumnos Participantes:
-                    <v-text v-if="participantes.length == 0"> Ninguno </v-text>
+                    <v-card-text v-if="participantes.length == 0"> Ninguno </v-card-text>
                     <br> 
                     <li v-for="item in participantes">
                         {{item.nombre}}

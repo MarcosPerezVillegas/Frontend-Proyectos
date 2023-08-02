@@ -49,8 +49,8 @@ export default {
         },
         encargado_nombre: "",
         carrera_nombre: "",
-        carreras: [""],
-        encargados: [""],
+        carreras: [],
+        encargados: [],
     }),
 
     beforeMount(){
@@ -81,7 +81,14 @@ export default {
         async getEncargados() {
             try{
                 const response = await this.$axios.get('/Maestros')
-                const usuarios = response.data.data
+                const responseA = await this.$axios.get(`/Maestros/Admins`)
+                const Maestros = response.data.data
+                const Admins = responseA.data.data
+                console.log(Maestros)
+                const usuarios= [...Admins,...Maestros]
+                console.log(Admins)
+                console.log(usuarios)
+
                 const encargadosItems = usuarios.map(usuario => usuario.nombre)
                 return encargadosItems
             }catch(error){
@@ -103,17 +110,13 @@ export default {
         },
         async cargarEncargados() {
             try {
-                const responseR = await this.$axios.get('/login')
-                this.roles = responseR.data
+                const response = await this.$axios.get('/login')
+                this.roles = response.data
                 const responseA = await this.$axios.get(`/maestros/${this.roles.codigo}`)
                 const usuarios = responseA.data.data
-                
-                if(this.roles.rol === 'maestro'){
-                    this.encargado_nombre = usuarios.nombre
-                }else{
-                    this.encargado_nombre = usuarios.nombre
-                    this.encargados = await this.getEncargados();
-                }
+                this.encargado_nombre = usuarios.nombre
+                this.encargados = await this.getEncargados();
+                console.log(this.encargados)
             }catch(error) {
                 console.log(error);
                 this.encargados = [];

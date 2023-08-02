@@ -17,6 +17,8 @@
                         :rules="[$validations.notEmpty]"></v-text-field>
                     <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
                         :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
+                        :rules="[$validations.notEmpty]"></v-combobox>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -33,6 +35,8 @@
 </template>
 
 <script lang="ts">
+import { TableRowHeightAttributes } from 'docx'
+
 
 export default {
     name: 'TareasUpdate',
@@ -45,7 +49,9 @@ export default {
             comentarios: "",
             fecha_limite: "",
             hora_limite: "",
+            activo: Number
         },
+        estado: "",
         proyecto: "",
         Proyectos: [""],
         nombre: ""
@@ -56,6 +62,11 @@ export default {
         try {
             const response = await this.$axios.get(`/Tareas/${id}`)
             this.tarea = response.data.data
+            if(this.tarea.activo === 0){
+                this.estado = 'Inactivo'
+            }else{
+                this.estado = 'Activo'
+            }
             this.nombre = this.tarea.nombre
             const respon = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
             this.proyecto = respon.data.data.nombre
@@ -70,7 +81,7 @@ export default {
     methods: {
         async guardar() {
             if (this.tarea.nombre === "" || this.tarea.descripcion === "" || this.tarea.comentarios === "" ||
-                this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.proyecto === null) {
+                this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.proyecto === null || this.estado === "") {
                 return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
             }
             try {
@@ -81,6 +92,11 @@ export default {
                             return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
                         }
                     } catch { }
+                }
+                if (this.estado === "Activo"){
+                    this.tarea.activo = 1
+                }else{
+                    this.tarea.activo = 0
                 }
                 const resPro = await this.$axios.get(`/Proyectos/Nombre/${this.proyecto}`)
                 this.tarea.Proyecto_id = resPro.data.data.id

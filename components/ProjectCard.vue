@@ -75,7 +75,8 @@ export default {
           return entrega > new Date(date);
         });
       } else {
-        this.tareasPen = this.tareas.filter((tarea) => {
+        const tar = this.tareas.filter(tarea => tarea.activo === 1)
+        this.tareasPen = tar.filter((tarea) => {
           const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
           const entrega = new Date(dateEntrega)
           return entrega < new Date(date);

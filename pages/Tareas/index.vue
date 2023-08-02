@@ -2,7 +2,7 @@
     <v-container fluid>
         <v-row>
             <v-spacer />
-            <SelectDialog v-if="usuario.rol!== 'alumno'" :proyectos="proyectos"/>
+            <SelectDialog v-if="usuario.rol=== 'maestro' || usuario.rol=== 'administrador'" :proyectos="proyectos"/>
         </v-row>
         <br>
         <v-title style="font-size: x-large;" class="text-center">Todas las tareas</v-title>
@@ -24,9 +24,8 @@
             </v-card-title>
             <v-data-table :items="tareas" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="`/Tareas/entrega`" />
-                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
-                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
+                    <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
+                    query: { id: item.id } }" />
                 </template>
             </v-data-table>
         </v-card>
@@ -51,8 +50,6 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
                     query: { id: item.id } }" />
-                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
-                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
                 </template>
             </v-data-table>
         </v-card>
@@ -63,7 +60,8 @@
             </v-card-title>
             <v-data-table :items="tareasEnt" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="'/Tareas/entrega'" />
+                    <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
+                    query: { id: item.id } }" />
                 </template>
             </v-data-table>
         </v-card>
@@ -139,7 +137,8 @@ export default {
                 });
                 this.tareasEnt = this.tareas.filter((tarea) => tarea.entregada === 1);
             } else {
-                this.tareasPen = this.tareas.filter((tarea) => {
+                const tar = this.tareas.filter(tarea => tarea.activo === 1)
+                this.tareasPen = tar.filter((tarea) => {
                     const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                     const entrega = new Date(dateEntrega)
                     return entrega < new Date(date);

@@ -49,7 +49,8 @@
                 </v-card-title>
                 <v-data-table :items="tareas" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="`/Tareas/entrega`" />
+                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
+                    query: { id: item.id } }" />
                         <v-btn v-if="item.activo == 0" v-text="'Activar'" color="green" text small @click="activar(item.id)" />
                         <v-btn v-if="item.activo == 1" v-text="'Desactivar'" color="red" text small @click="desactivar(item.id)" />
                     </template>
@@ -61,7 +62,8 @@
                 </v-card-title>
                 <v-data-table :items="tareas2" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="`/Tareas/entrega`" />
+                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
+                    query: { id: item.id } }" />
                     </template>
                 </v-data-table>
             </v-card>

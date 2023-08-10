@@ -16,7 +16,8 @@
                         :itemUrl="`/proyectos/${item.id}`" :index="index"/>
                     <v-btn v-if="roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small @click="genProg(item.id)"/>
                     <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small @click="contPro(item.id)"/>
-                    <v-btn @click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
+                    <v-btn v-if="roles.rol == 'alumno'"@click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
+                    <v-btn v-if="roles.rol == 'administrador'" @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
             </v-data-table>
         </v-card>

@@ -12,7 +12,7 @@
                     <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
                     <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
                     <v-text-field v-model="proyecto.alumnos" label="Cupos"></v-text-field>
-                    <v-text-field v-model="proyecto.carrera_clave" label="Carrera"></v-text-field>
+                    <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras"></v-combobox>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -42,7 +42,9 @@ export default {
             fechafinal: "",
             carrera_clave: "",
             alumnos: "",
-        }
+        },
+        carrera_nombre: "",
+        carreras: [],
     }),
 
     async beforeMount() {
@@ -50,8 +52,9 @@ export default {
         
         try {
             const response = await this.$axios.get(`/proyectos/${id}`)
-
             this.proyecto = response.data.data
+            this.carrera_nombre = this.proyecto.Carrera.nombre
+            this.cargarCarreras()
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -60,6 +63,9 @@ export default {
     methods: {
         async guardar() {
             try {
+                const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
+                const Carrera = resCar.data.data
+                this.proyecto.carrera_clave=Carrera.clave
                 const response = await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/proyectos')
@@ -69,6 +75,25 @@ export default {
         },
         cancelar() {
             this.$router.push('/proyectos')
+        },
+        async getCarreras() {
+            try{
+                const response = await this.$axios.get('/Carreras')
+                const carreras = response.data.data
+                const carrerasItems = carreras.map(car => car.nombre)
+                return carrerasItems
+            }catch(error){
+                return []
+
+            }
+        },
+        async cargarCarreras(){
+            try {
+                this.carreras = await this.getCarreras();
+            }catch(error) {
+                console.log(error);
+                this.carreras = [];
+            }
         }
     }
 }

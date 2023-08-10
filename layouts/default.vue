@@ -108,7 +108,6 @@ import Cookies from 'js-cookie';
 export default {
   name: 'DefaultLayout',
   
-  
   data() {
     return {
       snackbarColor: '',
@@ -219,6 +218,7 @@ export default {
       this.alum = responseA.data.data
       localStorage.setItem('proId', this.alum.proyecto_id)
     }
+    localStorage.removeItem("Tarea");
   },
 
 

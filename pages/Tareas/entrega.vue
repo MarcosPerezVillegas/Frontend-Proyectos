@@ -66,7 +66,7 @@ export default {
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
         console.log("Mensaje descifrado:", idDescifrado);
         this.id = idDescifrado
-        console.log(this.$route.query)
+        window.addEventListener('popstate', this.PopState);
         try {
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
@@ -95,6 +95,16 @@ export default {
         }
     },
 
+    beforeRouteLeave(to, from, next) {
+        localStorage.removeItem("Tarea");
+        next();
+    },
+
+
+    beforeDestroy() {
+        window.removeEventListener('popstate', this.PopState);
+    },
+
     methods: {
         async enviarArchivo() {
             if (this.archivo === null || this.archivo === '') {
@@ -117,6 +127,11 @@ export default {
 
             this.$router.push('/Tareas')
         },
+
+        PopState() {
+            localStorage.removeItem("Tarea");
+        },
+
         cancelar() {
             window.history.back();
         }

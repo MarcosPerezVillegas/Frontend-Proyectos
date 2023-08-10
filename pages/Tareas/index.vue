@@ -2,11 +2,11 @@
     <v-container fluid>
         <v-row>
             <v-spacer />
-            <SelectDialog v-if="usuario.rol=== 'maestro' || usuario.rol=== 'administrador'" :proyectos="proyectos"/>
+            <SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />
         </v-row>
         <br>
         <v-title style="font-size: x-large;" class="text-center">Todas las tareas</v-title>
-        <v-card v-if="usuario.rol!== 'alumno'">
+        <v-card v-if="usuario.rol !== 'alumno'">
             <v-card-title>
                 Todas las tareas que tienes
             </v-card-title>
@@ -24,13 +24,12 @@
             </v-card-title>
             <v-data-table :items="tareas" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
-                    query: { id: item.id } }" />
+                    <v-btn v-text="'ver'" color="blue" text small @click="entregaTarea(item.id)" />
                 </template>
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="usuario.rol!=='alumno'">
+        <v-card v-if="usuario.rol !== 'alumno'">
             <v-card-title>
                 Tareas pendientes de revisar
             </v-card-title>
@@ -48,30 +47,32 @@
             </v-card-title>
             <v-data-table :items="tareasPen" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
-                    query: { id: item.id } }" />
+                    <v-btn v-text="'ver'" color="blue" text small @click="entregaTarea(item.id)" />
                 </template>
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="usuario.rol==='alumno'">
+        <v-card v-if="usuario.rol === 'alumno'">
             <v-card-title>
                 Tareas entregadas
             </v-card-title>
             <v-data-table :items="tareasEnt" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
-                    query: { id: item.id } }" />
+                    <v-btn v-text="'ver'" color="blue" text small @click="entregaTarea(item.id)" />
                 </template>
             </v-data-table>
         </v-card>
         <br>
-        <v-title v-if="usuario.rol!=='alumno' && proyectos.length!==0" style="font-size: x-large;">Tareas de cada proyecto</v-title>
-        <ProjectCard v-if="usuario.rol!=='alumno' && proyectos.length!==0" v-for="proyecto in proyectos" :key="proyecto.id" :proyecto="proyecto" />
+        <v-title v-if="usuario.rol !== 'alumno' && proyectos.length !== 0" style="font-size: x-large;">Tareas de cada
+            proyecto</v-title>
+        <ProjectCard v-if="usuario.rol !== 'alumno' && proyectos.length !== 0" v-for="proyecto in proyectos" :key="proyecto.id"
+            :proyecto="proyecto" />
     </v-container>
 </template>
 
 <script lang="ts">
+
+const CryptoJS = require("crypto-js");
 
 export default {
 
@@ -80,7 +81,7 @@ export default {
     middleware: 'auth',
 
     data: () => ({
-        usuario:"",
+        usuario: "",
         tareas: [],
         tareasPen: [],
         proyectos: [],
@@ -154,6 +155,13 @@ export default {
         deleteElement(index: number) {
             this.tareas.pop(index)
             location.reload();
+        },
+        entregaTarea(id: number) {
+            const idTar=id.toString()
+            const clave = "Anitalabalatina"
+            const idCifrado = CryptoJS.AES.encrypt(idTar, clave).toString();
+            localStorage.setItem("Tarea", idCifrado)
+            this.$router.push ("Tareas/Entrega")
         }
     }
 }

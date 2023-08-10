@@ -40,6 +40,8 @@
 
 <script lang="ts">
 
+const CryptoJS = require("crypto-js");
+
 export default {
     name: 'TareaEntrega',
     middleware: 'auth',
@@ -58,7 +60,13 @@ export default {
     }),
 
     async beforeMount() {
-        this.id = this.$route.query.id
+        const clave = "Anitalabalatina"
+        const idCifrado = localStorage.getItem("Tarea")
+        const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
+        const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
+        console.log("Mensaje descifrado:", idDescifrado);
+        this.id = idDescifrado
+        console.log(this.$route.query)
         try {
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data

@@ -1,6 +1,12 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-card v-if="ver === 'true'">
+            <v-card-title>Nombre de la tarea: {{ tarea.nombre }}</v-card-title>
+            <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
+            <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
+            <br>
+        </v-card>
+        <v-form v-else @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
                     Editar tarea
@@ -35,7 +41,6 @@
 </template>
 
 <script lang="ts">
-import { TableRowHeightAttributes } from 'docx'
 
 
 export default {
@@ -54,25 +59,41 @@ export default {
         estado: "",
         proyecto: "",
         Proyectos: [""],
-        nombre: ""
+        nombre: "",
+        ver: "",
+        archivo: "",
+        entregada: null
     }),
 
     async beforeMount() {
         const id = this.$route.params.id
+        this.ver = localStorage.getItem("ver")
         try {
             const response = await this.$axios.get(`/Tareas/${id}`)
             this.tarea = response.data.data
-            if(this.tarea.activo === 0){
-                this.estado = 'Inactivo'
-            }else{
-                this.estado = 'Activo'
-            }
-            this.nombre = this.tarea.nombre
             const respon = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
             this.proyecto = respon.data.data.nombre
-            const respons = await this.$axios.get(`/Proyectos/Usuario/${respon.data.data.codigo}`)
-            const proyectos = respons.data.data.map(proyecto => proyecto.nombre)
-            this.Proyectos = proyectos
+            if (this.ver) {
+                try {
+                    const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
+                        responseType: 'arraybuffer',
+                    })
+                    this.entregada = true
+                } catch {
+
+                }
+
+            } else {
+                if (this.tarea.activo === 0) {
+                    this.estado = 'Inactivo'
+                } else {
+                    this.estado = 'Activo'
+                }
+                this.nombre = this.tarea.nombre
+                const respons = await this.$axios.get(`/Proyectos/Usuario/${respon.data.data.codigo}`)
+                const proyectos = respons.data.data.map(proyecto => proyecto.nombre)
+                this.Proyectos = proyectos
+            }
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -93,9 +114,9 @@ export default {
                         }
                     } catch { }
                 }
-                if (this.estado === "Activo"){
+                if (this.estado === "Activo") {
                     this.tarea.activo = 1
-                }else{
+                } else {
                     this.tarea.activo = 0
                 }
                 const resPro = await this.$axios.get(`/Proyectos/Nombre/${this.proyecto}`)
@@ -107,6 +128,26 @@ export default {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
+
+        async descargarArchivo() {
+            try {
+                const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
+                    responseType: 'arraybuffer',
+                })
+                const blob = new Blob([res.data], { type: 'application/pdf' })
+                const url = URL.createObjectURL(blob)
+
+                const link = document.createElement('a')
+                link.href = url
+                link.target = '_blank'
+                link.download = `${this.tarea.nombre}.pdf`
+                link.click()
+                URL.revokeObjectURL(url)
+            } catch {
+                this.$nuxt.$emit('show-snackbar', 'red', 'No hay archivo disponible para descargar');
+            }
+        },
+
 
         cancelar() {
             this.$router.push('/tareas')

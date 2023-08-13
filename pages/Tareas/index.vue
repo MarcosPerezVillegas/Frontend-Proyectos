@@ -32,7 +32,10 @@
                         </template>
                         <v-list>
                             <v-list-item>
-                                <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                                <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
+                            </v-list-item>
+                            <v-list-item>
+                                <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
                             </v-list-item>
                             <v-list-item>
                                 <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
@@ -65,7 +68,10 @@
                         </template>
                         <v-list>
                             <v-list-item>
-                                <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                                <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
+                            </v-list-item>
+                            <v-list-item>
+                                <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
                             </v-list-item>
                             <v-list-item>
                                 <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
@@ -248,14 +254,14 @@ export default {
             this.$router.push("Tareas/Entrega")
         },
 
-        editItem(Url: string, item, Rol: string) {
-            const url = CryptoJS.AES.encrypt(Url, clave).toString();
-            const rol = CryptoJS.AES.encrypt(Rol, clave).toString();
-            const codigo = CryptoJS.AES.encrypt(item.codigo.toString(), clave).toString();
-            localStorage.setItem("codigo", codigo)
-            localStorage.setItem("url", url)
-            localStorage.setItem("rol", rol)
-            this.$router.push(`/Usuarios/${item.codigo}`)
+        editItem(item) {
+            localStorage.setItem("ver", "false")
+            this.$router.push(`/Tareas/${item.id}`)
+        },
+
+        verItem(item) {
+            localStorage.setItem("ver", "true")
+            this.$router.push(`/Tareas/${item.id}`)
         },
     }
 }

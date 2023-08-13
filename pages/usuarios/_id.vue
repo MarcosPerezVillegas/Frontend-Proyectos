@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-form @submit.prevent="guardar">
-            <v-card v-if="rol_usuario!== 'Alumno'">
+            <v-card>
                 <v-card-title>
                     Editar usuario
                 </v-card-title>
@@ -10,35 +10,12 @@
                     <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
                     <v-text-field v-model="usuario.email" label="Email"
                         :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                    <v-combobox v-model="rol_usuario" label="Rol"
-                        :items="['Administrador', 'Maestro']"></v-combobox>
+                    <v-combobox v-model="rol_usuario" label="Rol" :items="['Administrador', 'Maestro']"></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn color="red" to="/Usuarios">
-                        Cancelar
-                    </v-btn>
-                    <v-btn color="green" type="submit">
-                        Guardar
-                    </v-btn>
-
-                </v-card-actions>
-            </v-card>
-            <v-card v-else>
-                <v-card-title>
-                    Editar usuario
-                </v-card-title>
-                <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
-                    <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"
-                        :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                    <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="red" to="/Usuarios">
+                    <v-btn color="red" @click="Cancelar">
                         Cancelar
                     </v-btn>
                     <v-btn color="green" type="submit">
@@ -52,6 +29,8 @@
 </template>
 
 <script lang="ts">
+
+const CryptoJS = require("crypto-js");
 
 export default {
     name: 'UsuariosUpdate',
@@ -68,18 +47,45 @@ export default {
         rol_usuario: "",
         rol: "",
         codigo: "",
-        rol_inicial: ""
+        rol_inicial: "",
+        url: ""
     }),
 
     async beforeMount() {
         try {
-            const response = await this.$axios.get(`${this.$route.query.url}`)
-            this.rol_usuario = this.$route.query.rol_usuario
-            this.rol_inicial = this.rol_usuario
+            const clave = "Encriptar"
+            let url = localStorage.getItem("url")
+            const urlCryp = CryptoJS.AES.decrypt(url, clave);
+            url = urlCryp.toString(CryptoJS.enc.Utf8);
+            this.url = url
+
+            let rol = localStorage.getItem("rol")
+            const rolCryp = CryptoJS.AES.decrypt(rol, clave);
+            rol = rolCryp.toString(CryptoJS.enc.Utf8);
+
+            let codigo = localStorage.getItem("codigo")
+            const codigoCryp = CryptoJS.AES.decrypt(codigo, clave);
+            codigo = codigoCryp.toString(CryptoJS.enc.Utf8);
+
+            const response = await this.$axios.get(url)
+            this.rol_usuario = rol
+            this.rol_inicial = rol
             this.usuario = response.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
+    },
+
+    beforeRouteLeave(to, from, next) {
+        localStorage.removeItem("url");
+        localStorage.removeItem("codigo");
+        localStorage.removeItem("rol");
+        next();
+    },
+
+
+    beforeDestroy() {
+        window.removeEventListener('popstate', this.PopState);
     },
 
     methods: {
@@ -91,7 +97,7 @@ export default {
                 if (this.rol_usuario === null) {
                     return this.$nuxt.$emit('show-snackbar', 'red', "No puedes dejar sin rol al usuario")
                 }
-                if (this.usuario.codigo === this.codigo && this.$route.query.rol_usuario !== this.rol_usuario) {
+                if (this.usuario.codigo === this.codigo && this.rol_inicial !== this.rol_usuario) {
                     return this.$nuxt.$emit('show-snackbar', 'red', "No puedes modificar el rol de tu propio usuario")
                 }
             }
@@ -107,13 +113,23 @@ export default {
                 if (this.rol_inicial === "Maestro" && this.rol_usuario === "Administrador") {
                     this.usuario.admin = 1
                 }
-                const response = await this.$axios.put(`${this.$route.query.url}`, this.usuario)
+                const response = await this.$axios.put(this.url, this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/Usuarios')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
+
+        PopState() {
+            localStorage.removeItem("url");
+            localStorage.removeItem("codigo");
+            localStorage.removeItem("rol");
+        },
+
+        Cancelar() {
+            window.history.back();
+        }
     }
 }
 

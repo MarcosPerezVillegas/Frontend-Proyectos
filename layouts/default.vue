@@ -219,6 +219,9 @@ export default {
       localStorage.setItem('proId', this.alum.proyecto_id)
     }
     localStorage.removeItem("Tarea");
+    localStorage.removeItem("url");
+    localStorage.removeItem("codigo");
+    localStorage.removeItem("rol");
   },
 
 

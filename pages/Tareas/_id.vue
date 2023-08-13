@@ -11,7 +11,7 @@
                     <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
                     <v-text-field v-model="tarea.descripcion" label="Descripcion"
                         :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.comentarios" label="Comentarios"
+                    <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
                         :rules="[$validations.notEmpty]"></v-text-field>
                     <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
                         :rules="[$validations.notEmpty]"></v-text-field>

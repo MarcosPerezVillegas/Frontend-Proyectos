@@ -1,53 +1,111 @@
 <template>
-    <v-container fluid>
+    <v-container fluid class="text-center">
         <v-row>
             <v-spacer />
             <SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />
         </v-row>
         <br>
-        <v-title style="font-size: x-large;" class="text-center">Todas las tareas</v-title>
-        <v-card v-if="usuario.rol !== 'alumno'">
+        <p v-if="usuario.rol ==='maestro' || usuario.rol === 'administrador'" style="font-size: larger ;">Selecciona uno de tus proyectos para mostrarte las tareas</p>
+        <v-menu v-if="usuario.rol ==='maestro' || usuario.rol === 'administrador'" offset-y>
+            <template #activator="{ on }">
+                <v-btn v-text="'Seleccionar Proyecto'" color="primary" v-on="on" />
+            </template>
+            <v-list>
+                <v-list-item v-for="(proyecto, index) in proyectos" :key="index">
+                    <v-list-item @click="selProyecto(proyecto)">{{ proyecto.nombre }}</v-list-item>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+        <br>
+        <v-card-title v-if="seleccionado" style="font-size: x-large;">
+            Tareas del proyecto: {{ seleccionado.nombre }}
+        </v-card-title>
+        <v-card v-if="seleccionado">
             <v-card-title>
                 Todas las tareas que tienes
             </v-card-title>
             <v-data-table :items="tareas" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <v-menu offset-y>
+                        <template #activator="{ on }">
+                            <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                        </template>
+                        <v-list>
+                            <v-list-item>
+                                <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                            </v-list-item>
+                            <v-list-item>
+                                <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
+                                de manera permanente? esta acción no se puede deshacer`" :index="index"
+                                    :item="item.codigo" :itemUrl="`/Tareas/${item.id}`" />
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                    <!--
+                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
                         :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
-                </template>
-            </v-data-table>
-        </v-card>
-        <v-card v-else>
-            <v-card-title>
-                Todas las tareas que tienes
-            </v-card-title>
-            <v-data-table :items="tareas" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small @click="entregaTarea(item.id)" />
+                    -->
                 </template>
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="usuario.rol !== 'alumno'">
+        <br>
+        <p v-if="usuario.rol ==='maestro' || usuario.rol === 'administrador'" style="font-size: large ;">A continuación se muestran solo las tareas con estado Activo igual que 1 y que esten
+            pendientes de revisar</p>
+        <v-card v-if="seleccionado">
             <v-card-title>
                 Tareas pendientes de revisar
             </v-card-title>
             <v-data-table :items="tareasPen" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <v-menu offset-y>
+                        <template #activator="{ on }">
+                            <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                        </template>
+                        <v-list>
+                            <v-list-item>
+                                <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                            </v-list-item>
+                            <v-list-item>
+                                <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
+                                de manera permanente? esta acción no se puede deshacer`" :index="index"
+                                    :item="item.codigo" :itemUrl="`/Tareas/${item.id}`" />
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                    <!--
+                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
                         :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
+                    -->
                 </template>
             </v-data-table>
         </v-card>
-        <v-card v-else>
+
+        <v-card v-if="usuario.rol === 'alumno'">
+            <v-card-title>
+                Todas las tareas que tienes
+            </v-card-title>
+            <v-data-table :items="tareas" :headers="headers">
+                <template v-slot:item.actions="{ item, index }">
+                    <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                    <!--
+                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
+                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
+                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
+                    -->
+                </template>
+            </v-data-table>
+        </v-card>
+        <br>
+        <v-card v-if="usuario.rol === 'alumno'">
             <v-card-title>
                 Tareas pendientes de entregar
             </v-card-title>
             <v-data-table :items="tareasPen" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small @click="entregaTarea(item.id)" />
+                    <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
                 </template>
             </v-data-table>
         </v-card>
@@ -58,15 +116,10 @@
             </v-card-title>
             <v-data-table :items="tareasEnt" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver'" color="blue" text small @click="entregaTarea(item.id)" />
+                    <v-btn v-text="'ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
                 </template>
             </v-data-table>
         </v-card>
-        <br>
-        <v-title v-if="usuario.rol !== 'alumno' && proyectos.length !== 0" style="font-size: x-large;">Tareas de cada
-            proyecto</v-title>
-        <ProjectCard v-if="usuario.rol !== 'alumno' && proyectos.length !== 0" v-for="proyecto in proyectos" :key="proyecto.id"
-            :proyecto="proyecto" />
     </v-container>
 </template>
 
@@ -81,11 +134,13 @@ export default {
     middleware: 'auth',
 
     data: () => ({
+        date: "",
         usuario: "",
         tareas: [],
         tareasPen: [],
         proyectos: [],
         tareasEnt: [],
+        seleccionado: null,
         headers: [
             { text: 'Id de tarea', value: 'id' },
             { text: 'Nombre de la tarea', value: 'nombre' },
@@ -93,6 +148,7 @@ export default {
             { text: 'Comentarios del profesor', value: 'comentarios' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
             { text: 'Hora de entrega', value: 'hora_limite' },
+            { text: 'Activa', value: 'activo' },
             { text: 'Acciones', value: 'actions' },
         ]
     }),
@@ -102,6 +158,7 @@ export default {
         try {
             const res = await this.$axios.get('/Login')
             this.usuario = res.data
+
             const hoy = new Date();
             const año = hoy.getFullYear();
             const mes = String(hoy.getMonth() + 1).padStart(2, '0');
@@ -113,7 +170,9 @@ export default {
 
             const fecha = `${año}-${mes}-${dia}`;
             const hora = `${horas}:${minutos}:${segundos}`;
-            const date = `${fecha} ${hora}`
+            this.date = `${fecha} ${hora}`
+
+            const pro = localStorage.getItem("ProId")
 
             if (this.usuario.rol === "alumno") {
                 const resusu = await this.$axios.get(`/Alumnos/${this.usuario.codigo}`)
@@ -124,26 +183,37 @@ export default {
                 this.proyectos = respro.data.data
             }
 
-            for (const proyecto of this.proyectos) {
-                const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
-                this.tareas = this.tareas.concat(responseTareas.data.data);
+            if (pro) {
+                try {
+                    const respro = await this.$axios.get(`/Proyectos/${pro}`)
+                    const res = await this.$axios.get(`/Tareas/Proyecto/${pro}`);
+                    this.tareas = res.data.data;
+                    const tar = this.tareas.filter(tarea => tarea.activo === 1)
+                    this.tareasPen = tar.filter((tarea) => {
+                        const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
+                        const entrega = new Date(dateEntrega)
+                        return entrega < new Date(this.date);
+                    });
+                    this.seleccionado = respro.data.data
+
+                } catch { }
+
+            } else {
+                for (const proyecto of this.proyectos) {
+                    const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
+                    this.tareas = this.tareas.concat(responseTareas.data.data);
+                }
             }
+
 
             if (this.usuario.rol === "alumno") {
                 this.tareas = this.tareas.filter((tarea) => tarea.activo === 1);
                 this.tareasPen = this.tareas.filter((tarea) => {
                     const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                     const entrega = new Date(dateEntrega)
-                    return entrega > new Date(date) && tarea.entregada !== 1;
+                    return entrega > new Date(this.date) && tarea.entregada !== 1;
                 });
                 this.tareasEnt = this.tareas.filter((tarea) => tarea.entregada === 1);
-            } else {
-                const tar = this.tareas.filter(tarea => tarea.activo === 1)
-                this.tareasPen = tar.filter((tarea) => {
-                    const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
-                    const entrega = new Date(dateEntrega)
-                    return entrega < new Date(date);
-                });
             }
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
@@ -152,17 +222,41 @@ export default {
     },
 
     methods: {
+        async selProyecto(proyecto) {
+            this.seleccionado = proyecto
+            localStorage.setItem("ProId", proyecto.id)
+            const res = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
+            this.tareas = res.data.data;
+
+            const tar = this.tareas.filter(tarea => tarea.activo === 1)
+            this.tareasPen = tar.filter((tarea) => {
+                const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
+                const entrega = new Date(dateEntrega)
+                return entrega < new Date(this.date);
+            });
+        },
+
         deleteElement(index: number) {
             this.tareas.pop(index)
-            location.reload();
+            location.reload()
         },
         entregaTarea(id: number) {
-            const idTar=id.toString()
+            const idTar = id.toString()
             const clave = "Anitalabalatina"
             const idCifrado = CryptoJS.AES.encrypt(idTar, clave).toString();
             localStorage.setItem("Tarea", idCifrado)
-            this.$router.push ("Tareas/Entrega")
-        }
+            this.$router.push("Tareas/Entrega")
+        },
+
+        editItem(Url: string, item, Rol: string) {
+            const url = CryptoJS.AES.encrypt(Url, clave).toString();
+            const rol = CryptoJS.AES.encrypt(Rol, clave).toString();
+            const codigo = CryptoJS.AES.encrypt(item.codigo.toString(), clave).toString();
+            localStorage.setItem("codigo", codigo)
+            localStorage.setItem("url", url)
+            localStorage.setItem("rol", rol)
+            this.$router.push(`/Usuarios/${item.codigo}`)
+        },
     }
 }
 </script>

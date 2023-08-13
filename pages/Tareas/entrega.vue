@@ -15,8 +15,6 @@
                     Entrega de tarea
                 </v-card-title>
                 <v-file-input v-model="archivo" label="Seleccionar archivo"></v-file-input>
-                <input type="hidden" :value="alumno" name="ANombre" />
-                <input type="hidden" :value="nombre" name="nombre" />
                 <v-btn @click="enviarArchivo" color="primary">Enviar archivo</v-btn>
                 <v-card-actions>
                     <v-spacer />

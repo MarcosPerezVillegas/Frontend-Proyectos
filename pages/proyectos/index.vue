@@ -11,13 +11,40 @@
             </v-card-title >
             <v-data-table :items="proyectos" :headers="headers">
                 <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-if="roles.rol == 'administrador'" v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
-                    <DeleteDialog v-if="roles.rol == 'administrador'" :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
-                        :itemUrl="`/proyectos/${item.id}`" :index="index"/>
-                    <v-btn v-if="roles.rol == 'administrador' " v-text="'Progreso'" color="green" text small @click="genProg(item.id)"/>
-                    <v-btn v-if="roles.rol == 'administrador'" v-text="'Constancia'" color="green" text small @click="contPro(item.id)"/>
+                    <v-menu offset-y v-if="roles.rol == 'administrador'">
+                        <template v-slot:activator="{ on }">
+                            <v-btn color="blue" v-on="on" text small> Opciones </v-btn>
+                        </template>
+                        <v-list>
+                            <v-list-item>
+                                <v-list-item-action>
+                                    <v-btn v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`"/>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-action>
+                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el proyecto '${item.nombre}'? Esta acción no se puede deshacer.`" 
+                                        :itemUrl="`/proyectos/${item.id}`" :index="index"/>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-action>
+                                    <v-btn v-text="'Progreso'" color="green" text small @click="genProg(item.id)"/>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-action>
+                                    <v-btn v-text="'Constancia'" color="green" text small @click="contPro(item.id)"/>
+                                </v-list-item-action>
+                            </v-list-item>
+                            <v-list-item>
+                                <v-list-item-action>
+                                    <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
+                                </v-list-item-action>
+                            </v-list-item>
+                        </v-list>  
+                    </v-menu>
                     <v-btn v-if="roles.rol == 'alumno'"@click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
-                    <v-btn v-if="roles.rol == 'administrador'" @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
             </v-data-table>
         </v-card>
@@ -48,6 +75,7 @@
 <script lang="ts">
 import XLSX from 'xlsx/dist/xlsx.full.min';
 import {jsPDF} from 'jspdf';
+const CryptoJS = require("crypto-js");
 
 export default {
     name: 'Proyectos',
@@ -93,11 +121,17 @@ export default {
 
     methods: {
         selecID (index: number){
-            localStorage.setItem('proId',index)
+            const idPro = index.toString()
+            const clave = "Anitalabalatina"
+            const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
+            localStorage.setItem('proId',idCifrado)
             this.$router.push('/proyectos/seleccion')
         },
         selecPro (index: number){
-            localStorage.setItem('proId',index)
+            const idPro = index.toString()
+            const clave = "Anitalabalatina"
+            const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
+            localStorage.setItem('proId',idCifrado)
             this.$router.push('/proyectos/datos')
         },
         async contPro (index: number){

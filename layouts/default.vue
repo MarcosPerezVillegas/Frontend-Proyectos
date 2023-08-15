@@ -105,6 +105,7 @@
 
 <script lang="ts">
 import Cookies from 'js-cookie';
+const CryptoJS = require("crypto-js");
 export default {
   name: 'DefaultLayout',
   
@@ -216,7 +217,13 @@ export default {
     if(this.roles.rol === 'alumno'){
       const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
       this.alum = responseA.data.data
-      localStorage.setItem('proId', this.alum.proyecto_id)
+      if(this.alum.proyecto_id){
+        const idPro = this.alum.proyecto_id.toString()
+        const clave = "Anitalabalatina"
+        const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
+        localStorage.setItem('proId',idCifrado)
+      }
+      
     }
     localStorage.removeItem("Tarea");
     localStorage.removeItem("url");

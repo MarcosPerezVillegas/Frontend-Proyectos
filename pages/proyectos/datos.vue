@@ -73,6 +73,8 @@
 
 <script lang="ts">
 
+const CryptoJS = require("crypto-js");
+
 export default {
     name: 'ProyectosDatos',
     middleware: 'auth',
@@ -80,6 +82,7 @@ export default {
         roles: {},
         proyecto: {},
         maestro: "",
+        id: "",
         carrera: "",
         participantes: [],
         tareas: [],
@@ -94,15 +97,19 @@ export default {
 
     async beforeMount() {
         this.$store.commit('setTitle', 'Proyectos')
-        const id = localStorage.getItem('proId')
+        const clave = "Anitalabalatina"
+        const idCifrado = localStorage.getItem("proId")
+        const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
+        const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
+        this.id = idDescifrado
         
         try {
-            const response = await this.$axios.get(`/proyectos/${id}`)
+            const response = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = response.data.data
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.participantes = this.proyecto.Alumnos
-            const responseT = await this.$axios.get(`/tareas/proyecto/${id}`)
+            const responseT = await this.$axios.get(`/tareas/proyecto/${this.id}`)
             this.tareas = responseT.data.data
             const ta2 = this.tareas.filter(item => item.activo == 1)
             this.tareas2 = ta2

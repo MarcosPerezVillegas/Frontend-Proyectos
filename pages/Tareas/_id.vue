@@ -1,7 +1,15 @@
 <template>
     <v-container>
         <v-card v-if="ver === 'true'">
-            <v-card-title>Nombre de la tarea: {{ tarea.nombre }}</v-card-title>
+            <v-card-title>
+                Nombre de la tarea: {{ tarea.nombre }}
+            </v-card-title>
+            <v-card-text>
+                Descripción de la tarea: {{ tarea.descripcion }}
+            </v-card-text>
+            <v-card-text>
+                Comentarios del profesor: {{ tarea.comentarios }}
+            </v-card-text>
             <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
             <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
             <br>
@@ -73,7 +81,7 @@ export default {
             this.tarea = response.data.data
             const respon = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
             this.proyecto = respon.data.data.nombre
-            if (this.ver) {
+            if (this.ver === "true") {
                 try {
                     const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
                         responseType: 'arraybuffer',
@@ -123,7 +131,7 @@ export default {
                 this.tarea.Proyecto_id = resPro.data.data.id
                 const response = await this.$axios.put(`/tareas/${this.tarea.id}`, this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/tareas')
+                this.$router.push('/Tareas')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
@@ -150,7 +158,7 @@ export default {
 
 
         cancelar() {
-            this.$router.push('/tareas')
+            this.$router.push('/Tareas')
         }
     }
 }

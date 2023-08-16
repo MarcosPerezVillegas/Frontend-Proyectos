@@ -1,12 +1,21 @@
 <template>
     <v-container fluid class="text-center">
-        <v-row>
-            <v-spacer />
-            <SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />
-        </v-row>
+        <v-spacer />
+        <v-menu offset-y>
+            <template #activator="{ on }">
+                <v-btn v-text="'Crear una tarea'" color="primary" v-on="on" />
+            </template>
+            <v-list>
+                <v-list-item v-for="(proyecto, index) in proyectos" :key="index">
+                    <v-list-item @click="selProTarea(proyecto)">{{ proyecto.nombre }}</v-list-item>
+                </v-list-item>
+            </v-list>
+        </v-menu>
+        <!--<SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />--->
         <br>
-        <p v-if="usuario.rol ==='maestro' || usuario.rol === 'administrador'" style="font-size: larger ;">Selecciona uno de tus proyectos para mostrarte las tareas</p>
-        <v-menu v-if="usuario.rol ==='maestro' || usuario.rol === 'administrador'" offset-y>
+        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" style="font-size: larger ;">Selecciona uno de
+            tus proyectos para mostrarte las tareas</p>
+        <v-menu v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" offset-y>
             <template #activator="{ on }">
                 <v-btn v-text="'Seleccionar Proyecto'" color="primary" v-on="on" />
             </template>
@@ -37,6 +46,12 @@
                             <v-list-item>
                                 <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
                             </v-list-item>
+                            <v-list-item v-if="item.activo === 0">
+                                <v-btn v-text="'Activar'" color="green" text small @click="state(item)" />
+                            </v-list-item>
+                            <v-list-item v-else>
+                                <v-btn v-text="'Desactivar'" color="red" text small @click="state(item)" />
+                            </v-list-item>
                             <v-list-item>
                                 <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
                                 de manera permanente? esta acción no se puede deshacer`" :index="index"
@@ -54,7 +69,8 @@
         </v-card>
         <br>
         <br>
-        <p v-if="usuario.rol ==='maestro' || usuario.rol === 'administrador'" style="font-size: large ;">A continuación se muestran solo las tareas con estado Activo igual que 1 y que esten
+        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" style="font-size: large ;">A continuación se
+            muestran solo las tareas con estado Activo igual que 1 y que esten
             pendientes de revisar</p>
         <v-card v-if="seleccionado">
             <v-card-title>
@@ -134,12 +150,12 @@
 const CryptoJS = require("crypto-js");
 
 export default {
-
     name: 'Tareas',
 
     middleware: 'auth',
 
     data: () => ({
+        clave: "Anitalabalatina",
         date: "",
         usuario: "",
         tareas: [],
@@ -147,11 +163,9 @@ export default {
         proyectos: [],
         tareasEnt: [],
         seleccionado: null,
+        pro: "",
         headers: [
-            { text: 'Id de tarea', value: 'id' },
             { text: 'Nombre de la tarea', value: 'nombre' },
-            { text: 'Descripcion', value: 'descripcion' },
-            { text: 'Comentarios del profesor', value: 'comentarios' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
             { text: 'Hora de entrega', value: 'hora_limite' },
             { text: 'Activa', value: 'activo' },
@@ -178,7 +192,14 @@ export default {
             const hora = `${horas}:${minutos}:${segundos}`;
             this.date = `${fecha} ${hora}`
 
-            const pro = localStorage.getItem("ProId")
+            const id = localStorage.getItem("ProId")
+            if(id){
+                const bytes = CryptoJS.AES.decrypt(id, this.clave);
+                this.pro = bytes.toString(CryptoJS.enc.Utf8);
+            }else{
+                this.pro = null
+            }
+            
 
             if (this.usuario.rol === "alumno") {
                 const resusu = await this.$axios.get(`/Alumnos/${this.usuario.codigo}`)
@@ -189,10 +210,10 @@ export default {
                 this.proyectos = respro.data.data
             }
 
-            if (pro) {
+            if (this.pro) {
                 try {
-                    const respro = await this.$axios.get(`/Proyectos/${pro}`)
-                    const res = await this.$axios.get(`/Tareas/Proyecto/${pro}`);
+                    const respro = await this.$axios.get(`/Proyectos/${this.pro}`)
+                    const res = await this.$axios.get(`/Tareas/Proyecto/${this.pro}`);
                     this.tareas = res.data.data;
                     const tar = this.tareas.filter(tarea => tarea.activo === 1)
                     this.tareasPen = tar.filter((tarea) => {
@@ -206,7 +227,7 @@ export default {
 
             } else {
                 for (const proyecto of this.proyectos) {
-                    const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
+                    const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${this.pro}`);
                     this.tareas = this.tareas.concat(responseTareas.data.data);
                 }
             }
@@ -230,7 +251,9 @@ export default {
     methods: {
         async selProyecto(proyecto) {
             this.seleccionado = proyecto
-            localStorage.setItem("ProId", proyecto.id)
+            const id = proyecto.id.toString()
+            const idCifrado = CryptoJS.AES.encrypt(id, this.clave).toString();
+            localStorage.setItem("ProId", idCifrado)
             const res = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
             this.tareas = res.data.data;
 
@@ -247,11 +270,16 @@ export default {
             location.reload()
         },
         entregaTarea(id: number) {
-            const idTar = id.toString()
-            const clave = "Anitalabalatina"
-            const idCifrado = CryptoJS.AES.encrypt(idTar, clave).toString();
+            const idCifrado = CryptoJS.AES.encrypt(id.toString(), this.clave).toString();
             localStorage.setItem("Tarea", idCifrado)
             this.$router.push("Tareas/Entrega")
+        },
+
+        async selProTarea(proyecto) {
+            const id = proyecto.id.toString()
+            const idCifrado = CryptoJS.AES.encrypt(id, this.clave).toString();
+            localStorage.setItem("ProId", idCifrado)
+            this.$router.push(`/Tareas/Create`)
         },
 
         editItem(item) {
@@ -262,6 +290,27 @@ export default {
         verItem(item) {
             localStorage.setItem("ver", "true")
             this.$router.push(`/Tareas/${item.id}`)
+        },
+
+        async state(item) {
+            if (item.activo === 0) {
+                const tarea = { activo: 1 }
+                try {
+                    await this.$axios.put(`/Tareas/${item.id}`, tarea)
+                    this.$nuxt.$emit('show-snackbar', 'green', 'Se a activado la tarea')
+                } catch (error) {
+                    this.$nuxt.$emit('show-snackbar', 'red', error.message)
+                }
+            } else {
+                const tarea = { activo: 0 }
+                try {
+                    await this.$axios.put(`/Tareas/${item.id}`, tarea)
+                    this.$nuxt.$emit('show-snackbar', 'green', 'Se a desactivado la tarea')
+                } catch (error) {
+                    this.$nuxt.$emit('show-snackbar', 'red', error.message)
+                }
+            }
+            location.reload()
         },
     }
 }

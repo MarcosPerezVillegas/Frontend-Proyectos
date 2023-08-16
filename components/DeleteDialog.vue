@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="deleteDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn v-text="'Eliminara'" color="red" text small v-bind="attrs" v-on="on" @click="deleteDialog = true" />
+            <v-btn v-text="'Eliminar'" color="red" text small v-bind="attrs" v-on="on" @click="deleteDialog = true" />
         </template>
         <v-card>
             <v-card-title>

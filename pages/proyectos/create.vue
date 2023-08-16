@@ -10,7 +10,8 @@
                     <v-text-field v-model="proyecto.objetivos" label="Objetivos"></v-text-field>
                     <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
                     <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
-                    <v-text-field v-if="roles.rol == 'maestro'" v-model="encargado_nombre" label="Encargado"></v-text-field>
+                    <v-text v-if="roles.rol == 'maestro'">Encargado</v-text><br>
+                    <v-text v-if="roles.rol == 'maestro'" style="font-size: larger;">{{encargado_nombre}}</v-text>
                     <v-combobox v-if="roles.rol == 'administrador'" v-model="encargado_nombre" label="Encargado" :items="encargados"></v-combobox>
                     <v-text-field v-model="proyecto.alumnos" label="Espacios de registro" type="integer"></v-text-field>
                     <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras"></v-combobox>

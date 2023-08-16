@@ -12,8 +12,14 @@
             </v-card>
             <v-card v-else-if="entrega < fecha">
                 <v-card-title>
-                    Entrega de tarea
+                    Nombre de la tarea: {{ tar.nombre }}
                 </v-card-title>
+                <v-card-text style="font-size: larger;">
+                    Descripción de la tarea: {{ tar.descripcion }}
+                </v-card-text>
+                <v-card-text style="font-size: larger;">
+                    Comentarios del profesor: {{ tar.comentarios }}
+                </v-card-text>
                 <v-file-input v-model="archivo" label="Seleccionar archivo"></v-file-input>
                 <v-btn @click="enviarArchivo" color="primary">Enviar archivo</v-btn>
                 <v-card-actions>
@@ -54,6 +60,8 @@ export default {
             entregada: Number,
             entregante: ""
         },
+        tar: {
+        },
         entregada: Number
     }),
 
@@ -83,6 +91,7 @@ export default {
             const hora = `${horas}:${minutos}:${segundos}`;
             const date = `${fecha} ${hora}`
             const restar = await this.$axios.get(`/Tareas/${this.id}`)
+            this.tar = restar.data.data
             this.entregada = restar.data.data.entregada
             const fechalimite = `${restar.data.data.fecha_limite} ${restar.data.data.hora_limite}`;
             this.fecha = new Date(fechalimite)

@@ -34,11 +34,13 @@
 
 <script lang="ts">
 
+const CryptoJS = require("crypto-js");
 export default {
     name: 'UsuariosCreate',
 
 
     data: () => ({
+        clave: "Anitalabalatina",
         tarea: {
             Proyecto_id: "",
             nombre: "",
@@ -66,7 +68,9 @@ export default {
                 return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
             }
             try {
-                this.tarea.Proyecto_id = parseInt(this.$route.query.id)
+                const id = localStorage.getItem("ProId")
+                const bytes = CryptoJS.AES.decrypt(id, this.clave);
+                this.tarea.Proyecto_id = bytes.toString(CryptoJS.enc.Utf8);
                 try {
                     if (this.estado === "Activo") {
                         this.tarea.activo = 1
@@ -76,22 +80,22 @@ export default {
                     const resTar = await this.$axios.get(`/Tareas/Nombre/${this.tarea.nombre}`)
                     const tareas = resTar.data.data
                     for (const tarea of tareas) {
-                        if (tarea.Proyecto_id === this.tarea.Proyecto_id) {
+                        if (tarea.Proyecto_id.toString() === this.tarea.Proyecto_id && tarea.nombre === this.tarea.nombre) {
                             return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
                         }
                     }
                 } catch { }
 
-                const response = await this.$axios.post('/tareas', this.tarea)
+                const response = await this.$axios.post('/Tareas', this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/tareas')
+                this.$router.push('/Tareas')
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
 
         cancelar() {
-            this.$router.push('/tareas')
+            this.$router.push('/Tareas')
         },
 
     }

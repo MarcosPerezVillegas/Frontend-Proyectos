@@ -13,6 +13,7 @@
             <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
             <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
             <br>
+            <v-spacer/> <v-btn v-text="'Atras'" color="primary" @click="cancelar()" />
         </v-card>
         <v-form v-else @submit.prevent="guardar">
             <v-card>
@@ -158,7 +159,7 @@ export default {
 
 
         cancelar() {
-            this.$router.push('/Tareas')
+            window.history.back()
         }
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="text-center">
         <v-spacer />
-        <v-menu offset-y>
+        <v-menu v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" offset-y>
             <template #activator="{ on }">
                 <v-btn v-text="'Crear una tarea'" color="primary" v-on="on" />
             </template>
@@ -205,6 +205,8 @@ export default {
                 const resusu = await this.$axios.get(`/Alumnos/${this.usuario.codigo}`)
                 const respro = await this.$axios.get(`/Proyectos/${resusu.data.data.proyecto_id}`)
                 this.proyectos = this.proyectos.concat(respro.data.data)
+                const res = await this.$axios.get(`/Tareas/Proyecto/${this.proyectos[0].id}`);
+                this.tareas = this.tareas.concat(res.data.data)
             } else {
                 const respro = await this.$axios.get(`/Proyectos/Usuario/${this.usuario.codigo}`)
                 this.proyectos = respro.data.data

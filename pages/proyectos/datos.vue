@@ -49,8 +49,7 @@
                 </v-card-title>
                 <v-data-table :items="tareas" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
-                    query: { id: item.id } }" />
+                        <v-btn v-text="'Ver tarea'" color="blue" text small @click="verItem(item)" />
                         <v-btn v-if="item.activo == 0" v-text="'Activar'" color="green" text small @click="activar(item.id)" />
                         <v-btn v-if="item.activo == 1" v-text="'Desactivar'" color="red" text small @click="desactivar(item.id)" />
                     </template>
@@ -62,8 +61,7 @@
                 </v-card-title>
                 <v-data-table :items="tareas2" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Ver tarea'" color="blue" text small :to="{ path: `/Tareas/Entrega`,
-                    query: { id: item.id } }" />
+                        <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
                     </template>
                 </v-data-table>
             </v-card>
@@ -134,6 +132,17 @@ export default {
             tar.activo = 0
             const response = await this.$axios.put(`/tareas/${index}`, tar)
             location.reload();
+        },
+        entregaTarea(index: number) {
+            const idTar = index.toString()
+            const clave = "Anitalabalatina"
+            const idCifrado = CryptoJS.AES.encrypt(idTar, clave).toString();
+            localStorage.setItem("Tarea", idCifrado)
+            this.$router.push("/Tareas/Entrega")
+        },
+        verItem(item) {
+            localStorage.setItem("ver", "true")
+            this.$router.push(`/Tareas/${item.id}`)
         },
         cancelar() {
             this.$router.push('/proyectos')

@@ -22,17 +22,23 @@
 <script lang="ts">
 import XLSX from 'xlsx/dist/xlsx.full.min';
 import {jsPDF} from 'jspdf';
+const CryptoJS = require("crypto-js");
 
 export default {
     data: () => ({
         proyecto: {},
+        id: "",
     }),
 
     async beforeMount() {
-        const id = localStorage.getItem('proId')
+        const clave = "Anitalabalatina"
+        const idCifrado = localStorage.getItem("proId")
+        const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
+        const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
+        this.id = idDescifrado
         
         try {
-            const responseP = await this.$axios.get(`/proyectos/${id}`)
+            const responseP = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = responseP.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
@@ -49,7 +55,7 @@ export default {
             Status: ${pro.statuses[0].Estado}
             Encargado: ${pro.encargado.nombre}
             Carrera: ${pro.Carrera.nombre}`, 10, 10)
-            doc.save('Certificado.pdf')
+            doc.save('Progreso.pdf')
         },
 
         createExel(){

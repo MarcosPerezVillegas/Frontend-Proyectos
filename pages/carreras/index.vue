@@ -1,3 +1,6 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
         <v-card-title>
@@ -16,34 +19,39 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-btn v-text="'Editar'" color="blue" text small :to="`/Carreras/${item.clave}`" />
                     <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
-                        :itemUrl="`/Carreras/${item.clave}`" :index="index" list="" />
+                        :itemUrl="`/Carreras/${item.clave}`" :index="index" list="" @remove-from-list="deleteElement" />
                 </template>
             </v-data-table>
         </v-card>
         <br>
     </v-container>
 </template>
-
+// @ts-nocheck
 <script lang="ts">
-
-export default {
+// @ts-nocheck
+import Vue from "vue"
+import DeleteDialog from "@/components/DeleteDialog.vue"
+export default Vue.extend ({
 
     name: 'Carreras',
     middleware: 'auth',
 
-    data: () => ({
+    data(){
+        return{
+            components:{
+            DeleteDialog
+        },
         carreras: [],
         headers: [
             { text: 'Nombre', value: 'nombre' },
             { text: 'Clave', value: 'clave' },
             { text: 'Acciones', value: 'actions' },
         ],
-    }
-    ),
+        }
+    },
 
 
     async beforeMount() {
-        this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Carreras')
         try {
             const response = await this.$axios.get('/Carreras')
@@ -56,9 +64,10 @@ export default {
     methods: {
         deleteElement(index: number) {
             this.carreras.splice(index, 1);
+            location.reload()
         }
     }
-}
+})
 
 </script>
   

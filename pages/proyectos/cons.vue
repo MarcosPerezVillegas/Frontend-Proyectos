@@ -15,6 +15,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 import Docxtemplater from "docxtemplater";
 import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
@@ -54,6 +56,7 @@ export default {
     methods: {
         createDoc(){
             const pro = this.proyecto
+            // eslint-disable-next-line new-cap
             const doc = new jsPDF();
             doc.text(`El certificado en cuestion es otorgado por el proyecto ${pro.nombre} realizado
             bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)
@@ -62,6 +65,7 @@ export default {
 
         renderDoc() {
             const pro = this.proyecto
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const docs = document.getElementById("doc");
             loadFile(
                 "https://docxtemplater.com/tag-example.docx",
@@ -75,7 +79,7 @@ export default {
                         linebreaks: true,
                     });
 
-                    //doc.setData(docid)
+                    // doc.setData(docid)
                     // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
                     doc.render({
                         first_name: pro.nombre,

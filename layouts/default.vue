@@ -104,7 +104,9 @@
 </template>
 
 <script lang="ts">
-import Cookies from 'js-cookie';
+
+// @ts-nocheck
+
 const CryptoJS = require("crypto-js");
 export default {
   name: 'DefaultLayout',

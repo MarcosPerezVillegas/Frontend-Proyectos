@@ -34,6 +34,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 const CryptoJS = require("crypto-js");
 export default {
     name: 'UsuariosCreate',
@@ -55,8 +57,7 @@ export default {
     async beforeMount() {
         try {
             const res = await this.$axios.get('/Login')
-            const response = await this.$axios.get(`/Proyectos/Usuario/${res.data.codigo}`)
-            const proyectos = response.data.data.map(proyecto => proyecto.nombre)
+            await this.$axios.get(`/Proyectos/Usuario/${res.data.codigo}`)
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }

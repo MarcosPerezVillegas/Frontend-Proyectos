@@ -1,3 +1,7 @@
+<!-- eslint-disable vue/no-parsing-error -->
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
         <v-row>
@@ -44,7 +48,7 @@
                             </v-list-item>
                         </v-list>  
                     </v-menu>
-                    <v-btn v-if="roles.rol == 'alumno'"@click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
+                    <v-btn v-if="roles.rol == 'alumno'" @click="selecID(item.id)" v-text="'ver proyecto'" color="green" text small />
                 </template>
             </v-data-table>
         </v-card>
@@ -102,7 +106,9 @@
 </template>
 
 <script lang="ts">
-import XLSX from 'xlsx/dist/xlsx.full.min';
+
+// @ts-nocheck
+
 import {jsPDF} from 'jspdf';
 const CryptoJS = require("crypto-js");
 
@@ -166,6 +172,7 @@ export default {
         async contPro (index: number){
             const response = await this.$axios.get(`/proyectos/${index}`)
             const pro = response.data.data
+            // eslint-disable-next-line new-cap
             const doc = new jsPDF();
             doc.text(`El certificado en cuestion es otorgado por el proyecto ${pro.nombre} realizado
             bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)

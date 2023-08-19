@@ -32,6 +32,7 @@
 
 <script lang="ts">
 
+// @ts-nocheck
 
 export default {
     name: 'UsuariosCreate',
@@ -70,7 +71,7 @@ export default {
                         const response = await this.$axios.post('/Maestros', this.usuario)
                         this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                     } catch (error) {
-                        this.$nuxt.$emit('show-snackbar', 'red', error.message)
+                        this.$nuxt.$emit('show-snackbar', 'red', (error as Error).message)
                     }
                 } else {
                     try {

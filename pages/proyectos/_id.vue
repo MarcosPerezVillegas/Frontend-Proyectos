@@ -30,6 +30,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 export default {
     name: 'ProyectosUpdate',
     middleware: 'auth',

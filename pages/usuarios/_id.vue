@@ -30,6 +30,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -54,28 +56,30 @@ export default {
     async beforeMount() {
         try {
             const clave = "Encriptar"
-            let url = localStorage.getItem("url")
-            const urlCryp = CryptoJS.AES.decrypt(url, clave);
-            url = urlCryp.toString(CryptoJS.enc.Utf8);
-            this.url = url
-
-            let rol = localStorage.getItem("rol")
-            const rolCryp = CryptoJS.AES.decrypt(rol, clave);
-            rol = rolCryp.toString(CryptoJS.enc.Utf8);
-
+            const url = localStorage.getItem("url")
+            if(url !== null){
+                const urlCryp = CryptoJS.AES.decrypt(url, clave);
+                this.url = urlCryp.toString(CryptoJS.enc.Utf8);
+            }
+            const rol = localStorage.getItem("rol")
+            if(rol !== null){
+                const rolCryp = CryptoJS.AES.decrypt(rol, clave);
+                this.rol_inicial = rolCryp.toString(CryptoJS.enc.Utf8);
+                this.rol_usuario = this.rol_inicial
+            }
+            
             let codigo = localStorage.getItem("codigo")
             const codigoCryp = CryptoJS.AES.decrypt(codigo, clave);
             codigo = codigoCryp.toString(CryptoJS.enc.Utf8);
 
-            const response = await this.$axios.get(url)
-            this.rol_usuario = rol
-            this.rol_inicial = rol
+            const response = await this.$axios.get(this.url)
             this.usuario = response.data.data
         } catch (error) {
-            this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            this.$nuxt.$emit('show-snackbar', 'red', (error as Error).message)
         }
     },
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, vue/order-in-components
     beforeRouteLeave(to, from, next) {
         localStorage.removeItem("url");
         localStorage.removeItem("codigo");
@@ -102,7 +106,7 @@ export default {
                 }
             }
             catch (error) {
-                return this.$nuxt.$emit('show-snackbar', 'red', "Algo salió mal: ", error.message)
+                return this.$nuxt.$emit('show-snackbar', 'red', "Algo salió mal: ", (error as Error).message)
             }
             try {
                 if (this.rol_inicial !== this.rol_usuario) {
@@ -117,7 +121,7 @@ export default {
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/Usuarios')
             } catch (error) {
-                this.$nuxt.$emit('show-snackbar', 'red', error.message)
+                this.$nuxt.$emit('show-snackbar', 'red', (error as Error).message)
             }
         },
 

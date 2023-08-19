@@ -26,6 +26,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 export default {
     name: 'UsuariosUpdate',
     middleware: 'auth',

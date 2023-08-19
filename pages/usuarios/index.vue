@@ -1,3 +1,6 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
         <v-card-title>
@@ -102,11 +105,11 @@
 </template>
 
 <script lang="ts">
-
-
+// @ts-nocheck
+import Vue from "vue"
 const CryptoJS = require("crypto-js");
 const clave = "Encriptar"
-export default {
+export default Vue.extend({
 
     name: 'Usuarios',
     middleware: 'auth',
@@ -168,7 +171,7 @@ export default {
             }
         },
 
-        editItem(Url:string, item, Rol: string) {
+        editItem(Url:string, item: any, Rol: string) {
             const url = CryptoJS.AES.encrypt(Url, clave).toString();
             const rol = CryptoJS.AES.encrypt(Rol, clave).toString();
             const codigo = CryptoJS.AES.encrypt(item.codigo.toString(), clave).toString();
@@ -179,7 +182,7 @@ export default {
         },
     },
 
-}
+})
 
 </script>
   

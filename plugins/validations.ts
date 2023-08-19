@@ -1,5 +1,8 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// @ts-nocheck
+
 export default (context, inject) => {
-    console.log('Funciona!')
     const validations = {
         notEmpty(value: String) {
             return value !== '' || 'El campo es obligatorio'

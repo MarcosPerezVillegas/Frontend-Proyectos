@@ -39,6 +39,8 @@
   
 <script lang="ts">
 
+// @ts-nocheck
+
 export default {
 
     name: "Login",
@@ -77,12 +79,11 @@ export default {
             this.$refs.form.validate()
             if (!this.validForm) return
             try {
-                const response = await this.$auth.loginWith('local', { data: this.login })
-                const email = this.login.email
+                await this.$auth.loginWith('local', { data: this.login })
                     try {
-                        const responseM = await this.$axios.get(`/Maestros/Email/${email}`)
+                        await this.$axios.get(`/Maestros/Email/${this.login.email}`)
                     } catch{}
-                const responseA = await this.$axios.get(`/Alumnos/Email/${email}`)
+                await this.$axios.get(`/Alumnos/Email/${this.login.email}`)
                 
             } catch (error) {
                 this.hasError = true

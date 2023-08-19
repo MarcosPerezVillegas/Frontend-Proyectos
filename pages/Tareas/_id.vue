@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container>
         <v-card v-if="ver === 'true'">
@@ -51,6 +52,7 @@
 
 <script lang="ts">
 
+// @ts-nocheck
 
 export default {
     name: 'TareasUpdate',
@@ -84,7 +86,7 @@ export default {
             this.proyecto = respon.data.data.nombre
             if (this.ver === "true") {
                 try {
-                    const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
+                    await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
                         responseType: 'arraybuffer',
                     })
                     this.entregada = true

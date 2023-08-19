@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-dialog v-model="restoreDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
@@ -20,6 +21,8 @@
 </template>
 
 <script lang="ts">
+
+// @ts-nocheck
 
 export default {
     name: "RestoreDialog",

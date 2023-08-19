@@ -32,6 +32,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 const CryptoJS = require("crypto-js");
 
 export default {

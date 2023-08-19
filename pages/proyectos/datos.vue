@@ -1,3 +1,8 @@
+<!-- eslint-disable vue/no-unused-vars -->
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/v-slot-style -->
+<!-- eslint-disable vue/require-v-for-key -->
 <template>
     <v-container>
         <v-form @submit.prevent="guardar">
@@ -71,6 +76,8 @@
 
 <script lang="ts">
 
+// @ts-nocheck
+
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -102,16 +109,15 @@ export default {
         this.id = idDescifrado
         
         try {
-            const response = await this.$axios.get(`/proyectos/${this.id}`)
+            const response = await this.$axios.get(`/proyectos/${this.id}`);
             this.proyecto = response.data.data
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.participantes = this.proyecto.Alumnos
-            const responseT = await this.$axios.get(`/tareas/proyecto/${this.id}`)
+            const responseT = await this.$axios.get(`/tareas/proyecto/${this.id}`);
             this.tareas = responseT.data.data
-            const ta2 = this.tareas.filter(item => item.activo == 1)
-            this.tareas2 = ta2
-            const responseR = await this.$axios.get('/login')
+            this.tareas2 = this.tareas.filter(item => item.activo === 1)
+            const responseR = await this.$axios.get('/login');
             this.roles = responseR.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
@@ -120,17 +126,17 @@ export default {
 
     methods: {
         async activar(index: number){
-            const responseT = await this.$axios.get(`/tareas/${index}`)
-            const tar = responseT.data.data
+            const response = await this.$axios.get(`/tareas/${index}`)
+            const tar = response.data.data
             tar.activo = 1
-            const response = await this.$axios.put(`/tareas/${index}`, tar)
+            await this.$axios.put(`/tareas/${index}`, tar)
             location.reload();
         },
         async desactivar(index: number){
-            const responseT = await this.$axios.get(`/tareas/${index}`)
-            const tar = responseT.data.data
+            const response = await this.$axios.get(`/tareas/${index}`)
+            const tar = response.data.data
             tar.activo = 0
-            const response = await this.$axios.put(`/tareas/${index}`, tar)
+            await this.$axios.put(`/tareas/${index}`, tar)
             location.reload();
         },
         entregaTarea(index: number) {

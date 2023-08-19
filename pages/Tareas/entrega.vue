@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-form>
             <v-card v-if="entregada === 1">
                 <v-card-actions>
                     <p>Ya Entregaste esta tarea</p>
@@ -43,6 +43,8 @@
 </template>
 
 <script lang="ts">
+
+// @ts-nocheck
 
 const CryptoJS = require("crypto-js");
 
@@ -101,6 +103,7 @@ export default {
         }
     },
 
+    // eslint-disable-next-line vue/order-in-components, @typescript-eslint/no-unused-vars
     beforeRouteLeave(to, from, next) {
         localStorage.removeItem("Tarea");
         next();
@@ -125,7 +128,7 @@ export default {
                 const response = await this.$axios.post(`Tarea/Entrega/${restar.data.data.nombre}/${respro.data.data.nombre}`, formData)
                 this.tarea.entregada = 1
                 this.tarea.entregante = this.alumno
-                const res = await this.$axios.put(`/Tareas/${this.id}`, this.tarea)
+                await this.$axios.put(`/Tareas/${this.id}`, this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)

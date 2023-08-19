@@ -20,6 +20,9 @@
 </template>
 
 <script lang="ts">
+
+// @ts-nocheck
+
 import XLSX from 'xlsx/dist/xlsx.full.min';
 import {jsPDF} from 'jspdf';
 const CryptoJS = require("crypto-js");
@@ -48,6 +51,7 @@ export default {
     methods: {
         createPDF(){
             const pro = this.proyecto
+            // eslint-disable-next-line new-cap
             const doc = new jsPDF();
             doc.text(`
             Nombre: ${pro.nombre}

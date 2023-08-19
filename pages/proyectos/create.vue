@@ -32,6 +32,7 @@
 
 <script lang="ts">
 
+// @ts-nocheck
 
 export default {
     name: 'ProyectosCreate',
@@ -85,15 +86,11 @@ export default {
                 const responseA = await this.$axios.get(`/Maestros/Admins`)
                 const Maestros = response.data.data
                 const Admins = responseA.data.data
-                console.log(Maestros)
                 const usuarios= [...Admins,...Maestros]
-                console.log(Admins)
-                console.log(usuarios)
 
                 const encargadosItems = usuarios.map(usuario => usuario.nombre)
                 return encargadosItems
             }catch(error){
-                console.log(error)
                 return []
 
             }
@@ -117,9 +114,7 @@ export default {
                 const usuarios = responseA.data.data
                 this.encargado_nombre = usuarios.nombre
                 this.encargados = await this.getEncargados();
-                console.log(this.encargados)
             }catch(error) {
-                console.log(error);
                 this.encargados = [];
             }
         },
@@ -127,7 +122,6 @@ export default {
             try {
                 this.carreras = await this.getCarreras();
             }catch(error) {
-                console.log(error);
                 this.carreras = [];
             }
         }

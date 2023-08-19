@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-dialog v-model="confirmDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
@@ -20,6 +21,8 @@
 </template>
 
 <script lang="ts">
+
+// @ts-nocheck
 
 const CryptoJS = require("crypto-js");
 
@@ -76,9 +79,9 @@ export default {
                 const responseA = await this.$axios.get(`/alumnos/${rol.codigo}`)
                 this.alum = responseA.data.data
                 this.alum.proyecto_id = this.id
-                const responseB = await this.$axios.put(`/alumnos/${rol.codigo}`, this.alum)
+                await this.$axios.put(`/alumnos/${rol.codigo}`, this.alum)
                 this.proyecto.alumnos = pro.alumnos - 1
-                const responseC = await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
+                await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
                 location.replace('/proyectos/datos');     
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)

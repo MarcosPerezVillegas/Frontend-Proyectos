@@ -25,6 +25,7 @@
 
 <script lang="ts">
 
+// @ts-nocheck
 
 export default {
     name: 'UsuariosCreate',

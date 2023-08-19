@@ -1,3 +1,6 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
         <v-card-title>
@@ -26,7 +29,7 @@
                             <v-list-item>
                                 <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'
                                     de manera permanente? esta acción no se puede deshacer`" :index="index"
-                                    :item="item.codigo" :itemUrl="`/Maestros/${item.codigo}`" :list="'Administradores'" />
+                                    :item="item.codigo" :itemUrl="`/Maestros/Eliminados/${item.codigo}`" :list="'Administradores'" />
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -59,7 +62,7 @@
                             <v-list-item>
                                 <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'
                                     de manera permanente? esta acción no se puede deshacer`" :index="index"
-                                    :item="item.codigo" :itemUrl="`/Maestros/${item.codigo}`" :list="'Maestros'" />
+                                    :item="item.codigo" :itemUrl="`/Maestros/Eliminados/${item.codigo}`" :list="'Maestros'" />
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -92,7 +95,7 @@
                             <v-list-item>
                                 <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'
                                     de manera permanente? esta acción no se puede deshacer`" :index="index"
-                                    :item="item.codigo" :itemUrl="`/Alumnos/${item.codigo}`" :list="'Alumnos'" />
+                                    :item="item.codigo" :itemUrl="`/Alumnos/Eliminados/${item.codigo}`" :list="'Alumnos'" />
                             </v-list-item>
                         </v-list>
                     </v-menu>
@@ -110,6 +113,8 @@
 </template>
 
 <script lang="ts">
+
+// @ts-nocheck
 
 export default {
 

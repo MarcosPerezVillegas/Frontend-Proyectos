@@ -30,6 +30,7 @@
 
 <script lang="ts">
 
+// @ts-nocheck
 
 export default {
     name: 'UsuariosCreate',
@@ -56,11 +57,11 @@ export default {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
                 try {
-                    const responseM = await this.$axios.get(`/Maestros/Email/${this.usuario.email}`)
+                    await this.$axios.get(`/Maestros/Email/${this.usuario.email}`)
                     return this.$nuxt.$emit('show-snackbar', 'red', 'El correo electrónico ya está registrado')
                 }catch{
                     try {
-                        const responseA = await this.$axios.get(`/Alumnos/Email/${this.usuario.email}`)
+                        await this.$axios.get(`/Alumnos/Email/${this.usuario.email}`)
                         return this.$nuxt.$emit('show-snackbar', 'red', 'El correo electrónico ya está registrado')
                     }catch{}
                 }

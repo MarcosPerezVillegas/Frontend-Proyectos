@@ -30,7 +30,6 @@
 <script lang="ts">
 // @ts-nocheck
 import Vue from "vue"
-import DeleteDialog from "@/components/DeleteDialog.vue"
 export default Vue.extend ({
 
     name: 'Carreras',
@@ -38,9 +37,6 @@ export default Vue.extend ({
 
     data(){
         return{
-            components:{
-            DeleteDialog
-        },
         carreras: [],
         headers: [
             { text: 'Nombre', value: 'nombre' },
@@ -52,6 +48,7 @@ export default Vue.extend ({
 
 
     async beforeMount() {
+        this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Carreras')
         try {
             const response = await this.$axios.get('/Carreras')

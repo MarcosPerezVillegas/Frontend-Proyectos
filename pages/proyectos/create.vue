@@ -6,15 +6,15 @@
                     Crear proyecto
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="proyecto.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="proyecto.objetivos" label="Objetivos"></v-text-field>
-                    <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"></v-text-field>
-                    <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"></v-text-field>
-                    <v-text v-if="roles.rol == 'maestro'">Encargado</v-text><br>
-                    <v-text v-if="roles.rol == 'maestro'" style="font-size: larger;">{{encargado_nombre}}</v-text>
-                    <v-combobox v-if="roles.rol == 'administrador'" v-model="encargado_nombre" label="Encargado" :items="encargados"></v-combobox>
-                    <v-text-field v-model="proyecto.alumnos" label="Espacios de registro" type="integer"></v-text-field>
-                    <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras"></v-combobox>
+                    <v-text-field v-model="proyecto.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="proyecto.objetivos" label="Objetivos" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text v-if="roles.rol === 'maestro'">Encargado</v-text><br>
+                    <v-text v-if="roles.rol === 'maestro'" style="font-size: larger;">{{encargado_nombre}}</v-text>
+                    <v-combobox v-if="roles.rol === 'administrador'" v-model="encargado_nombre" label="Encargado" :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
+                    <v-text-field v-model="proyecto.alumnos" label="Espacios de registro" type="integer" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras" :rules="[$validations.notEmpty]"></v-combobox>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -63,6 +63,10 @@ export default {
 
     methods: {
         async guardar() {
+            if (this.proyecto.nombre === "" || this.proyecto.objetivos === "" || this.carrera_nombre === "" ||
+                this.proyecto.fechainicio === "" || this.proyecto.fechafinal === "" || this.proyecto.alumnos === "") {
+                return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
+            }
             try {
                 const resEnca = await this.$axios.get(`/Maestros/Nombre/${this.encargado_nombre}`)
                 const Encargado = resEnca.data.data

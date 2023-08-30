@@ -125,7 +125,7 @@ export default {
             try {
                 const restar = await this.$axios.get(`/Tareas/${this.id}`)
                 const respro = await this.$axios.get(`/Proyectos/${restar.data.data.Proyecto_id}`)
-                const response = await this.$axios.post(`Tarea/Entrega/${restar.data.data.nombre}/${respro.data.data.nombre}`, formData)
+                const response = await this.$axios.post(`Tarea/Entrega/${this.id}/${respro.data.data.nombre}`, formData)
                 this.tarea.entregada = 1
                 this.tarea.entregante = this.alumno
                 await this.$axios.put(`/Tareas/${this.id}`, this.tarea)

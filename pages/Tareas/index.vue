@@ -72,7 +72,7 @@
         </v-card>
         <br>
         <br>
-        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" style="font-size: large ;">A continuación se
+        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador' && seleccionado" style="font-size: large ;">A continuación se
             muestran solo las tareas con estado Activo igual que 1 y que esten
             pendientes de revisar</p>
         <v-card v-if="seleccionado">

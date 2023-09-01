@@ -106,7 +106,7 @@
                     Agregar un Estado al proyecto
                 </v-card-title>
                 <v-card-text>
-                    <v-combobox v-model="estado.estado" label="Estado" :items="estados"
+                    <v-combobox v-model="est.estado" label="Estado" :items="estados"
                         :rules="[$validations.notEmpty]"></v-combobox>
                     <v-text-field v-model="estado.nota" label="Nota"></v-text-field>
                 </v-card-text>
@@ -136,9 +136,9 @@
 <script lang="ts">
 
 // @ts-nocheck
-
-const CryptoJS = require("crypto-js");
 import {jsPDF} from 'jspdf';
+const CryptoJS = require("crypto-js");
+
 
 export default {
     name: 'ProyectosDatos',
@@ -171,7 +171,7 @@ export default {
             { text: 'Estado', value: 'Estado' },
             { text: 'Nota', value: 'Nota' },
         ],
-        estado: {
+        est: {
             estado: "",
             nota: "",
             status_id: 0
@@ -274,9 +274,9 @@ export default {
                 return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
             }
             try {
-                const res = await this.$axios.get(`/Status/Estado/${this.estado.estado}`)
-                this.estado.status_id = res.data.data.id
-                await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.estado)
+                const res = await this.$axios.get(`/Status/Estado/${this.est.estado}`)
+                this.est.status_id = res.data.data.id
+                await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.est)
                 this.$nuxt.$emit('show-snackbar', 'green', 'Se agregó el estado correctamente')
                 location.reload()
                 

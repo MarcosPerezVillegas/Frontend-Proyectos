@@ -108,7 +108,7 @@
                 <v-card-text>
                     <v-combobox v-model="est.estado" label="Estado" :items="estados"
                         :rules="[$validations.notEmpty]"></v-combobox>
-                    <v-text-field v-model="estado.nota" label="Nota"></v-text-field>
+                    <v-text-field v-model="est.nota" label="Nota"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />

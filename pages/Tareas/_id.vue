@@ -69,6 +69,7 @@ export default {
         },
         estado: "",
         proyecto: "",
+        id: "",
         Proyectos: [""],
         nombre: "",
         ver: "",
@@ -83,10 +84,11 @@ export default {
             const response = await this.$axios.get(`/Tareas/${id}`)
             this.tarea = response.data.data
             const respon = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
+            this.id = this.tarea.Proyecto_id
             this.proyecto = respon.data.data.nombre
             if (this.ver === "true") {
                 try {
-                    await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
+                    await this.$axios.get(`/Tarea/Cargar/${this.tarea.id}/${this.tarea.Proyecto_id}`, {
                         responseType: 'arraybuffer',
                     })
                     this.entregada = true
@@ -142,7 +144,7 @@ export default {
 
         async descargarArchivo() {
             try {
-                const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.nombre}/${this.proyecto}`, {
+                const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.id}/${this.id}`, {
                     responseType: 'arraybuffer',
                 })
                 const blob = new Blob([res.data], { type: 'application/pdf' })

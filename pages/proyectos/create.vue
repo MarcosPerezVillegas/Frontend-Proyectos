@@ -13,7 +13,7 @@
                     <v-text v-if="roles.rol === 'maestro'">Encargado</v-text><br>
                     <v-text v-if="roles.rol === 'maestro'" style="font-size: larger;">{{encargado_nombre}}</v-text>
                     <v-combobox v-if="roles.rol === 'administrador'" v-model="encargado_nombre" label="Encargado" :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
-                    <v-text-field v-model="proyecto.alumnos" label="Espacios de registro" type="integer" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="proyecto.alumnos" label="Alumnos solicitados" type="integer" :rules="[$validations.notEmpty]"></v-text-field>
                     <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras" :rules="[$validations.notEmpty]"></v-combobox>
                 </v-card-text>
                 <v-card-actions>

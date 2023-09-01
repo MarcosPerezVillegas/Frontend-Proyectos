@@ -26,7 +26,7 @@
             snackbarColor: '',
             snackbarMessage: '',
             snackbar: false,
-            title: 'Registrate!!'
+            title: 'Registrate'
         }
     },
     

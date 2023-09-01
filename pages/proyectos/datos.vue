@@ -15,19 +15,19 @@
             <br>
             <v-card>
                 <v-card-title>
-                    {{proyecto.nombre}}
+                    {{ proyecto.nombre }}
                 </v-card-title>
                 <v-card-text>
-                    Maestro encargado: {{maestro}}
+                    Maestro encargado: {{ maestro }}
                     <v-spacer />
-                    Carrera: {{carrera}}
+                    Carrera: {{ carrera }}
                 </v-card-text>
                 <v-card-text>
                     ALumnos Participantes:
                     <v-card-text v-if="participantes.length == 0"> Ninguno </v-card-text>
-                    <br> 
+                    <br>
                     <li v-for="item in participantes">
-                        {{item.nombre}}
+                        {{ item.nombre }}
                         <br>
                     </li>
                 </v-card-text>
@@ -38,13 +38,13 @@
                     Objetivos
                 </v-card-title>
                 <v-card-text>
-                    {{proyecto.objetivos}}
+                    {{ proyecto.objetivos }}
                 </v-card-text>
                 <v-card-title>
                     Fecha de Entrega
                 </v-card-title>
                 <v-card-text>
-                    {{proyecto.fechafinal}}
+                    {{ proyecto.fechafinal }}
                 </v-card-text>
             </v-card>
             <br>
@@ -55,8 +55,10 @@
                 <v-data-table :items="tareas" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Ver tarea'" color="blue" text small @click="verItem(item)" />
-                        <v-btn v-if="item.activo == 0" v-text="'Activar'" color="green" text small @click="activar(item.id)" />
-                        <v-btn v-if="item.activo == 1" v-text="'Desactivar'" color="red" text small @click="desactivar(item.id)" />
+                        <v-btn v-if="item.activo == 0" v-text="'Activar'" color="green" text small
+                            @click="activar(item.id)" />
+                        <v-btn v-if="item.activo == 1" v-text="'Desactivar'" color="red" text small
+                            @click="desactivar(item.id)" />
                     </template>
                 </v-data-table>
             </v-card>
@@ -68,6 +70,43 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
                     </template>
+                </v-data-table>
+            </v-card>
+            <br>
+            <v-row>
+                <v-spacer />
+                <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador' && estatus === 0"
+                    @click="CambiarEstatus()" color="green">
+                    Agregar un estado al proyecto
+                </v-btn>
+            </v-row>
+            <br>
+            <v-card v-if="estatus === 1">
+                <v-card-title>
+                    Agregar un Estado al proyecto
+                </v-card-title>
+                <v-card-text>
+                    <v-combobox v-model="estado.estado" label="Estado" :items="estados"
+                        :rules="[$validations.notEmpty]"></v-combobox>
+                    <v-text-field v-model="estado.nota" label="Nota"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn color="red" @click="CambiarEstatus()">
+                        Cancelar
+                    </v-btn>
+                    <v-btn @click="agregarStatus()" color="green">
+                        Guardar
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <br>
+            <v-card>
+                <v-card-title>
+                    Registro Histórico
+                </v-card-title>
+                <v-data-table :items="registros" :headers="headersH">
+                    <!-- Aquí puedes personalizar la visualización de las celdas si es necesario -->
                 </v-data-table>
             </v-card>
         </v-form>
@@ -84,6 +123,7 @@ export default {
     name: 'ProyectosDatos',
     middleware: 'auth',
     data: () => ({
+        estatus: 0,
         roles: {},
         proyecto: {},
         maestro: "",
@@ -92,12 +132,24 @@ export default {
         participantes: [],
         tareas: [],
         tareas2: [],
+        registros: [],
+        estados: [],
         headers: [
             { text: 'Nombre', value: 'nombre' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
             { text: 'Hora de entrega', value: 'hora_limite' },
             { text: 'Acciones', value: 'actions' },
-        ]
+        ],
+        headersH: [
+            { text: 'Fecha', value: 'Fecha' },
+            { text: 'Estado', value: 'Estado' },
+            { text: 'Nota', value: 'Nota' },
+        ],
+        estado: {
+            estado: "",
+            nota: "",
+            status_id: 0
+        }
     }),
 
     async beforeMount() {
@@ -107,10 +159,21 @@ export default {
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
         this.id = idDescifrado
-        
+
         try {
             const response = await this.$axios.get(`/proyectos/${this.id}`);
             this.proyecto = response.data.data
+            const Estados = this.proyecto.statuses.map(status => ({
+                Fecha: new Date(status.statusProyecto.createdAt).toISOString().split('T')[0],
+                Estado: status.Estado,
+                Nota: status.statusProyecto.nota,
+            }));
+            this.registros = Estados;
+
+            const responseS = await this.$axios.get(`/Status`);
+            responseS.data.data.map(status => (
+                this.estados = this.estados.concat(status.Estado)
+            ));
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.participantes = this.proyecto.Alumnos
@@ -125,14 +188,14 @@ export default {
     },
 
     methods: {
-        async activar(index: number){
+        async activar(index: number) {
             const response = await this.$axios.get(`/tareas/${index}`)
             const tar = response.data.data
             tar.activo = 1
             await this.$axios.put(`/tareas/${index}`, tar)
             location.reload();
         },
-        async desactivar(index: number){
+        async desactivar(index: number) {
             const response = await this.$axios.get(`/tareas/${index}`)
             const tar = response.data.data
             tar.activo = 0
@@ -152,6 +215,25 @@ export default {
         },
         cancelar() {
             this.$router.push('/proyectos')
+        },
+        async agregarStatus() {
+            if (this.estado.estado === "") {
+                return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
+            }
+            try {
+                const res = await this.$axios.get(`/Status/Estado/${this.estado.estado}`)
+                this.estado.status_id = res.data.data.id
+                await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.estado)
+                this.$nuxt.$emit('show-snackbar', 'green', 'Se agregó el estado correctamente')
+                location.reload()
+                
+            } catch (error) {
+                this.$nuxt.$emit('show-snackbar', 'red', error.response.data.message)
+            }
+
+        },
+        CambiarEstatus() {
+            this.estatus = this.estatus === 0 ? 1 : 0;
         }
     }
 }

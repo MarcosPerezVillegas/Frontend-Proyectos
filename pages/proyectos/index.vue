@@ -17,7 +17,7 @@
             <v-data-table :items="proyectos" :headers="headers">
                 <template v-slot:item.statuses="item, index">
                     <span>
-                        {{ item.item.statuses[0].Estado }}
+                        {{ item.item.statuses[item.item.statuses.length -1].Estado }}
                     </span>
                 </template>
                 <template v-slot:item.actions="{ item, index }">
@@ -68,7 +68,7 @@
             <v-data-table :items="proMaes" :headers="headers">
                 <template v-slot:item.statuses="item, index">
                     <span>
-                        {{ item.item.statuses[0].Estado }}
+                        {{ item.item.statuses[item.item.statuses.length -1].Estado }}
                     </span>
                 </template>
                 <template v-slot:item.actions="{ item, index }">
@@ -137,6 +137,7 @@ export default {
         alum: {},
         proMaes: [],
         proyectos: [],
+        numEstat: "",
         headers: [
             { text: 'Nombre', value: 'nombre' },
             { text: 'Ultimo estado del proyecto', value: 'statuses' },

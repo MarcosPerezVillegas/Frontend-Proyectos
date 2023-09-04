@@ -1,12 +1,12 @@
 <template>
   <v-row>
     <v-col class="text-center">
-      <img src="/v.png" alt="Vuetify.js" class="mb-5" />
+      <img src="/udg.png" width="200" height="250" alt="Vuetify.js" class="mb-5" />
       <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
+        &#8220;Este sistema almacena datos de proyectos tecnológicos y ayuda a gestionar el progreso de los proyectos&#8221;
         <footer>
           <small>
-            <em>&mdash;John Johnson</em>
+            <em>Centro Universitario de los Valles</em>
           </small>
         </footer>
       </blockquote>

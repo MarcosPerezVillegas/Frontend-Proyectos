@@ -103,9 +103,7 @@ export default {
                 }
                 this.password = genRandonString(12)
                 Email.send({
-                    Host : "smtp.elasticemail.com",
-                    Username : "martin.lbarboza@alumnos.udg.mx",
-                    Password : "97ECF65718AAC048F7EC4744E34AA5BBA0EB",
+                    SecureToken : "4b6f9a26-4962-4794-a581-3030f01bf3e3",
                     To : this.usuario.email,
                     From : 'martin.lbarboza@alumnos.udg.mx',
                     Subject : "Recuperar contraseña",

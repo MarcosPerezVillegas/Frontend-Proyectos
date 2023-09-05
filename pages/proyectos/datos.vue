@@ -19,7 +19,7 @@
                         <v-btn color="blue" v-on="on" text small> Opciones </v-btn>
                     </template>
                     <v-list>
-                        <v-list-item v-if="estado == 'Activo'">
+                        <v-list-item v-if="estado !== 'Terminado'">
                             <v-list-item-action>
                                 <v-btn v-text="'Terminar Proyecto'" color="blue" text small @click="TerProg()" />
                             </v-list-item-action>
@@ -203,15 +203,11 @@ export default {
             this.maestro = this.proyecto.encargado.nombre;
             this.participantes = this.proyecto.Alumnos;
             this.estado = this.proyecto.statuses[0].Estado;
-            responseS.data.data.map(status => (
-                this.estados = this.estados.concat(status.Estado)
-            ));
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.participantes = this.proyecto.Alumnos
             const utl = this.proyecto.statuses.length
             this.estado = this.proyecto.statuses[utl-1].Estado
-            console.log(this.proyecto.statuses.length)
             const responseT = await this.$axios.get(`/tareas/proyecto/${this.id}`);
             this.tareas = responseT.data.data;
             this.tareas2 = this.tareas.filter(item => item.activo === 1);

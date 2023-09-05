@@ -12,6 +12,8 @@
                         :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
                     <v-text-field v-model="usuario.password" label="Contraseña" type="password"
                         :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="password" label="Confirmar contraseña" type="password"
+                        :rules="[$validations.notEmpty]"></v-text-field>
                     <v-combobox v-model="roles" label="Rol" :items="['Administrador', 'Maestro', 'Alumno']"></v-combobox>
                     <v-text-field v-model="usuario.telefono" label="Telefono" :rules="[$validations.notPhone]"></v-text-field>
 
@@ -46,6 +48,7 @@ export default {
             admin: 0,
 
         },
+        password: "",
         roles: ""
     }),
 
@@ -54,7 +57,7 @@ export default {
 
             try {
                 if (this.usuario.codigo === "" || this.usuario.email === "" || this.usuario.nombre === ""
-                    || this.usuario.password === "" || this.roles === null) {
+                    || this.usuario.password === "" || this.password ==="" || this.roles === null) {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
                 if (isNaN(Number(this.usuario.codigo))) {
@@ -62,6 +65,9 @@ export default {
                 }
                 if ((this.usuario.telefono !== "" && this.usuario.telefono.length !== 10) || isNaN(Number(this.usuario.telefono))) {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'El número de telefono solo puede contener números y no debe de superar los 10 digitos')
+                }
+                if (this.usuario.password !== this.password ) {
+                    return this.$nuxt.$emit('show-snackbar', 'orange', 'Las contraseñas no coinciden')
                 }
                 if (this.roles === 'Administrador') {
                     this.usuario.admin = 1

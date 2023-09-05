@@ -126,7 +126,11 @@
                     Registro Histórico
                 </v-card-title>
                 <v-data-table :items="registros" :headers="headersH">
-                    <!-- Aquí puedes personalizar la visualización de las celdas si es necesario -->
+                    <template v-slot:item.actions="{ item, index }">
+                    <RemoveState v-if="item.Estado !== 'Activo'"
+                        :description="`¿Está seguro de querer eliminar el registro del estado '${item.Estado}'?. Esta acción no se puede deshacer`"
+                        :id="id" :index="index" :estado="item.Estado" @remove-from-list="deleteElement" />
+                </template>
                 </v-data-table>
             </v-card>
         </v-form>
@@ -137,6 +141,7 @@
 
 // @ts-nocheck
 import {jsPDF} from 'jspdf';
+import RemoveState from '~/components/RemoveState.vue';
 const CryptoJS = require("crypto-js");
 
 
@@ -170,6 +175,7 @@ export default {
             { text: 'Fecha', value: 'Fecha' },
             { text: 'Estado', value: 'Estado' },
             { text: 'Nota', value: 'Nota' },
+            { text: 'Acciones', value: 'actions' },
         ],
         est: {
             estado: "",
@@ -177,118 +183,126 @@ export default {
             status_id: 0
         }
     }),
-
     async beforeMount() {
-        this.$store.commit('setTitle', 'Proyectos')
-        const clave = "Anitalabalatina"
-        const idCifrado = localStorage.getItem("proId")
+        this.$store.commit('setTitle', 'Proyectos');
+        this.$nuxt.$on('remove-from-list', this.deleteElement);
+        const clave = "Anitalabalatina";
+        const idCifrado = localStorage.getItem("proId");
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
-        this.id = idDescifrado
-
+        this.id = idDescifrado;
         try {
             const response = await this.$axios.get(`/proyectos/${this.id}`);
-            this.proyecto = response.data.data
+            this.proyecto = response.data.data;
             const Estados = this.proyecto.statuses.map(status => ({
                 Fecha: new Date(status.statusProyecto.createdAt).toISOString().split('T')[0],
                 Estado: status.Estado,
                 Nota: status.statusProyecto.nota,
             }));
             this.registros = Estados;
-
             const responseS = await this.$axios.get(`/Status`);
-            responseS.data.data.map(status => (
-                this.estados = this.estados.concat(status.Estado)
-            ));
-            this.carrera = this.proyecto.Carrera.nombre
-            this.maestro = this.proyecto.encargado.nombre
-            this.participantes = this.proyecto.Alumnos
-            this.estado = this.proyecto.statuses[0].Estado
+            responseS.data.data.map(status => (this.estados = this.estados.concat(status.Estado)));
+            this.estados.splice(2,1)
+            this.estados.splice(0,1)
+            this.carrera = this.proyecto.Carrera.nombre;
+            this.maestro = this.proyecto.encargado.nombre;
+            this.participantes = this.proyecto.Alumnos;
+            this.estado = this.proyecto.statuses[0].Estado;
             const responseT = await this.$axios.get(`/tareas/proyecto/${this.id}`);
-            this.tareas = responseT.data.data
-            this.tareas2 = this.tareas.filter(item => item.activo === 1)
+            this.tareas = responseT.data.data;
+            this.tareas2 = this.tareas.filter(item => item.activo === 1);
             const responseR = await this.$axios.get('/login');
-            this.roles = responseR.data
-        } catch (error) {
-            this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            this.roles = responseR.data;
+        }
+        catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error.message);
         }
     },
-
     methods: {
         async activar(index: number) {
-            const response = await this.$axios.get(`/tareas/${index}`)
-            const tar = response.data.data
-            tar.activo = 1
-            await this.$axios.put(`/tareas/${index}`, tar)
+            const response = await this.$axios.get(`/tareas/${index}`);
+            const tar = response.data.data;
+            tar.activo = 1;
+            await this.$axios.put(`/tareas/${index}`, tar);
             location.reload();
         },
         async desactivar(index: number) {
-            const response = await this.$axios.get(`/tareas/${index}`)
-            const tar = response.data.data
-            tar.activo = 0
-            await this.$axios.put(`/tareas/${index}`, tar)
+            const response = await this.$axios.get(`/tareas/${index}`);
+            const tar = response.data.data;
+            tar.activo = 0;
+            await this.$axios.put(`/tareas/${index}`, tar);
             location.reload();
         },
         entregaTarea(index: number) {
-            const idTar = index.toString()
-            const clave = "Anitalabalatina"
+            const idTar = index.toString();
+            const clave = "Anitalabalatina";
             const idCifrado = CryptoJS.AES.encrypt(idTar, clave).toString();
-            localStorage.setItem("Tarea", idCifrado)
-            this.$router.push("/Tareas/Entrega")
+            localStorage.setItem("Tarea", idCifrado);
+            this.$router.push("/Tareas/Entrega");
         },
         async contPro() {
-            const response = await this.$axios.get(`/proyectos/${this.id}`)
-            const pro = response.data.data
+            const response = await this.$axios.get(`/proyectos/${this.id}`);
+            const pro = response.data.data;
             // eslint-disable-next-line new-cap
             const doc = new jsPDF();
-            const res2 = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
-            const nombre = res2.data.data.nombre
+            const res2 = await this.$axios.get(`/alumnos/${this.roles.codigo}`);
+            const nombre = res2.data.data.nombre;
             doc.text(`El certificado en cuestion es otorgado a ${nombre} por el proyecto ${pro.nombre} realizado
-            bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)
-            doc.save('Certificado.pdf')
+            bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10);
+            doc.save('Certificado.pdf');
         },
         verItem(item) {
-            localStorage.setItem("ver", "true")
-            this.$router.push(`/Tareas/${item.id}`)
+            localStorage.setItem("ver", "true");
+            this.$router.push(`/Tareas/${item.id}`);
         },
         async TerProg() {
-            const terminar = await this.$axios.get(`/status`)
-            const terid = terminar.data.data.filter(item => item.id === 2)
-            if(terid.length == 0){
-                console.log(this.stat)
-                const estado = await this.$axios.post('/status', this.stat)
+            const terminar = await this.$axios.get(`/status`);
+            const terid = terminar.data.data.filter(item => item.id === 2);
+            if (terid.length == 0) {
+                console.log(this.stat);
+                await this.$axios.post('/status', this.stat);
             }
-            this.proyecto.estado = this.stat.Estado
-            await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
+            this.proyecto.estado = this.stat.Estado;
+            //await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto);
+            this.est.status_id = 3;
+            this.est.estado = 'Terminado'
+            this.est.nota = 'Proyecto finalizado'
+            await this.$axios.put(`/proyectos/${this.id}`, this.est);
             location.reload();
         },
         async ActProg() {
-            this.proyecto.estado = "Activo"
+            this.proyecto.estado = "Activo";
             //await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
         },
         cancelar() {
-            this.$router.push('/proyectos')
+            this.$router.push('/proyectos');
         },
         async agregarStatus() {
             if (this.estado.estado === "") {
-                return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
+                return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar');
             }
             try {
-                const res = await this.$axios.get(`/Status/Estado/${this.est.estado}`)
-                this.est.status_id = res.data.data.id
-                await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.est)
-                this.$nuxt.$emit('show-snackbar', 'green', 'Se agregó el estado correctamente')
-                location.reload()
-                
-            } catch (error) {
-                this.$nuxt.$emit('show-snackbar', 'red', error.response.data.message)
+                const res = await this.$axios.get(`/Status/Estado/${this.est.estado}`);
+                this.est.status_id = res.data.data.id;
+                await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.est);
+                this.$nuxt.$emit('show-snackbar', 'green', 'Se agregó el estado correctamente');
+                location.reload();
             }
-
+            catch (error) {
+                this.$nuxt.$emit('show-snackbar', 'red', error.response.data.message);
+            }
         },
         CambiarEstatus() {
             this.estatus = this.estatus === 0 ? 1 : 0;
-        }
-    }
+            this.est.estado = "";
+            this.est.nota = "";
+        },
+        deleteElement(index: number) {
+            this.estados.splice(index, 1);
+            location.reload()
+        },
+    },
+    components: { RemoveState }
 }
 
 </script>

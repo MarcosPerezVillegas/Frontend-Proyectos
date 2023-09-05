@@ -3,7 +3,7 @@
         <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
-                    Registrar Usuario
+                    Crear una carrera
                 </v-card-title>
                 <v-card-text>
                     <v-text-field v-model="carrera.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
@@ -29,7 +29,7 @@
 
 export default {
     name: 'UsuariosCreate',
-    layout: 'singIn',
+    layout: 'default',
     data: () => ({
         carrera: {
             nombre: "",

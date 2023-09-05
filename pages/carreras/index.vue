@@ -4,7 +4,7 @@
 <template>
     <v-container>
         <v-card-title>
-            Lista de todos los usuarios
+            Lista de todas las carreras
         </v-card-title>
         <v-row>
             <v-spacer />
@@ -12,7 +12,7 @@
         </v-row>
         <br>
         <v-card-title>
-            Administradores
+            Carreras
         </v-card-title>
         <v-card>
             <v-data-table :items="carreras" :headers="headers">

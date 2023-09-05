@@ -141,6 +141,11 @@ export default {
           to: '/Proyectos',
         },
         {
+          icon: 'mdi-checkbox-multiple-marked-circle',
+          title: 'Status',
+          to: '/Status',
+        },
+        {
           icon: 'mdi-clock-alert',
           title: 'Tareas',
           to: '/Tareas',

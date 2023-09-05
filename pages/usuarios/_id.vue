@@ -24,6 +24,34 @@
 
                 </v-card-actions>
             </v-card>
+            <br>
+            <v-row>
+                <v-spacer />
+                <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
+                    Cambiar contraseña
+                </v-btn>
+            </v-row>
+            <br>
+            <v-card v-if="btn === 1">
+                <v-card-title>
+                    Ingresa la nueva contraseña
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="pass.cont" label="Nueva contraseña" type="password"
+                        :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="pass.confCont" label="Confirma la contraseña" type="password"
+                        :rules="[$validations.notEmpty]"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn color="red" @click="CambiarBTN()">
+                        Cancelar
+                    </v-btn>
+                    <v-btn @click="CambiarPass()" color="green">
+                        Guardar
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
         </v-form>
     </v-container>
 </template>
@@ -41,11 +69,17 @@ export default {
         usuario: {
             codigo: "",
             nombre: "",
+            password: "",
             email: "",
             usuario: "",
             telefono: "",
             admin: 0,
         },
+        pass: {
+            cont: "",
+            confCont: "",
+        },
+        btn: 0,
         rol_usuario: "",
         rol: "",
         codigo: "",
@@ -57,17 +91,17 @@ export default {
         try {
             const clave = "Encriptar"
             const url = localStorage.getItem("url")
-            if(url !== null){
+            if (url !== null) {
                 const urlCryp = CryptoJS.AES.decrypt(url, clave);
                 this.url = urlCryp.toString(CryptoJS.enc.Utf8);
             }
             const rol = localStorage.getItem("rol")
-            if(rol !== null){
+            if (rol !== null) {
                 const rolCryp = CryptoJS.AES.decrypt(rol, clave);
                 this.rol_inicial = rolCryp.toString(CryptoJS.enc.Utf8);
                 this.rol_usuario = this.rol_inicial
             }
-            
+
             let codigo = localStorage.getItem("codigo")
             const codigoCryp = CryptoJS.AES.decrypt(codigo, clave);
             codigo = codigoCryp.toString(CryptoJS.enc.Utf8);
@@ -121,7 +155,7 @@ export default {
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/Usuarios')
             } catch (error) {
-                this.$nuxt.$emit('show-snackbar', 'red', (error as Error).message)
+                this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
 
@@ -133,6 +167,31 @@ export default {
 
         Cancelar() {
             window.history.back();
+        },
+
+        CambiarBTN() {
+            this.btn = this.btn === 0 ? 1 : 0;
+        },
+        async CambiarPass() {
+            try {
+                if (this.pass.cont === "" || this.pass.confCont === "") {
+                    return this.$nuxt.$emit('show-snackbar', 'orange', 'Ingresa las la contraseña correctamente.')
+                }
+                if (this.pass.cont !== this.pass.confCont) {
+                    return this.$nuxt.$emit('show-snackbar', 'red', 'Las contraseñas no coinciden')
+                }
+                this.usuario.password = this.pass.cont
+                const usu = {
+                    password: this.pass.cont
+                }
+                const response = await this.$axios.put(this.url, usu)
+                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+            } catch (error) {
+                this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            }
+            this.pass.cont=""
+            this.pass.confCont=""
+            this.btn=0
         }
     }
 }

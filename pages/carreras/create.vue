@@ -1,25 +1,36 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-container v-if="rol !== 'administrador'" justify-center align-center>
             <v-card>
-                <v-card-title>
-                    Crear una carrera
-                </v-card-title>
+                <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="carrera.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="carrera.clave" label="Clave" :rules="[$validations.notEmpty]"></v-text-field>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn to="/Carreras" color="red">
-                        Cancelar
-                    </v-btn>
-                    <v-btn type="submit" color="green">
-                        Guardar
-                    </v-btn>
-                </v-card-actions>
             </v-card>
-        </v-form>
+        </v-container>
+        <v-container v-else>
+            <v-form @submit.prevent="guardar">
+                <v-card>
+                    <v-card-title>
+                        Crear una carrera
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field v-model="carrera.nombre" label="Nombre"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="carrera.clave" label="Clave" :rules="[$validations.notEmpty]"></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn to="/Carreras" color="red">
+                            Cancelar
+                        </v-btn>
+                        <v-btn type="submit" color="green">
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-container>
     </v-container>
 </template>
 
@@ -31,11 +42,18 @@ export default {
     name: 'UsuariosCreate',
     layout: 'default',
     data: () => ({
+        rol: "",
         carrera: {
             nombre: "",
             clave: "",
         },
     }),
+
+    async beforeMount() {
+        const responseR = await this.$axios.get('/login')
+        this.rol = responseR.data.rol
+    },
+
 
     methods: {
         async guardar() {

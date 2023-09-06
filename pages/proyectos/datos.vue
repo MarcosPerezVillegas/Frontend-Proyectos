@@ -24,6 +24,11 @@
                                 <v-btn v-text="'Terminar Proyecto'" color="blue" text small @click="TerProg()" />
                             </v-list-item-action>
                         </v-list-item>
+                        <v-list-item v-if="estado === 'En espera'">
+                            <v-list-item-action>
+                                <v-btn v-text="'Validar proyecto'" color="blue" text small @click="ValPro()" />
+                            </v-list-item-action>
+                        </v-list-item>
                     </v-list>
                 </v-menu>
             </v-row>
@@ -88,15 +93,15 @@
                 </v-data-table>
             </v-card>
             <br>
-            <v-row>
+            <v-row v-if=" estado !== 'En espera'">
                 <v-spacer />
                 <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador' && estatus === 0"
                     @click="CambiarEstatus()" color="green">
                     Agregar un estado al proyecto
                 </v-btn>
             </v-row>
-            <br>
-            <v-card v-if="estatus === 1">
+            <br> 
+            <v-card v-if="estatus === 1 ">
                 <v-card-title>
                     Agregar un Estado al proyecto
                 </v-card-title>
@@ -122,7 +127,7 @@
                 </v-card-title>
                 <v-data-table :items="registros" :headers="headersH">
                     <template v-slot:item.actions="{ item, index }">
-                    <RemoveState v-if="item.Estado !== 'Activo'"
+                    <RemoveState v-if="item.Estado !== 'En espera'"
                         :description="`¿Está seguro de querer eliminar el registro del estado '${item.Estado}'?. Esta acción no se puede deshacer`"
                         :id="id" :index="index" :estado="item.Estado" @remove-from-list="deleteElement" />
                 </template>
@@ -148,7 +153,7 @@ export default {
         roles: {},
         proyecto: {},
         stat: {
-            id: "2",
+            id: "3",
             Estado: "Terminado",
         },
         estado: "",
@@ -202,7 +207,6 @@ export default {
             this.carrera = this.proyecto.Carrera.nombre;
             this.maestro = this.proyecto.encargado.nombre;
             this.participantes = this.proyecto.Alumnos;
-            this.estado = this.proyecto.statuses[0].Estado;
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.participantes = this.proyecto.Alumnos
@@ -295,17 +299,20 @@ export default {
             this.$router.push(`/Tareas/${item.id}`);
         },
         async TerProg() {
-            const terminar = await this.$axios.get(`/status`);
-            const terid = terminar.data.data.filter(item => item.id === 2);
-            if (terid.length == 0) {
-                console.log(this.stat);
-                await this.$axios.post('/status', this.stat);
-            }
-            this.proyecto.estado = this.stat.Estado;
+            this.proyecto.estado = 'Terminado'
             //await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto);
             this.est.status_id = 3;
             this.est.estado = 'Terminado'
             this.est.nota = 'Proyecto finalizado'
+            await this.$axios.put(`/proyectos/${this.id}`, this.est);
+            location.reload();
+        },
+        async ValPro() {
+            this.proyecto.estado = 'Activo'
+            //await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto);
+            this.est.status_id = 2;
+            this.est.estado = 'Activo'
+            this.est.nota = 'Proyecto validado'
             await this.$axios.put(`/proyectos/${this.id}`, this.est);
             location.reload();
         },

@@ -232,6 +232,7 @@ export default {
       }
       
     }
+    console.log(this.roles.rol)
     localStorage.removeItem("Tarea");
     localStorage.removeItem("url");
     localStorage.removeItem("codigo");

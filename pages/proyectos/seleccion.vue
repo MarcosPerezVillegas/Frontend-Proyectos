@@ -74,7 +74,7 @@ export default {
             this.proyecto = response.data.data
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
-            this.estado = this.proyecto.statuses[0].Estado
+            this.estado = this.proyecto.statuses[this.proyecto.statuses.length-1].Estado
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
         } catch (error) {

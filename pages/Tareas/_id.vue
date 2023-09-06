@@ -1,52 +1,62 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container>
-        <v-card v-if="ver === 'true'">
-            <v-card-title>
-                Nombre de la tarea: {{ tarea.nombre }}
-            </v-card-title>
-            <v-card-text>
-                Descripción de la tarea: {{ tarea.descripcion }}
-            </v-card-text>
-            <v-card-text>
-                Comentarios del profesor: {{ tarea.comentarios }}
-            </v-card-text>
-            <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
-            <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
-            <br>
-            <v-spacer/> <v-btn v-text="'Atras'" color="primary" @click="cancelar()" />
-        </v-card>
-        <v-form v-else @submit.prevent="guardar">
+        <v-container v-if="rol !== 'maestro' || rol !== 'administrador'" justify-center align-center>
             <v-card>
+                <v-card-title>Acceso Denegado</v-card-title>
+                <v-card-text>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                </v-card-text>
+            </v-card>
+        </v-container>
+        <v-container v-else>
+            <v-card v-if="ver === 'true'">
                 <v-card-title>
-                    Editar tarea
+                    Nombre de la tarea: {{ tarea.nombre }}
                 </v-card-title>
                 <v-card-text>
-                    <v-combobox v-model="proyecto" label="Proyecto al que quieras reasignar la tarea" :items="Proyectos"
-                        :rules="[$validations.notEmpty]"></v-combobox>
-                    <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.descripcion" label="Descripcion"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
-                        :rules="[$validations.notEmpty]"></v-combobox>
+                    Descripción de la tarea: {{ tarea.descripcion }}
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn type="submit">
-                        Guardar
-                    </v-btn>
-                    <v-btn @click="cancelar()" color="red">
-                        Cancelar
-                    </v-btn>
-                </v-card-actions>
+                <v-card-text>
+                    Comentarios del profesor: {{ tarea.comentarios }}
+                </v-card-text>
+                <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
+                <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
+                <br>
+                <v-spacer /> <v-btn v-text="'Atras'" color="primary" @click="cancelar()" />
             </v-card>
-        </v-form>
+            <v-form v-else @submit.prevent="guardar">
+                <v-card>
+                    <v-card-title>
+                        Editar tarea
+                    </v-card-title>
+                    <v-card-text>
+                        <v-combobox v-model="proyecto" label="Proyecto al que quieras reasignar la tarea" :items="Proyectos"
+                            :rules="[$validations.notEmpty]"></v-combobox>
+                        <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.descripcion" label="Descripcion"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
+                            :rules="[$validations.notEmpty]"></v-combobox>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn type="submit">
+                            Guardar
+                        </v-btn>
+                        <v-btn @click="cancelar()" color="red">
+                            Cancelar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-container>
     </v-container>
 </template>
 
@@ -80,6 +90,8 @@ export default {
     async beforeMount() {
         const id = this.$route.params.id
         this.ver = localStorage.getItem("ver")
+        const res = await this.$axios.get('/Login')
+        this.rol = res.data.rol
         try {
             const response = await this.$axios.get(`/Tareas/${id}`)
             this.tarea = response.data.data

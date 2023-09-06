@@ -212,7 +212,13 @@ export default {
                 this.tareas = this.tareas.concat(res.data.data)
             } else {
                 const respro = await this.$axios.get(`/Proyectos/Usuario/${this.usuario.codigo}`)
-                this.proyectos = respro.data.data
+                this.proyectos = respro.data.data.filter(proyecto => {
+                    // Obtiene el último estado del arreglo statuses
+                    const ultimoEstado = proyecto.statuses[proyecto.statuses.length - 1];
+
+                    // Verifica si el último estado es "En espera" y excluye el proyecto si es cierto
+                    return !(ultimoEstado && ultimoEstado.Estado === "En espera");
+                });
             }
 
             if (this.pro) {

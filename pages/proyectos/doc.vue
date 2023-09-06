@@ -1,5 +1,14 @@
 <template>
     <v-container>
+        <v-container v-if="rol !== 'maestro' || rol !== 'administrador'" justify-center align-center>
+            <v-card>
+                <v-card-title>Acceso Denegado</v-card-title>
+                <v-card-text>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                </v-card-text>
+            </v-card>
+        </v-container>
+        <v-container v-else>
         <v-row>
             <v-spacer />
             <v-btn @click="cancelar()" color="red">Cancelar</v-btn>
@@ -14,8 +23,8 @@
                 <br><br>
                 Formato PDF <v-btn @click="createPDF" color="red">Descargar</v-btn>    
             </v-card-text>
-            
         </v-card>
+        </v-container>
     </v-container>
 </template>
 
@@ -29,11 +38,14 @@ const CryptoJS = require("crypto-js");
 
 export default {
     data: () => ({
+        rol: "",
         proyecto: {},
         id: "",
     }),
 
     async beforeMount() {
+        const response = await this.$axios.get('/login')
+        this.rol = response.data.rol
         const clave = "Anitalabalatina"
         const idCifrado = localStorage.getItem("proId")
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);

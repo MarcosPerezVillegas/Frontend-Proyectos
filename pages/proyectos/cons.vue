@@ -1,15 +1,26 @@
 <template>
     <v-container>
-        <v-row>
-            <v-spacer />
-            <v-btn @click="createDoc">Render docx</v-btn>
-            <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()" color="red">Cancelar</v-btn>
-        </v-row>
-        <br>
-        <v-card>
-            <v-data-table :items="documento" :headers="headers">
-            </v-data-table>
-        </v-card>
+        <v-container v-if="rol !== 'maestro' || rol !== 'administrador'" justify-center align-center>
+            <v-card>
+                <v-card-title>Acceso Denegado</v-card-title>
+                <v-card-text>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                </v-card-text>
+            </v-card>
+        </v-container>
+        <v-container v-else>
+            <v-row>
+                <v-spacer />
+                <v-btn @click="createDoc">Render docx</v-btn>
+                <v-btn v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()"
+                    color="red">Cancelar</v-btn>
+            </v-row>
+            <br>
+            <v-card>
+                <v-data-table :items="documento" :headers="headers">
+                </v-data-table>
+            </v-card>
+        </v-container>
     </v-container>
 </template>
 
@@ -29,7 +40,7 @@ function loadFile(url, callback) {
 
 export default {
     data: () => ({
-        roles: {},
+        rol: "",
         documento: [],
         proyecto: {},
         headers: [
@@ -43,7 +54,7 @@ export default {
         const id = localStorage.getItem('proId')
         try {
             const responseR = await this.$axios.get('/login')
-            this.roles = responseR.data
+            this.rol = responseR.data.rol
             const response = await this.$axios.get(`/documentos`)
             this.documento = response.data.data
             const responseP = await this.$axios.get(`/proyectos/${id}`)
@@ -54,7 +65,7 @@ export default {
     },
 
     methods: {
-        createDoc(){
+        createDoc() {
             const pro = this.proyecto
             // eslint-disable-next-line new-cap
             const doc = new jsPDF();

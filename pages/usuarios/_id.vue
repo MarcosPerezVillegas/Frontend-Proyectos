@@ -1,58 +1,69 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
             <v-card>
-                <v-card-title>
-                    Editar usuario
-                </v-card-title>
+                <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
-                    <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"
-                        :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                    <v-combobox v-model="rol_usuario" label="Rol" :items="['Administrador', 'Maestro']"></v-combobox>
-                    <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn color="red" @click="Cancelar">
-                        Cancelar
-                    </v-btn>
-                    <v-btn color="green" type="submit">
-                        Guardar
-                    </v-btn>
+            </v-card>
+        </v-container>
+        <v-container v-else>
+            <v-form @submit.prevent="guardar">
+                <v-card>
+                    <v-card-title>
+                        Editar usuario
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
+                        <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
+                        <v-text-field v-model="usuario.email" label="Email"
+                            :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
+                        <v-combobox v-model="rol_usuario" label="Rol" :items="['Administrador', 'Maestro']"></v-combobox>
+                        <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn color="red" @click="Cancelar">
+                            Cancelar
+                        </v-btn>
+                        <v-btn color="green" type="submit">
+                            Guardar
+                        </v-btn>
 
-                </v-card-actions>
-            </v-card>
-            <br>
-            <v-row>
-                <v-spacer />
-                <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
-                    Cambiar contraseña
-                </v-btn>
-            </v-row>
-            <br>
-            <v-card v-if="btn === 1">
-                <v-card-title>
-                    Ingresa la nueva contraseña
-                </v-card-title>
-                <v-card-text>
-                    <v-text-field v-model="pass.cont" label="Nueva contraseña" type="password"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="pass.confCont" label="Confirma la contraseña" type="password"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                </v-card-text>
-                <v-card-actions>
+                    </v-card-actions>
+                </v-card>
+                <br>
+                <v-row>
                     <v-spacer />
-                    <v-btn color="red" @click="CambiarBTN()">
-                        Cancelar
+                    <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
+                        Cambiar contraseña
                     </v-btn>
-                    <v-btn @click="CambiarPass()" color="green">
-                        Guardar
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-form>
+                </v-row>
+                <br>
+                <v-card v-if="btn === 1">
+                    <v-card-title>
+                        Ingresa la nueva contraseña
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field v-model="pass.cont" label="Nueva contraseña" type="password"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="pass.confCont" label="Confirma la contraseña" type="password"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn color="red" @click="CambiarBTN()">
+                            Cancelar
+                        </v-btn>
+                        <v-btn @click="CambiarPass()" color="green">
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-container>
+
     </v-container>
 </template>
 
@@ -89,6 +100,8 @@ export default {
 
     async beforeMount() {
         try {
+            const respons = await this.$axios.get('/login')
+            this.rol = respons.data.rol
             const clave = "Encriptar"
             const url = localStorage.getItem("url")
             if (url !== null) {
@@ -189,9 +202,9 @@ export default {
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
-            this.pass.cont=""
-            this.pass.confCont=""
-            this.btn=0
+            this.pass.cont = ""
+            this.pass.confCont = ""
+            this.btn = 0
         }
     }
 }

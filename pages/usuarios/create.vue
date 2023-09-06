@@ -1,6 +1,15 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
+            <v-card>
+                <v-card-title>Acceso Denegado</v-card-title>
+                <v-card-text>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                </v-card-text>
+            </v-card>
+        </v-container>
+        <v-container v-else>
+            <v-form @submit.prevent="guardar">
             <v-card>
                 <v-card-title>
                     Registrar Usuario
@@ -29,6 +38,8 @@
                 </v-card-actions>
             </v-card>
         </v-form>
+        </v-container>
+        
     </v-container>
 </template>
 
@@ -39,6 +50,7 @@
 export default {
     name: 'UsuariosCreate',
     data: () => ({
+        rol: "",
         usuario: {
             codigo: "",
             nombre: "",
@@ -51,6 +63,15 @@ export default {
         password: "",
         roles: ""
     }),
+
+    async beforeMount() {
+        try {
+            const respons = await this.$axios.get('/login')
+            this.rol = respons.data.rol
+        } catch (error) {
+            this.$nuxt.$emit('show-snackbar', 'red', error.message)
+        }
+    },
 
     methods: {
         async guardar() {

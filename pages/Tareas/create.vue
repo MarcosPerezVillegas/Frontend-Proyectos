@@ -1,34 +1,44 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-container v-if="rol === 'alumno'" justify-center align-center>
             <v-card>
-                <v-card-title>
-                    Crear una tarea
-                </v-card-title>
+                <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.descripcion" label="Descripcion"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
-                        :rules="[$validations.notEmpty]"></v-combobox>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
                 </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn @click="cancelar()">
-                        Cancelar
-                    </v-btn>
-                    <v-btn type="submit">
-                        Guardar
-                    </v-btn>
-                </v-card-actions>
             </v-card>
-        </v-form>
+        </v-container>
+        <v-container v-else>
+            <v-form @submit.prevent="guardar">
+                <v-card>
+                    <v-card-title>
+                        Crear una tarea
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.descripcion" label="Descripcion"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
+                            :rules="[$validations.notEmpty]"></v-combobox>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn @click="cancelar()">
+                            Cancelar
+                        </v-btn>
+                        <v-btn type="submit">
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
+        </v-container>
     </v-container>
 </template>
 
@@ -42,6 +52,7 @@ export default {
 
 
     data: () => ({
+        rol: "",
         clave: "Anitalabalatina",
         tarea: {
             Proyecto_id: "",
@@ -57,6 +68,7 @@ export default {
     async beforeMount() {
         try {
             const res = await this.$axios.get('/Login')
+            this.rol = res.data.rol
             await this.$axios.get(`/Proyectos/Usuario/${res.data.codigo}`)
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)

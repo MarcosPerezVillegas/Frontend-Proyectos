@@ -3,67 +3,80 @@
 <!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
-        <v-card-title>
-            Lista de todos los estados posibles para los proyectos
-        </v-card-title>
-        <v-row>
-            <v-spacer />
-            <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
-                Agregar estado
-            </v-btn>
-        </v-row>
-        <br>
-        <v-card v-if="btn === 1">
+        <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
+            <v-card>
+                <v-card-title>Acceso Denegado</v-card-title>
+                <v-card-text>
+                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                </v-card-text>
+            </v-card>
+        </v-container>
+        <v-container v-else>
             <v-card-title>
-                Crear nuevo estado
+                Lista de todos los estados posibles para los proyectos
             </v-card-title>
-            <v-card-text>
-                <v-text-field v-model="estado.Estado" label="Ingresa el estado"
-                    :rules="[$validations.notEmpty]"></v-text-field>
-            </v-card-text>
-            <v-card-actions>
+            <v-row>
                 <v-spacer />
-                <v-btn color="red" @click="CambiarBTN()">
-                    Cancelar
+                <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
+                    Agregar estado
                 </v-btn>
-                <v-btn @click="CrearEstado()" color="green">
-                    Guardar
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-        <br>
-        <v-card-title>
-            Estados
-        </v-card-title>
-        <v-card>
-            <v-data-table :items="estados" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Editar'" color="blue" text small @click="CambiarBT(item.id,item.Estado)" />
-                    <DeleteDialog
-                        :description="`¿Está seguro de querer eliminar el status '${item.Estado}'?. Esta acción no se puede deshacer`"
-                        :itemUrl="`/Status/${item.id}`" :index="index" list="" @remove-from-list="deleteElement" />
-                </template>
-            </v-data-table>
-        </v-card>
-        <br>
-        <v-card v-if="bt === 1">
+            </v-row>
+            <br>
+            <v-card v-if="btn === 1">
+                <v-card-title>
+                    Crear nuevo estado
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="estado.Estado" label="Ingresa el estado"
+                        :rules="[$validations.notEmpty]"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn color="red" @click="CambiarBTN()">
+                        Cancelar
+                    </v-btn>
+                    <v-btn @click="CrearEstado()" color="green">
+                        Guardar
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <br>
             <v-card-title>
-                Editar estado ' {{ this.Estado }} '
+                Estados
             </v-card-title>
-            <v-card-text>
-                <v-text-field v-model="estado.Estado" label="Ingresa el nuevo valor del estado"></v-text-field>
-            </v-card-text>
-            <v-card-actions>
-                <v-spacer />
-                <v-btn color="red" @click="cancelar()">
-                    Cancelar
-                </v-btn>
-                <v-btn @click="ActEstado()" color="green">
-                    Guardar
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-        <br>
+            <v-card>
+                <v-data-table :items="estados" :headers="headers">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 " v-text="'Editar'" color="blue" text small @click="CambiarBT(item.id, item.Estado)"/>
+                        <DeleteDialog v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 "
+                            :description="`¿Está seguro de querer eliminar el status '${item.Estado}'?. Esta acción no se puede deshacer`"
+                            :itemUrl="`/Status/${item.id}`" :index="index" list="" @remove-from-list="deleteElement" />
+                        <span v-else>
+                            Este estado no se puede eliminar ni modificar
+                        </span>
+                    </template>
+                </v-data-table>
+            </v-card>
+            <br>
+            <v-card v-if="bt === 1">
+                <v-card-title>
+                    Editar estado ' {{ this.Estado }} '
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="estado.Estado" label="Ingresa el nuevo valor del estado"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn color="red" @click="cancelar()">
+                        Cancelar
+                    </v-btn>
+                    <v-btn @click="ActEstado()" color="green">
+                        Guardar
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            <br>
+        </v-container>
     </v-container>
 </template>
 <script lang="ts">
@@ -76,6 +89,7 @@ export default Vue.extend({
 
     data() {
         return {
+            rol: "",
             id: 0,
             Estado: "",
             btn: 0,
@@ -96,6 +110,8 @@ export default Vue.extend({
     async beforeMount() {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Status')
+        const response = await this.$axios.get('/login')
+        this.rol = response.data.rol
         try {
             const response = await this.$axios.get('/Status')
             this.estados = response.data.data
@@ -112,18 +128,18 @@ export default Vue.extend({
         CambiarBTN() {
             this.btn = this.btn === 0 ? 1 : 0;
             this.bt = 0
-            window.scrollTo(0,0)
+            window.scrollTo(0, 0)
         },
-        cancelar(){
+        cancelar() {
             this.bt = 0
         },
-        CambiarBT(id: number, Estado:string) {
+        CambiarBT(id: number, Estado: string) {
             this.btn = 0
             this.bt = this.bt === 0 ? 1 : 1;
             this.estado.Estado = ""
             this.id = id
-            this.Estado= Estado
-            window.scrollTo(0,1000)
+            this.Estado = Estado
+            window.scrollTo(0, 1000)
         },
         async CrearEstado() {
             try {
@@ -141,7 +157,7 @@ export default Vue.extend({
             }
             location.reload()
         },
-        async ActEstado(){
+        async ActEstado() {
             try {
                 if (this.estado.Estado === "") {
                     return this.cancelar()

@@ -63,10 +63,6 @@ export default {
             email: "",
             password: "",
         },
-        logMa: {
-            email: "jiji@gmail.com",
-            password: "WARD"
-        }
     }),
     beforeMount() {
     },
@@ -82,8 +78,14 @@ export default {
                 }
                 if (this.validacion === this.password){
                     try {
-                        const user = await this.$axios.put(`/Alumnos/Cambiar/${this.usuario.codigo}`,  this.usuario)
-                        this.$nuxt.$emit('show-snackbar', 'green', "contraseña cambiada")
+                        if(this.maestro === 1){
+                            const user = await this.$axios.put(`/Maestros/Cambiar/${this.usuario.codigo}`,  this.usuario)
+                            this.$nuxt.$emit('show-snackbar', 'green', "contraseña cambiada")
+                        }
+                        else{
+                            const user = await this.$axios.put(`/Alumnos/Cambiar/${this.usuario.codigo}`,  this.usuario)
+                            this.$nuxt.$emit('show-snackbar', 'green', "contraseña cambiada")
+                        }
                         this.$router.push('/login')
                     } catch(error){
                         this.$nuxt.$emit('show-snackbar', 'red', error.message)
@@ -126,7 +128,35 @@ export default {
                 this.btn = 1
                 this.$nuxt.$emit('show-snackbar', 'green', "Correo de recuperacion enviado")
             } catch (error) {
-                this.$nuxt.$emit('show-snackbar', 'red', error.message)
+                try{
+                    const user = await this.$axios.get(`/Maestros/${this.usuario.codigo}`)
+                    this.usuario.email = user.data.data.email
+                    this.usuario.nombre = user.data.data.nombre
+                    this.maestro = 1
+                    console.log(this.usuario.email)
+                    function genRandonString(length) {
+                        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
+                        const charLength = chars.length
+                        var result = ""
+                        for ( var i = 0; i < length; i++ ) {
+                            result += chars.charAt(Math.floor(Math.random() * charLength))
+                        }
+                        return result
+                    }
+                    this.password = genRandonString(12)
+                    Email.send({
+                        SecureToken : "fb442f98-2143-4d14-bc28-55d308ed573f",
+                        To : this.usuario.email,
+                        From : 'martin.lbarboza@alumnos.udg.mx',
+                        Subject : "Cambio de contraseña",
+                        Body : `Tu codigo de verificación es ${this.password}`
+                    }).then();
+                    this.btn = 1
+                    this.$nuxt.$emit('show-snackbar', 'green', "Correo de recuperacion enviado")
+                }  catch (error){
+                    this.$nuxt.$emit('show-snackbar', 'red', "Usuario no encontrado")
+                }
+                
             }
         }
     }

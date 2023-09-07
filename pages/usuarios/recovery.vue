@@ -120,8 +120,8 @@ export default {
                     SecureToken : "fb442f98-2143-4d14-bc28-55d308ed573f",
                     To : this.usuario.email,
                     From : 'martin.lbarboza@alumnos.udg.mx',
-                    Subject : "Recuperar contraseña",
-                    Body : `Tu contraseña es ${this.password}`
+                    Subject : "Cambio de contraseña",
+                    Body : `Tu codigo de verificación es ${this.password}`
                 }).then();
                 this.btn = 1
                 this.$nuxt.$emit('show-snackbar', 'green', "Correo de recuperacion enviado")

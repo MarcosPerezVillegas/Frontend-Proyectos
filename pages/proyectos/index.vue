@@ -248,13 +248,11 @@ export default {
             this.$router.push('/proyectos/datos')
         },
         async contPro(index: number) {
-            const response = await this.$axios.get(`/proyectos/${index}`)
-            const pro = response.data.data
-            // eslint-disable-next-line new-cap
-            const doc = new jsPDF();
-            doc.text(`El certificado en cuestion es otorgado por el proyecto ${pro.nombre} realizado
-            bajo la supervicion de ${pro.encargado.nombre}, de la carrera de ${pro.Carrera.nombre}`, 10, 10)
-            doc.save('Certificado.pdf')
+            const idPro = index.toString()
+            const clave = "Anitalabalatina"
+            const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
+            localStorage.setItem('proId', idCifrado)
+            this.$router.push('/proyectos/cons')
         },
         genProg(index: number) {
             const idPro = index.toString()

@@ -1,9 +1,16 @@
 <template>
     <v-container>
         <v-form @submit.prevent="guardar">
+            <v-row>
+                <v-spacer />
+                <v-btn to="/login" color="red">
+                    Cancelar
+                </v-btn>
+            </v-row>
+            <br>
             <v-card>
                 <v-card-title>
-                    Recuperar Contraseña
+                    Cambiar Contraseña
                 </v-card-title>
                 <v-card-text>
                     Ingresa tu codigo para enviarte un codigo de validacion de cambio de contraseña
@@ -17,15 +24,17 @@
                         enviar correo
                     </v-btn>
                 </v-card-actions>
+            </v-card>
+            <v-card v-if="btn === 1">
                 <v-card-text>
-                    <v-text-field v-model="usuario.password2" label="Nueva contraseña" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="usuario.password" label="Nueva contraseña" type="password" 
+                        :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="passconf" label="Confirma la contraseña" type="password"
+                        :rules="[$validations.notEmpty]"></v-text-field>
                     <v-text-field v-model="validacion" label="codigo de validación" :rules="[$validations.notEmpty]"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn to="/login" color="red">
-                        Cancelar
-                    </v-btn>
                     <v-btn type="submit" color="green">
                         enviar
                     </v-btn>
@@ -46,11 +55,13 @@ export default {
         maestro: 0,
         validacion: "",
         password: "",
+        passconf: "",
+        btn: 0,
         usuario: {
             codigo: "",
             nombre: "",
             email: "",
-            password2: "",
+            password: "",
         },
         logMa: {
             email: "jiji@gmail.com",
@@ -63,8 +74,11 @@ export default {
     methods: {
         async guardar() {
             try {
-                if (this.validacion === "" || this.usuario.password2 === "") {
+                if (this.validacion === "" || this.usuario.password === "" || this.passconf === "") {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
+                }
+                if(this.usuario.password !== this.passconf){
+                    return this.$nuxt.$emit('show-snackbar', 'red', 'Las contraseñas no coinciden')
                 }
                 if (this.validacion === this.password){
                     try {
@@ -103,12 +117,13 @@ export default {
                 }
                 this.password = genRandonString(12)
                 Email.send({
-                    SecureToken : "4b6f9a26-4962-4794-a581-3030f01bf3e3",
+                    SecureToken : "fb442f98-2143-4d14-bc28-55d308ed573f",
                     To : this.usuario.email,
                     From : 'martin.lbarboza@alumnos.udg.mx',
                     Subject : "Recuperar contraseña",
                     Body : `Tu contraseña es ${this.password}`
                 }).then();
+                this.btn = 1
                 this.$nuxt.$emit('show-snackbar', 'green', "Correo de recuperacion enviado")
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)

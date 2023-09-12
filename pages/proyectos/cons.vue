@@ -1,3 +1,7 @@
+<!-- eslint-disable vue/no-v-text-v-html-on-component -->
+<!-- eslint-disable vue/no-unused-vars -->
+<!-- eslint-disable vue/valid-v-slot -->
+<!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno'" justify-center align-center>

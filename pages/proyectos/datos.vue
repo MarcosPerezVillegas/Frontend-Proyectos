@@ -142,7 +142,6 @@
 // @ts-nocheck
 import {jsPDF} from 'jspdf';
 import { clave } from '@/plugins/globals';
-import html2canvas from 'html2canvas';
 import RemoveState from '~/components/RemoveState.vue';
 const CryptoJS = require("crypto-js");
 

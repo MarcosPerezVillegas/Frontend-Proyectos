@@ -142,6 +142,7 @@
 // @ts-nocheck
 import {jsPDF} from 'jspdf';
 import { clave } from '@/plugins/globals';
+import html2canvas from 'html2canvas';
 import RemoveState from '~/components/RemoveState.vue';
 const CryptoJS = require("crypto-js");
 
@@ -274,7 +275,20 @@ export default {
             doc.text(`CONSTAR`, width/2, 85, {align: "center"})
             doc.setFontSize(13)
             doc.setFont("Courier", "normal")
-            doc.text(`Que el alumno de la Ingeniería en Electrónica y Computación ${nombre} con código ${this.roles.codigo} presentó el proyecto denominado ${pro.nombre}, de acuerdo con el resolutivo séptimo del dictamen de creación del Programa Educativo mencionado.`, 25, 100, {maxWidth: 160, align: "justify"})
+            const line1 = `<font face="Courier" size=1 > <p style="width: 355px"> Que el alumno de la Ingeniería en Electrónica y Computación  <b>${nombre}</b> con código <b> ${this.roles.codigo} </b> presentó el proyecto denominado <b> ${pro.nombre}</b>, de acuerdo con el resolutivo séptimo del dictamen de creación del Programa Educativo mencionado. </p></font>`
+            const container = document.createElement('div');
+            container.innerHTML = line1;
+            doc.html(container, {
+                x: 25,
+                y: 90,
+                html2canvas: {
+                    scale: 0.48,
+                    Width: 160,
+                },
+                callback: function (doc) {
+                    doc.save('Certificado.pdf');
+                },
+            })
             doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 130, {maxWidth: 160, align: "justify"})
             doc.setFontSize(12)
             doc.setFont("Courier", "bold")
@@ -294,7 +308,6 @@ export default {
             doc.setFont("Courier", "normal")
             doc.text(`Jefe de Departamento`, width/2, 190, {align: "center"})
             doc.addImage(img2, 'PNG', 50, 270, 110, 16, {align: "center"});
-            doc.save('Certificado.pdf');
         },
         verItem(item) {
             localStorage.setItem("ver", "true");

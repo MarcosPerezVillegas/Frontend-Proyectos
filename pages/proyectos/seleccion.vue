@@ -16,7 +16,7 @@
                     <v-spacer />
                     Fecha de termino: {{proyecto.fechafinal}}
                     <v-spacer />
-                    Cupos: {{proyecto.alumnos}}
+                    Cupos restantes: {{proyecto.alumnos}}
                 </v-card-text>
                 <v-card-text v-if="estado === 'Terminado'">
                     Objetivos: {{proyecto.objetivos}}
@@ -46,7 +46,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -63,7 +63,6 @@ export default {
 
     async beforeMount() {
         this.$store.commit('setTitle', 'Proyectos')
-        const clave = "Anitalabalatina"
         const idCifrado = localStorage.getItem("proId")
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
@@ -72,6 +71,8 @@ export default {
         try {
             const response = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = response.data.data
+            this.proyecto.fechainicio= new Date(this.proyecto.fechainicio).toISOString().split('T')[0]
+            this.proyecto.fechafinal= new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.estado = this.proyecto.statuses[this.proyecto.statuses.length-1].Estado

@@ -15,21 +15,21 @@
                         Crear proyecto
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="proyecto.nombre" label="Nombre"
+                        <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="proyecto.objetivos" label="Objetivos"
+                        <v-textarea v-model="proyecto.objetivos" outlined label="Objetivos" style="overflow-y: auto; max-block-size: 300px; "
+                            :rules="[$validations.notEmpty]"></v-textarea>
+                        <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="proyecto.fechainicio" label="Fecha de inicio" type="date"
+                        <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="proyecto.fechafinal" label="Fecha final" type="date"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text v-if="roles.rol === 'maestro'">Encargado</v-text><br>
-                        <v-text v-if="roles.rol === 'maestro'" style="font-size: larger;">{{ encargado_nombre }}</v-text>
-                        <v-combobox v-if="roles.rol === 'administrador'" v-model="encargado_nombre" label="Encargado"
+                        <v-text v-if="roles.rol === 'maestro'" outlined>Encargado</v-text><br>
+                        <v-text v-if="roles.rol === 'maestro'" outlined style="font-size: larger;">{{ encargado_nombre }}</v-text>
+                        <v-combobox v-if="roles.rol === 'administrador'" outlined v-model="encargado_nombre" label="Encargado"
                             :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
-                        <v-text-field v-model="proyecto.alumnos" label="Alumnos solicitados" type="integer"
+                        <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados" type="integer"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-combobox v-model="carrera_nombre" label="Carrera" :items="carreras"
+                        <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"
                             :rules="[$validations.notEmpty]"></v-combobox>
                     </v-card-text>
                     <v-card-actions>

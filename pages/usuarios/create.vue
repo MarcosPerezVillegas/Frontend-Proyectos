@@ -10,36 +10,40 @@
         </v-container>
         <v-container v-else>
             <v-form @submit.prevent="guardar">
-            <v-card>
-                <v-card-title>
-                    Registrar Usuario
-                </v-card-title>
-                <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Codigo" :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
-                    <v-text-field v-model="usuario.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"
-                        :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                    <v-text-field v-model="usuario.password" label="Contraseña" type="password"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="password" label="Confirmar contraseña" type="password"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-combobox v-model="roles" label="Rol" :items="['Administrador', 'Maestro', 'Alumno']"></v-combobox>
-                    <v-text-field v-model="usuario.telefono" label="Telefono" :rules="[$validations.notPhone]"></v-text-field>
+                <v-card>
+                    <v-card-title>
+                        Registrar Usuario
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field v-model="usuario.codigo" outlined label="Codigo"
+                            :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
+                        <v-text-field v-model="usuario.nombre" outlined label="Nombre"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="usuario.email" outlined label="Email"
+                            :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
+                        <v-text-field v-model="usuario.password" outlined label="Contraseña" type="password"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="password" outlined label="Confirmar contraseña" type="password"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-combobox v-model="roles" outlined label="Rol"
+                            :items="['Administrador', 'Maestro', 'Alumno']"></v-combobox>
+                        <v-text-field v-model="usuario.telefono" outlined label="Telefono"
+                            :rules="[$validations.notPhone]"></v-text-field>
 
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn to="/Usuarios" color="red">
-                        Cancelar
-                    </v-btn>
-                    <v-btn type="submit" color="green">
-                        Guardar
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-form>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn to="/Usuarios" color="red">
+                            Cancelar
+                        </v-btn>
+                        <v-btn type="submit" color="green">
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
         </v-container>
-        
+
     </v-container>
 </template>
 
@@ -78,7 +82,7 @@ export default {
 
             try {
                 if (this.usuario.codigo === "" || this.usuario.email === "" || this.usuario.nombre === ""
-                    || this.usuario.password === "" || this.password ==="" || this.roles === null) {
+                    || this.usuario.password === "" || this.password === "" || this.roles === null) {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
                 if (isNaN(Number(this.usuario.codigo))) {
@@ -87,7 +91,7 @@ export default {
                 if ((this.usuario.telefono !== "" && this.usuario.telefono.length !== 10) || isNaN(Number(this.usuario.telefono))) {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'El número de telefono solo puede contener números y no debe de superar los 10 digitos')
                 }
-                if (this.usuario.password !== this.password ) {
+                if (this.usuario.password !== this.password) {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Las contraseñas no coinciden')
                 }
                 if (this.roles === 'Administrador') {

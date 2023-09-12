@@ -27,11 +27,11 @@
             </v-card>
             <v-card v-if="btn === 1">
                 <v-card-text>
-                    <v-text-field v-model="usuario.password" label="Nueva contraseña" type="password" 
+                    <v-text-field v-model="usuario.password" outlined label="Nueva contraseña" type="password" 
                         :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="passconf" label="Confirma la contraseña" type="password"
+                    <v-text-field v-model="passconf" outlined label="Confirma la contraseña" type="password"
                         :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="validacion" label="codigo de validación" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="validacion" outlined label="codigo de validación" :rules="[$validations.notEmpty]"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />

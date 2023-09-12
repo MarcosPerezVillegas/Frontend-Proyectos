@@ -64,11 +64,11 @@
                     Fecha de Entrega
                 </v-card-title>
                 <v-card-text>
-                    {{ proyecto.fechafinal }}
+                    {{ proyecto.fechafinal}}
                 </v-card-text>
             </v-card>
             <br>
-            <v-card v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
+            <v-card outlined v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <v-card-title>
                     Tareas
                 </v-card-title>
@@ -82,7 +82,7 @@
                     </template>
                 </v-data-table>
             </v-card>
-            <v-card v-if="roles.rol == 'alumno'">
+            <v-card outlined v-if="roles.rol == 'alumno'">
                 <v-card-title>
                     Tareas
                 </v-card-title>
@@ -101,14 +101,14 @@
                 </v-btn>
             </v-row>
             <br> 
-            <v-card v-if="estatus === 1 ">
+            <v-card outlined v-if="estatus === 1 ">
                 <v-card-title>
                     Agregar un Estado al proyecto
                 </v-card-title>
                 <v-card-text>
-                    <v-combobox v-model="est.estado" label="Estado" :items="estados"
+                    <v-combobox v-model="est.estado" outlined label="Estado" :items="estados"
                         :rules="[$validations.notEmpty]"></v-combobox>
-                    <v-text-field v-model="est.nota" label="Nota"></v-text-field>
+                    <v-textarea v-model="est.nota" outlined style="overflow-y: auto; max-block-size: 300px; " label="Nota"></v-textarea>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -121,13 +121,13 @@
                 </v-card-actions>
             </v-card>
             <br>
-            <v-card v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" >
+            <v-card outlined v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" >
                 <v-card-title>
                     Registro Histórico
                 </v-card-title>
                 <v-data-table :items="registros" :headers="headersH">
                     <template v-slot:item.actions="{ item, index }">
-                    <RemoveState v-if="item.Estado !== 'En espera'"
+                    <RemoveState v-if="item.Estado !== 'En espera' && item.Estado !== 'Activo'"
                         :description="`¿Está seguro de querer eliminar el registro del estado '${item.Estado}'?. Esta acción no se puede deshacer`"
                         :id="id" :index="index" :estado="item.Estado" @remove-from-list="deleteElement" />
                 </template>
@@ -141,6 +141,7 @@
 
 // @ts-nocheck
 import {jsPDF} from 'jspdf';
+import { clave } from '@/plugins/globals';
 import RemoveState from '~/components/RemoveState.vue';
 const CryptoJS = require("crypto-js");
 
@@ -186,7 +187,6 @@ export default {
     async beforeMount() {
         this.$store.commit('setTitle', 'Proyectos');
         this.$nuxt.$on('remove-from-list', this.deleteElement);
-        const clave = "Anitalabalatina";
         const idCifrado = localStorage.getItem("proId");
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
@@ -199,11 +199,14 @@ export default {
                 Estado: status.Estado,
                 Nota: status.statusProyecto.nota,
             }));
+            this.proyecto.fechafinal= new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
             this.registros = Estados;
             const responseS = await this.$axios.get(`/Status`);
             responseS.data.data.map(status => (this.estados = this.estados.concat(status.Estado)));
-            this.estados.splice(2,1)
             this.estados.splice(0,1)
+            this.estados.splice(0,1)
+            const term = this.estados.splice(0,1)
+            this.estados.push(term)
             this.carrera = this.proyecto.Carrera.nombre;
             this.maestro = this.proyecto.encargado.nombre;
             this.participantes = this.proyecto.Alumnos;
@@ -239,7 +242,6 @@ export default {
         },
         entregaTarea(index: number) {
             const idTar = index.toString();
-            const clave = "Anitalabalatina";
             const idCifrado = CryptoJS.AES.encrypt(idTar, clave).toString();
             localStorage.setItem("Tarea", idCifrado);
             this.$router.push("/Tareas/Entrega");

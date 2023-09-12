@@ -23,7 +23,7 @@
             <v-card-title>
                 Administradores
             </v-card-title>
-            <v-card>
+            <v-card outlined>
                 <v-data-table :items="administradores" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
@@ -59,7 +59,7 @@
             <v-card-title>
                 Maestros
             </v-card-title>
-            <v-card>
+            <v-card outlined>
                 <v-data-table :items="maestros" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
@@ -94,7 +94,7 @@
             <v-card-title>
                 Alumnos
             </v-card-title>
-            <v-card>
+            <v-card outlined>
                 <v-data-table :items="alumnos" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>

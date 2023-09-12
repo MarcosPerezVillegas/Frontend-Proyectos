@@ -23,7 +23,7 @@
             <v-card-title>
                 Carreras
             </v-card-title>
-            <v-card>
+            <v-card outlined>
                 <v-data-table :items="carreras" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Editar'" color="blue" text small :to="`/Carreras/${item.clave}`" />

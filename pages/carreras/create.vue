@@ -15,9 +15,9 @@
                         Crear una carrera
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="carrera.nombre" label="Nombre"
+                        <v-text-field v-model="carrera.nombre" outlined label="Nombre"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="carrera.clave" label="Clave" :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-text-field v-model="carrera.clave" outlined label="Clave" :rules="[$validations.notEmpty]"></v-text-field>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />

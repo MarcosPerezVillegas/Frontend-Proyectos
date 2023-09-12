@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container>
-        <v-container v-if="rol !== 'maestro' || rol !== 'administrador'" justify-center align-center>
+        <v-container v-if="rol === 'alumno'" justify-center align-center>
             <v-card>
                 <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
@@ -10,39 +10,48 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-card v-if="ver === 'true'">
-                <v-card-title>
-                    Nombre de la tarea: {{ tarea.nombre }}
-                </v-card-title>
-                <v-card-text>
-                    Descripción de la tarea: {{ tarea.descripcion }}
-                </v-card-text>
-                <v-card-text>
-                    Comentarios del profesor: {{ tarea.comentarios }}
-                </v-card-text>
-                <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
-                <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
+            <v-container v-if="ver === 'true'">
+                <v-card>
+                    <v-card-title>
+                        Nombre de la tarea: {{ tarea.nombre }}
+                    </v-card-title>
+                    <v-card-text style="font-size: larger;">
+                        Descripción de la tarea: {{ tarea.descripcion }}
+                    </v-card-text>
+                    <v-card-text v-if="tarea.comentarios !== ''">
+                        Comentarios del profesor: {{ tarea.comentarios }}
+                    </v-card-text>
+                </v-card>
+                <br>
+                <v-card class="text-center">
+                    <br>
+                    <br>
+                    <v-btn v-if="entregada" v-text="'Descargar Archivo'" color="primary" @click="descargarArchivo" />
+                    <p v-else class="text-center" style="font-size: larger;">Esta tarea no tiene archivos para descargar</p>
+                    <br>
+                    <br>
+                </v-card>
                 <br>
                 <v-spacer /> <v-btn v-text="'Atras'" color="primary" @click="cancelar()" />
-            </v-card>
+            </v-container>
             <v-form v-else @submit.prevent="guardar">
                 <v-card>
                     <v-card-title>
                         Editar tarea
                     </v-card-title>
                     <v-card-text>
-                        <v-combobox v-model="proyecto" label="Proyecto al que quieras reasignar la tarea" :items="Proyectos"
+                        <v-combobox v-model="proyecto" outlined label="Proyecto al que quieras reasignar la tarea" :items="Proyectos"
                             :rules="[$validations.notEmpty]"></v-combobox>
-                        <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.descripcion" label="Descripcion"
+                        <v-text-field v-model="tarea.nombre" outlined label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-textarea v-model="tarea.descripcion" outlined style="overflow-y: auto; max-block-size: 300px; "
+                            label="Descripcion" :rules="[$validations.notEmpty]"></v-textarea>
+                        <v-textarea v-model="tarea.comentarios" outlined style="overflow-y: auto; max-block-size: 300px; "
+                            label="Comentarios del profesor"></v-textarea>
+                        <v-text-field v-model="tarea.fecha_limite" outlined label="Fecha limite" type="date"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
+                        <v-text-field v-model="tarea.hora_limite" outlined label="Hora limite" type="time"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
+                        <v-combobox v-model="estado" outlined label="Estado de la tarea" :items="['Activo', 'Inactivo']"
                             :rules="[$validations.notEmpty]"></v-combobox>
                     </v-card-text>
                     <v-card-actions>
@@ -126,7 +135,7 @@ export default {
 
     methods: {
         async guardar() {
-            if (this.tarea.nombre === "" || this.tarea.descripcion === "" || this.tarea.comentarios === "" ||
+            if (this.tarea.nombre === "" || this.tarea.descripcion === "" ||
                 this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.proyecto === null || this.estado === "") {
                 return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
             }
@@ -159,13 +168,15 @@ export default {
                 const res = await this.$axios.get(`/Tarea/Cargar/${this.tarea.id}/${this.id}`, {
                     responseType: 'arraybuffer',
                 })
-                const blob = new Blob([res.data], { type: 'application/pdf' })
+                const contentType = res.headers['content-type']
+                const ext = contentType.split('/')[1];
+                const blob = new Blob([res.data], { type: contentType })
                 const url = URL.createObjectURL(blob)
 
                 const link = document.createElement('a')
                 link.href = url
                 link.target = '_blank'
-                link.download = `${this.tarea.nombre}.pdf`
+                link.download = `${this.tarea.nombre}.${ext}`
                 link.click()
                 URL.revokeObjectURL(url)
             } catch {

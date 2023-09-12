@@ -23,7 +23,7 @@
       </v-list>
 
       <v-list v-if="roles.rol == 'maestro'">
-        <v-list-item v-for="(item, i) in itemsMaes" :key="i" :to="item.to" router exact>
+        <v-list-item v-for="(item, i) in itemsMaes" :key="i" @click="handleItemClick(item)" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -44,7 +44,7 @@
       </v-list>
 
       <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id == null">
-        <v-list-item v-for="(item, i) in itemsAlum2" :key="i" :to="item.to" router exact>
+        <v-list-item v-for="(item, i) in itemsAlum2" :key="i" @click="handleItemClick(item)" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -65,7 +65,7 @@
       </v-list>
 
       <v-list v-if="roles.rol == 'alumno' && alum.proyecto_id != null">
-        <v-list-item v-for="(item, i) in itemsAlum" :key="i" :to="item.to" router exact>
+        <v-list-item v-for="(item, i) in itemsAlum" :key="i" @click="handleItemClick(item)" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -106,11 +106,11 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 export default {
   name: 'DefaultLayout',
-  
+
   data() {
     return {
       snackbarColor: '',
@@ -158,6 +158,11 @@ export default {
           to: '/',
         },
         {
+          icon: 'mdi-account',
+          title: 'Perfil',
+          to: 'editarUsuario',
+        },
+        {
           icon: 'mdi-compass',
           title: 'Proyectos',
           to: '/Proyectos',
@@ -177,7 +182,7 @@ export default {
         {
           icon: 'mdi-account',
           title: 'Perfil',
-          to: '/Usuarios/Perfil',
+          to: 'editarUsuario',
         },
         {
           icon: 'mdi-compass',
@@ -199,7 +204,7 @@ export default {
         {
           icon: 'mdi-account',
           title: 'Perfil',
-          to: '/Usuarios/Perfil',
+          to: 'editarUsuario',
         },
         {
           icon: 'mdi-compass',
@@ -207,54 +212,72 @@ export default {
           to: '/Proyectos',
         },
       ],
-      roles:{},
+      roles: {},
       alum: {},
       rol: "",
     };
   },
 
   computed: {
-    
+
   },
   async beforeMount() {
     this.$nuxt.$on('show-snackbar', this.showSnackbar)
     const responseR = await this.$axios.get('/login')
     this.roles = responseR.data
 
-    if(this.roles.rol === 'alumno'){
+    if (this.roles.rol === 'alumno') {
       const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
       this.alum = responseA.data.data
-      if(this.alum.proyecto_id){
+      if (this.alum.proyecto_id) {
         const idPro = this.alum.proyecto_id.toString()
-        const clave = "Anitalabalatina"
         const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
-        localStorage.setItem('proId',idCifrado)
+        localStorage.setItem('proId', idCifrado)
       }
-      
+
     }
-    console.log(this.roles.rol)
     localStorage.removeItem("Tarea");
-    localStorage.removeItem("url");
-    localStorage.removeItem("codigo");
-    localStorage.removeItem("rol");
   },
 
 
   methods: {
-
+    handleItemClick(item) {
+      if (item.title === 'Perfil') {
+        this.editarUsuario(item);
+      } else {
+        // Navegar a la ruta especificada en la propiedad `to`
+        this.$router.push(item.to);
+      }
+    },
+    editarUsuario() {
+      const codigo = CryptoJS.AES.encrypt(this.roles.codigo.toString(), clave).toString();
+      let rol, url;
+      if (this.roles.rol === 'maestro') {
+        url = CryptoJS.AES.encrypt(`/Maestros/${this.roles.codigo}`, clave).toString();
+        rol = CryptoJS.AES.encrypt('Maestro', clave).toString();
+      }
+      else {
+        url = CryptoJS.AES.encrypt(`/Alumnos/${this.roles.codigo}`, clave).toString();
+        rol = CryptoJS.AES.encrypt('Alumno', clave).toString();
+      }
+      localStorage.setItem("codigo", codigo)
+      localStorage.setItem("url", url)
+      localStorage.setItem("rol", rol)
+      this.$router.push(`/Usuarios/${this.roles.codigo}`)
+    },
     showSnackbar(color: string, message: string) {
       this.snackbar = true
       this.snackbarColor = color
       this.snackbarMessage = message
     },
-    async getRol(){
+    async getRol() {
       const resRol = await this.$axios.get('/Login')
       this.rol = resRol.data.rol
     },
     logout() {
       localStorage.clear()
       this.$auth.logout();
-      this.$router.push('/login');
+      location.reload()
     },
   },
 };

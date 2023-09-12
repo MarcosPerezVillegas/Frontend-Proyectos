@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 <!-- eslint-disable vue/no-parsing-error -->
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <!-- eslint-disable vue/valid-v-slot -->
@@ -10,11 +11,11 @@
                 proyecto</v-btn>
         </v-row>
         <br>
-        <v-card v-if="roles.rol == 'alumno' || roles.rol == 'administrador'">
+        <v-card outlined v-if="roles.rol == 'alumno' || roles.rol == 'administrador'">
             <v-card-title>
                 Todos los Proyectos
             </v-card-title>
-            <v-data-table :items="proyectos" :headers="headers">
+            <v-data-table  :items="proyectos" :headers="headers">
                 <template v-slot:item.statuses="item, index">
                     <span>
                         {{ item.item.statuses[item.item.statuses.length - 1].Estado }}
@@ -61,7 +62,7 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="roles.rol == 'maestro' && proMaes.length > 0 || roles.rol == 'administrador' && proMaes.length > 0">
+        <v-card outlined v-if="roles.rol == 'maestro' && proMaes.length > 0 || roles.rol == 'administrador' && proMaes.length > 0">
             <v-card-title>
                 Mis Proyectos
             </v-card-title>
@@ -89,17 +90,17 @@
                                         :itemUrl="`/proyectos/${item.id}`" :index="index" />
                                 </v-list-item-action>
                             </v-list-item>
-                            <v-list-item>
+                            <v-list-item v-if="item.statuses.some(estado => estado.Estado !== 'En espera')">
                                 <v-list-item-action>
                                     <v-btn v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
                                 </v-list-item-action>
                             </v-list-item>
-                            <v-list-item>
+                            <v-list-item v-if="item.statuses.some(estado => estado.Estado !== 'En espera')">
                                 <v-list-item-action>
                                     <v-btn v-text="'Constancia'" color="green" text small @click="contPro(item.id)" />
                                 </v-list-item-action>
                             </v-list-item>
-                            <v-list-item>
+                            <v-list-item >
                                 <v-list-item-action>
                                     <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
                                 </v-list-item-action>
@@ -110,14 +111,17 @@
                         v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
                     <v-btn v-if="roles.rol == 'maestro' && item.statuses.some(estado => estado.Estado !== 'En espera')"
                         @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
-                    <span v-else>
+                    <span v-else-if="roles.rol == 'maestro'">
+                        El proyecto está en proceso de validación
+                    </span>
+                    <span v-else-if="!item.statuses.some(estado => estado.Estado !== 'En espera')">
                         El proyecto está en proceso de validación
                     </span>
                 </template>
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="roles.rol == 'administrador'">
+        <v-card outlined v-if="roles.rol == 'administrador'">
             <v-card-title>
                 Proyectos sin Validar
             </v-card-title>
@@ -170,7 +174,7 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="roles.rol == 'maestro' && proMaes.length == 0 || roles.rol == 'administrador' && proMaes.length == 0">
+        <v-card outlined v-if="roles.rol == 'maestro' && proMaes.length == 0 || roles.rol == 'administrador' && proMaes.length == 0">
             <v-card-title>
                 No tienes ningun proyecto
             </v-card-title>
@@ -182,7 +186,7 @@
 
 // @ts-nocheck
 
-import { jsPDF } from 'jspdf';
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -198,8 +202,9 @@ export default {
         numEstat: "",
         headers: [
             { text: 'Nombre', value: 'nombre' },
-            { text: 'Ultimo estado del proyecto', value: 'statuses' },
-            { text: 'Cupos', value: 'alumnos' },
+            { text: 'Estado actual del proyecto', value: 'statuses' },
+            { text: 'Cupos restantes', value: 'alumnos' },
+            { text: 'Objetivos del proyecto', value: 'objetivos' },
             { text: 'Acciones', value: 'actions' }
         ]
     }),
@@ -235,28 +240,24 @@ export default {
     methods: {
         selecID(index: number) {
             const idPro = index.toString()
-            const clave = "Anitalabalatina"
             const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
             localStorage.setItem('proId', idCifrado)
             this.$router.push('/proyectos/seleccion')
         },
         selecPro(index: number) {
             const idPro = index.toString()
-            const clave = "Anitalabalatina"
             const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
             localStorage.setItem('proId', idCifrado)
             this.$router.push('/proyectos/datos')
         },
-        async contPro(index: number) {
+        contPro(index: number) {
             const idPro = index.toString()
-            const clave = "Anitalabalatina"
             const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
             localStorage.setItem('proId', idCifrado)
             this.$router.push('/proyectos/cons')
         },
         genProg(index: number) {
             const idPro = index.toString()
-            const clave = "Anitalabalatina"
             const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
             localStorage.setItem('proId', idCifrado)
             this.$router.push('/proyectos/doc')

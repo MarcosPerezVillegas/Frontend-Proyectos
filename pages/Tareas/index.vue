@@ -32,7 +32,7 @@
         <v-card-title v-if="seleccionado" style="font-size: x-large;">
             Tareas del proyecto: {{ seleccionado.nombre }}
         </v-card-title>
-        <v-card v-if="seleccionado">
+        <v-card outlined v-if="seleccionado">
             <v-card-title>
                 Todas las tareas que tienes
             </v-card-title>
@@ -49,7 +49,7 @@
                             <v-list-item>
                                 <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
                             </v-list-item>
-                            <v-list-item v-if="item.activo === 0">
+                            <v-list-item v-if="item.activo === 'Oculta'">
                                 <v-btn v-text="'Activar'" color="green" text small @click="state(item)" />
                             </v-list-item>
                             <v-list-item v-else>
@@ -72,10 +72,7 @@
         </v-card>
         <br>
         <br>
-        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador' && seleccionado" style="font-size: large ;">A continuación se
-            muestran solo las tareas con estado Activo igual que 1 y que esten
-            pendientes de revisar</p>
-        <v-card v-if="seleccionado">
+        <v-card outlined v-if="seleccionado">
             <v-card-title>
                 Tareas pendientes de revisar
             </v-card-title>
@@ -108,7 +105,7 @@
             </v-data-table>
         </v-card>
 
-        <v-card v-if="usuario.rol === 'alumno'">
+        <v-card outlined v-if="usuario.rol === 'alumno'">
             <v-card-title>
                 Todas las tareas que tienes
             </v-card-title>
@@ -124,7 +121,7 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="usuario.rol === 'alumno'">
+        <v-card outlined v-if="usuario.rol === 'alumno'">
             <v-card-title>
                 Tareas pendientes de entregar
             </v-card-title>
@@ -135,7 +132,7 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card v-if="usuario.rol === 'alumno'">
+        <v-card outlined v-if="usuario.rol === 'alumno'">
             <v-card-title>
                 Tareas entregadas
             </v-card-title>
@@ -150,7 +147,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -159,7 +156,6 @@ export default {
     middleware: 'auth',
 
     data: () => ({
-        clave: "Anitalabalatina",
         date: "",
         usuario: "",
         tareas: [],
@@ -172,7 +168,7 @@ export default {
             { text: 'Nombre de la tarea', value: 'nombre' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
             { text: 'Hora de entrega', value: 'hora_limite' },
-            { text: 'Activa', value: 'activo' },
+            { text: 'Estado', value: 'activo' },
             { text: 'Acciones', value: 'actions' },
         ]
     }),
@@ -197,10 +193,10 @@ export default {
             this.date = `${fecha} ${hora}`
 
             const id = localStorage.getItem("ProId")
-            if(id){
-                const bytes = CryptoJS.AES.decrypt(id, this.clave);
+            if (id) {
+                const bytes = CryptoJS.AES.decrypt(id, clave);
                 this.pro = bytes.toString(CryptoJS.enc.Utf8);
-            }else{
+            } else {
                 this.pro = null
             }
 
@@ -210,6 +206,14 @@ export default {
                 this.proyectos = this.proyectos.concat(respro.data.data)
                 const res = await this.$axios.get(`/Tareas/Proyecto/${this.proyectos[0].id}`);
                 this.tareas = this.tareas.concat(res.data.data)
+                this.tareas = this.tareas.map(tarea => {
+                    if (tarea.activo === 1) {
+                        tarea.activo = 'Activa';
+                    } else if (tarea.activo === 0) {
+                        tarea.activo = 'Oculta';
+                    }
+                    return tarea;
+                });
             } else {
                 const respro = await this.$axios.get(`/Proyectos/Usuario/${this.usuario.codigo}`)
                 this.proyectos = respro.data.data.filter(proyecto => {
@@ -226,7 +230,15 @@ export default {
                     const respro = await this.$axios.get(`/Proyectos/${this.pro}`)
                     const res = await this.$axios.get(`/Tareas/Proyecto/${this.pro}`);
                     this.tareas = res.data.data;
-                    const tar = this.tareas.filter(tarea => tarea.activo === 1)
+                    this.tareas = this.tareas.map(tarea => {
+                    if (tarea.activo === 1) {
+                        tarea.activo = 'Activa';
+                    } else if (tarea.activo === 0) {
+                        tarea.activo = 'Oculta';
+                    }
+                    return tarea;
+                });
+                    const tar = this.tareas.filter(tarea => tarea.activo === 'Activa')
                     this.tareasPen = tar.filter((tarea) => {
                         const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                         const entrega = new Date(dateEntrega)
@@ -241,12 +253,20 @@ export default {
                 for (const proyecto of this.proyectos) {
                     const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${this.pro}`);
                     this.tareas = this.tareas.concat(responseTareas.data.data);
+                    this.tareas = this.tareas.map(tarea => {
+                    if (tarea.activo === 1) {
+                        tarea.activo = 'Activa';
+                    } else if (tarea.activo === 0) {
+                        tarea.activo = 'Oculta';
+                    }
+                    return tarea;
+                });
                 }
             }
 
 
             if (this.usuario.rol === "alumno") {
-                this.tareas = this.tareas.filter((tarea) => tarea.activo === 1);
+                this.tareas = this.tareas.filter((tarea) => tarea.activo === 'Activa');
                 this.tareasPen = this.tareas.filter((tarea) => {
                     const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                     const entrega = new Date(dateEntrega)
@@ -257,19 +277,25 @@ export default {
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
-
     },
 
     methods: {
         async selProyecto(proyecto) {
             this.seleccionado = proyecto
             const id = proyecto.id.toString()
-            const idCifrado = CryptoJS.AES.encrypt(id, this.clave).toString();
+            const idCifrado = CryptoJS.AES.encrypt(id, clave).toString();
             localStorage.setItem("ProId", idCifrado)
             const res = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
             this.tareas = res.data.data;
-
-            const tar = this.tareas.filter(tarea => tarea.activo === 1)
+            this.tareas = this.tareas.map(tarea => {
+                    if (tarea.activo === 1) {
+                        tarea.activo = 'Activa';
+                    } else if (tarea.activo === 0) {
+                        tarea.activo = 'Oculta';
+                    }
+                    return tarea;
+                });
+            const tar = this.tareas.filter(tarea => tarea.activo === 'Activa')
             this.tareasPen = tar.filter((tarea) => {
                 const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
                 const entrega = new Date(dateEntrega)
@@ -282,14 +308,14 @@ export default {
             location.reload()
         },
         entregaTarea(id: number) {
-            const idCifrado = CryptoJS.AES.encrypt(id.toString(), this.clave).toString();
+            const idCifrado = CryptoJS.AES.encrypt(id.toString(), clave).toString();
             localStorage.setItem("Tarea", idCifrado)
             this.$router.push("Tareas/Entrega")
         },
 
         selProTarea(proyecto) {
             const id = proyecto.id.toString()
-            const idCifrado = CryptoJS.AES.encrypt(id, this.clave).toString();
+            const idCifrado = CryptoJS.AES.encrypt(id, clave).toString();
             localStorage.setItem("ProId", idCifrado)
             this.$router.push(`/Tareas/Create`)
         },
@@ -305,8 +331,8 @@ export default {
         },
 
         async state(item) {
-            if (item.activo === 0) {
-                const tarea = { activo: 1 }
+            if (item.activo === 'Activa') {
+                const tarea = { activo: 0 }
                 try {
                     await this.$axios.put(`/Tareas/${item.id}`, tarea)
                     this.$nuxt.$emit('show-snackbar', 'green', 'Se a activado la tarea')
@@ -314,7 +340,7 @@ export default {
                     this.$nuxt.$emit('show-snackbar', 'red', error.message)
                 }
             } else {
-                const tarea = { activo: 0 }
+                const tarea = { activo: 1 }
                 try {
                     await this.$axios.put(`/Tareas/${item.id}`, tarea)
                     this.$nuxt.$emit('show-snackbar', 'green', 'Se a desactivado la tarea')

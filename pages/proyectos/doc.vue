@@ -34,6 +34,7 @@
 
 import XLSX from 'xlsx/dist/xlsx.full.min';
 import {jsPDF} from 'jspdf';
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -47,7 +48,6 @@ export default {
     async beforeMount() {
         const response = await this.$axios.get('/login')
         this.rol = response.data
-        const clave = "Anitalabalatina"
         const idCifrado = localStorage.getItem("proId")
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);

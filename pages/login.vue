@@ -25,7 +25,7 @@
                                 </v-card-actions>
                                 <div class="text-center" style="margin: .5cm;">
                                     <a :href="'/Usuarios/Recovery'"><p>¿Olvidaste tu contraseña?</p></a>
-                                    <a :href="'/Usuarios/Register'"><p>¿Aun no estás registrado?</p></a>
+                                    <a :href="'/Usuarios/Register'"><p>¿No tienes una cuenta?</p></a>
                                     <br>
                                 </div>
                             </v-card>

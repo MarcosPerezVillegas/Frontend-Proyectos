@@ -22,12 +22,12 @@
                 </v-btn>
             </v-row>
             <br>
-            <v-card v-if="btn === 1">
+            <v-card outlined v-if="btn === 1">
                 <v-card-title>
                     Crear nuevo estado
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="estado.Estado" label="Ingresa el estado"
+                    <v-text-field outlined v-model="estado.Estado" label="Ingresa el estado"
                         :rules="[$validations.notEmpty]"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
@@ -44,7 +44,7 @@
             <v-card-title>
                 Estados
             </v-card-title>
-            <v-card>
+            <v-card outlined>
                 <v-data-table :items="estados" :headers="headers">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 " v-text="'Editar'" color="blue" text small @click="CambiarBT(item.id, item.Estado)"/>
@@ -58,12 +58,12 @@
                 </v-data-table>
             </v-card>
             <br>
-            <v-card v-if="bt === 1">
+            <v-card outlined v-if="bt === 1">
                 <v-card-title>
                     Editar estado ' {{ this.Estado }} '
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="estado.Estado" label="Ingresa el nuevo valor del estado"></v-text-field>
+                    <v-text-field outlined v-model="estado.Estado" label="Ingresa el nuevo valor del estado"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -115,6 +115,7 @@ export default Vue.extend({
         try {
             const response = await this.$axios.get('/Status')
             this.estados = response.data.data
+            console.log(this.estados)
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)
         }

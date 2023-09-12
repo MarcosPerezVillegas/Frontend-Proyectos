@@ -9,22 +9,30 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar">
+            <v-form @submit.prevent="validarTamañoArchivo()">
                 <v-card>
                     <v-card-title>
                         Crear una tarea
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="tarea.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.descripcion" label="Descripcion"
+                        <v-text-field v-model="tarea.nombre" outlined label="Nombre"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.comentarios" label="Comentarios del profesor"
+                        <v-textarea v-model="tarea.descripcion" outlined style="overflow-y: auto; max-block-size: 300px; "
+                            label="Descripcion" :rules="[$validations.notEmpty]"></v-textarea>
+                        <v-textarea v-model="tarea.comentarios" outlined style="overflow-y: auto; max-block-size: 300px; "
+                            label="Comentarios del profesor"></v-textarea>
+                        <v-text-field v-model="tarea.fecha_limite" outlined label="Fecha limite" type="date"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.fecha_limite" label="Fecha limite" type="date"
+                        <v-text-field v-model="tarea.hora_limite" outlined label="Hora limite" type="time"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.hora_limite" label="Hora limite" type="time"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-combobox v-model="estado" label="Estado de la tarea" :items="['Activo', 'Inactivo']"
+                        <v-card outlined>
+                            <v-text style="font-size: larger;">Subir material de apoyo</v-text>
+                            <br>
+                            <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb</v-text>
+                            <v-file-input v-model="archivo" label="Seleccionar archivo"></v-file-input>
+                        </v-card>
+                        <br>
+                        <v-combobox v-model="estado" outlined label="Estado de la tarea" :items="['Activa', 'Oculta']"
                             :rules="[$validations.notEmpty]"></v-combobox>
                     </v-card-text>
                     <v-card-actions>
@@ -45,7 +53,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 export default {
     name: 'UsuariosCreate',
@@ -53,7 +61,7 @@ export default {
 
     data: () => ({
         rol: "",
-        clave: "Anitalabalatina",
+        archivo: null,
         tarea: {
             Proyecto_id: "",
             nombre: "",
@@ -63,6 +71,7 @@ export default {
             hora_limite: "",
             activo: Number
         },
+        tareaId: 0,
         estado: ""
     }),
     async beforeMount() {
@@ -70,34 +79,58 @@ export default {
             const res = await this.$axios.get('/Login')
             this.rol = res.data.rol
             await this.$axios.get(`/Proyectos/Usuario/${res.data.codigo}`)
+            const id = localStorage.getItem("ProId")
+            const bytes = CryptoJS.AES.decrypt(id, clave);
+            this.tarea.Proyecto_id = bytes.toString(CryptoJS.enc.Utf8);
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     },
     methods: {
-        async guardar() {
-            if (this.tarea.nombre === "" || this.tarea.descripcion === "" || this.tarea.comentarios === "" ||
-                this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.estado === "") {
-                return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
+        async validarTamañoArchivo() {
+            // Verificar si se ha seleccionado un archivo
+            if (this.archivo) {
+                const tamañoMaximo = 50 * 1024 * 1024; // 50 MB (ajusta según tus necesidades)
+                if (this.archivo.size > tamañoMaximo) {
+                    this.$nuxt.$emit('show-snackbar', 'red', 'El archivo seleccionado es demasiado grande. Por favor, elige un archivo más pequeño.');
+                    this.archivo = null; // Limpia el archivo seleccionado
+                }
             }
             try {
-                const id = localStorage.getItem("ProId")
-                const bytes = CryptoJS.AES.decrypt(id, this.clave);
-                this.tarea.Proyecto_id = bytes.toString(CryptoJS.enc.Utf8);
-                try {
-                    if (this.estado === "Activo") {
-                        this.tarea.activo = 1
-                    } else {
-                        this.tarea.activo = 0
+                if (this.tarea.nombre === "" || this.tarea.descripcion === "" ||
+                    this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.estado === "") {
+                    return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
+                }
+                const resTar = await this.$axios.get(`/Tareas`)
+                const tareas = resTar.data.data
+                for (const tarea of tareas) {
+                    if (tarea.Proyecto_id.toString() === this.tarea.Proyecto_id && tarea.nombre === this.tarea.nombre) {
+                        return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
                     }
-                    const resTar = await this.$axios.get(`/Tareas/Nombre/${this.tarea.nombre}`)
-                    const tareas = resTar.data.data
-                    for (const tarea of tareas) {
-                        if (tarea.Proyecto_id.toString() === this.tarea.Proyecto_id && tarea.nombre === this.tarea.nombre) {
-                            return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
-                        }
-                    }
-                } catch { }
+                }
+                this.tareaId = tareas[tareas.length - 1].id + 1
+            } catch { }
+            this.enviarArchivo()
+        },
+        async enviarArchivo() {
+            const formData = new FormData()
+            formData.append('archivo', this.archivo)
+            try {
+                const response = await this.$axios.post(`Tarea/Entrega/Material/${this.tareaId}/${this.tarea.Proyecto_id}`, formData)
+                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+            } catch (error) {
+                this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            }
+            this.guardar()
+        },
+
+        async guardar() {
+            try {
+                if (this.estado === "Activa") {
+                    this.tarea.activo = 1
+                } else {
+                    this.tarea.activo = 0
+                }
 
                 const response = await this.$axios.post('/Tareas', this.tarea)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
@@ -110,8 +143,8 @@ export default {
         cancelar() {
             this.$router.push('/Tareas')
         },
-
     }
+
 }
 
 </script>

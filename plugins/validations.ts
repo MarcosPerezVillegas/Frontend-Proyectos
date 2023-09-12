@@ -11,8 +11,10 @@ export default (context, inject) => {
             return !isNaN(Number(value)) || 'Solo se admiten números'
         },
         notPhone(value: String) {
-            if(value.length!==10 || isNaN(Number(value))){
-                return 'El número de telefono solo debe contener números y tener solo 10 digitos'
+            if(value.length!==0){
+                if((value.length!==10 || isNaN(Number(value)))){
+                    return 'El número de telefono solo debe contener números y tener solo 10 digitos'
+                }
             }
         },
         isValidEmail(value: String) {

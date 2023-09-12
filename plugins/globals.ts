@@ -1,0 +1,1 @@
+export const clave = 'KM?:#0Y?c{4%+AbbdHZN';

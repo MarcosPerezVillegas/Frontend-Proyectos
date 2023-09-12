@@ -6,15 +6,15 @@
                     Registrar Usuario
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Codigo" :rules="[$validations.notEmpty,$validations.notNumber]"></v-text-field>
-                    <v-text-field v-model="usuario.nombre" label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="usuario.email" label="Email"
+                    <v-text-field v-model="usuario.codigo" outlined label="Codigo" :rules="[$validations.notEmpty,$validations.notNumber]"></v-text-field>
+                    <v-text-field v-model="usuario.nombre" outlined label="Nombre" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="usuario.email" outlined label="Email"
                         :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                    <v-text-field v-model="usuario.password" label="Contraseña" type="password"
+                    <v-text-field v-model="usuario.password" outlined label="Contraseña" type="password"
                         :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="password" label="Confirmar contraseña" type="password"
+                    <v-text-field v-model="password" outlined label="Confirmar contraseña" type="password"
                         :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
+                    <v-text-field v-model="usuario.telefono" outlined label="Telefono"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />

@@ -1,7 +1,35 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card>
+            <v-card v-if="usuario.codigo === cod">
+                <v-card-title>
+                    Información del Usuario
+                </v-card-title>
+                <v-card-text>
+                    <v-form>
+                        <v-text-field v-model="usuario.nombre" outlined label="Nombre completo" outlined
+                            :readonly="!editar"></v-text-field>
+
+                        <v-text-field v-model="usuario.email" outlined label="Correo electrónico" outlined
+                            :readonly="!editar"></v-text-field>
+
+                        <v-text-field v-model="usuario.telefono" outlined label="Número de teléfono" outlined
+                            :readonly="!editar"></v-text-field>
+
+                        <v-text-field v-model="usuario.codigo" outlined label="Código de usuario" outlined
+                            :readonly="!editar"></v-text-field>
+
+                        <v-text-field v-if="editar" v-model="pass.cont" outlined label="Contraseña" outlined
+                            type="password"></v-text-field>
+
+                        <v-text-field v-if="editar" v-model="pass.confCont" outlined label="Confirmar contraseña" outlined
+                            type="password"></v-text-field>
+
+                        <v-btn @click="toggleeditar" color="primary">{{ editar ? 'Guardar' : 'Editar' }}</v-btn>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+            <v-card v-else>
                 <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
                     <p>No tienes el rol necesario para acceder a esta página.</p>
@@ -15,12 +43,12 @@
                         Editar usuario
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="usuario.codigo" label="Código"></v-text-field>
-                        <v-text-field v-model="usuario.nombre" label="Nombre"></v-text-field>
-                        <v-text-field v-model="usuario.email" label="Email"
+                        <v-text-field v-model="usuario.codigo" outlined label="Código"></v-text-field>
+                        <v-text-field v-model="usuario.nombre" outlined label="Nombre"></v-text-field>
+                        <v-text-field v-model="usuario.email" outlined label="Email"
                             :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                        <v-combobox v-model="rol_usuario" label="Rol" :items="['Administrador', 'Maestro']"></v-combobox>
-                        <v-text-field v-model="usuario.telefono" label="Telefono"></v-text-field>
+                        <v-combobox v-model="rol_usuario" label="Rol" outlined :items="['Administrador', 'Maestro']"></v-combobox>
+                        <v-text-field v-model="usuario.telefono" outlined label="Telefono"></v-text-field>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
@@ -70,7 +98,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 
 export default {
@@ -95,14 +123,15 @@ export default {
         rol: "",
         codigo: "",
         rol_inicial: "",
-        url: ""
+        url: "",
+        editar: false,
+        cod:""
     }),
 
     async beforeMount() {
         try {
             const respons = await this.$axios.get('/login')
             this.rol = respons.data.rol
-            const clave = "Encriptar"
             const url = localStorage.getItem("url")
             if (url !== null) {
                 const urlCryp = CryptoJS.AES.decrypt(url, clave);
@@ -114,15 +143,14 @@ export default {
                 this.rol_inicial = rolCryp.toString(CryptoJS.enc.Utf8);
                 this.rol_usuario = this.rol_inicial
             }
-
-            let codigo = localStorage.getItem("codigo")
+            const codigo = localStorage.getItem("codigo")
             const codigoCryp = CryptoJS.AES.decrypt(codigo, clave);
-            codigo = codigoCryp.toString(CryptoJS.enc.Utf8);
-
+            this.cod = codigoCryp.toString(CryptoJS.enc.Utf8);
             const response = await this.$axios.get(this.url)
             this.usuario = response.data.data
+            console.log(this.usuario.codigo,this.cod)
         } catch (error) {
-            this.$nuxt.$emit('show-snackbar', 'red', (error as Error).message)
+            this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     },
 
@@ -134,12 +162,13 @@ export default {
         next();
     },
 
-
-    beforeDestroy() {
-        window.removeEventListener('popstate', this.PopState);
-    },
-
     methods: {
+        toggleeditar() {
+            if(this.editar){
+                this.guardar()
+            }
+            this.editar = !this.editar;
+        },
         async guardar() {
             const resRol = await this.$axios.get('/Login')
             this.rol = resRol.data.rol
@@ -166,16 +195,16 @@ export default {
                 }
                 const response = await this.$axios.put(this.url, this.usuario)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/Usuarios')
+                if(this.pass.cont !== "" && this.pass.confCont !== ""){
+                    if (this.pass.cont !== this.pass.confCont) {
+                    return this.$nuxt.$emit('show-snackbar', 'red', 'Las contraseñas no coinciden')
+                }
+                this.CambiarPass()
+                }
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
-        },
-
-        PopState() {
-            localStorage.removeItem("url");
-            localStorage.removeItem("codigo");
-            localStorage.removeItem("rol");
+            location.reload()
         },
 
         Cancelar() {

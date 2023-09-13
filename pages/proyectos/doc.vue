@@ -21,7 +21,9 @@
             <v-card-text>
                 Formato Exel <v-btn @click="createExel" color="green">Descargar</v-btn>
                 <br><br>
-                Formato PDF <v-btn @click="createPDF" color="red">Descargar</v-btn>    
+                Formato PDF <v-btn @click="createPDF" color="red">Descargar</v-btn>
+                <br><br>
+                Descargar Exel y PDF <v-btn @click="descarExPDF" color="blue">Descargar</v-btn>    
             </v-card-text>
         </v-card>
         </v-container>
@@ -41,6 +43,13 @@ export default {
     data: () => ({
         rol: {},
         proyecto: {},
+        tareas: [],
+        headers: [
+            { text: 'Nombre', value: 'nombre' },
+            { text: 'Estado actual del proyecto', value: 'statuses[0].Estado' },
+            { text: 'Encargado', value: 'encargado.nombre' },
+            { text: 'Objetivos del proyecto', value: 'objetivos' },
+        ],
         alumPart: [],
         id: "",
     }),
@@ -56,6 +65,8 @@ export default {
         try {
             const responseP = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = responseP.data.data
+            const resTar = await this.$axios.get(`/tareas/proyecto/${this.id}`)
+            this.tareas = resTar.data.data
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -79,17 +90,26 @@ export default {
             doc.setFontSize(14)
             doc.setFont("Courier", "bold")
             doc.text(`A QUIEN CORRESPONDA:`, 25, 45)
-            doc.setFontSize(13)
-            doc.setFont("Courier", "normal")
-            doc.text(`El que suscribe Dr. Héctor Huerta Avila, Jefe de Departamento de Ciencias Computacionales e Ingenierías, del Centro Universitario de los Valles, por medio del presente certifica y hace`, 25, 60, {maxWidth: 160, align: "justify"})
-            doc.setFontSize(17)
-            doc.setFont("Courier", "bold")
             const width = doc.internal.pageSize.getWidth()
-            doc.text(`CONSTAR`, width/2, 85, {align: "center"})
             doc.setFontSize(13)
             doc.setFont("Courier", "normal")
-            doc.text(`Que el maestro encargado  ${pro.encargado.nombre} con código ${this.rol.codigo} del proyecto denominado ${pro.nombre}, presentó los avances del proyecto de acuerdo con el resolutivo séptimo del dictamen de creación del Programa Educativo mencionado.`, 25, 100, {maxWidth: 160, align: "justify"})
-            doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 130, {maxWidth: 160, align: "justify"})
+            const line1 = `<font face="Courier" size=1 > <p style="width: 335px" align="justify"> El que suscribe <b>Dr. Héctor Huerta Avila</b>, Jefe de Departamento de Ciencias Computacionales e Ingenierías, del Centro Universitario de los Valles, por medio del presente certifica y hace </p> <br>
+            <font size=2 > <p style="width: 335px" align="center"> <b>CONSTAR</b> </p> </font><br>
+            <p style="width: 335px" align="justify"> Que el maestro encargado <b>${pro.encargado.nombre}</b> con código <b>${this.rol.codigo}</b> del proyecto denominado <b>${pro.nombre}</b>, presentó los avances del proyecto de acuerdo con el resolutivo séptimo del dictamen de creación del Programa Educativo mencionado. </p></font>`
+            const container = document.createElement('div');
+            container.innerHTML = line1;
+            doc.html(container, {
+                x: 25,
+                y: 55,
+                html2canvas: {
+                    scale: 0.48,
+                    Width: 160,
+                },
+                callback: function (doc) {
+                    doc.save('Progreso.pdf');
+                },
+            })
+            doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, {maxWidth: 160, align: "justify"})
             doc.setFontSize(12)
             doc.setFont("Courier", "bold")
             doc.text(`ATENTAMENTE`, width/2, 160, {align: "center"})
@@ -108,27 +128,58 @@ export default {
             doc.setFont("Courier", "normal")
             doc.text(`Encargado del Proyecto`, width/2, 190, {align: "center"})
             doc.addImage(img2, 'PNG', 50, 270, 110, 16, {align: "center"});
-            doc.save('Progreso.pdf');
         },
 
         createExel(){
             const pro = this.proyecto
             const datEx = [
-                { Nombre: pro.nombre, Objetivo: pro.objetivos, Status: pro.statuses[0].Estado,
+                { Nombre: pro.nombre, Objetivo: pro.objetivos, Estado: pro.statuses[pro.statuses.length -1].Estado,
                 Encargado: pro.encargado.nombre, Carrera: pro.Carrera.nombre, Cupos: pro.alumnos }
             ]
-            const data = XLSX.utils.aoa_to_sheet([
-                ["Nombre", "Objetivo", "Status", "Encargado", "Carrera", "Cupos"],
-                [ pro.nombre, pro.objetivos, pro.statuses[0].Estado, pro.encargado.nombre, pro.Carrera.nombre, pro.alumnos],
-                [],
-                ["Alumnos"],
-                ["Codigo", "Nombre", "Correo"],
-                [pro.Alumnos[0].codigo, pro.Alumnos[0].nombre, pro.Alumnos[0].email]
-            ])
+
+            const datEst = pro.statuses.map(function (item) {
+                const tabla = { Estado: item.Estado, Nota: item.statusProyecto.nota, FechaCreación: item.statusProyecto.createdAt, FechaModificación: item.statusProyecto.updatedAt, FechaEliminación: item.statusProyecto.deletedAt } 
+                return tabla 
+            })
+
+            const datAlum = pro.Alumnos.map(function (item) {
+                const tabla = { Codigo: item.codigo, Nombre: item.nombre, Correo: item.email } 
+                return tabla 
+            })
+
+            const datTar = this.tareas.map(function (item) {
+                var estado = "Oculta"
+                var entregada = "No"
+                if(item.activo === 1){
+                    estado = "Activo"
+                }
+                if(item.entregada === 1){
+                    entregada = "Si"
+                }
+                const tabla = { Nombre: item.nombre, Descripcion: item.descripcion, Comentarios: item.comentarios, FecheEntrega: item.fecha_limite, HoraEntrega: item.hora_limite, Estado: estado, TareaEntregada: entregada, AlumnoEntregante: item.entregante } 
+                return tabla 
+            })
+
+            const data = XLSX.utils.json_to_sheet(datEx)
+            const data2 = XLSX.utils.json_to_sheet(datAlum)
+            const data3 = XLSX.utils.json_to_sheet(datEst)
+            const data4 = XLSX.utils.json_to_sheet(datTar)
             const workbook = XLSX.utils.book_new()
+            const sheet1 = 'Datos del proyecto'
+            const sheet2 = 'Datos de Participantes'
+            const sheet3 = 'Hisorial de estados'
+            const sheet4 = 'Hisorial de Tareas'
             const filename = 'Progreso'
-            XLSX.utils.book_append_sheet(workbook, data, filename)
+            XLSX.utils.book_append_sheet(workbook, data, sheet1)
+            XLSX.utils.book_append_sheet(workbook, data2, sheet2)
+            XLSX.utils.book_append_sheet(workbook, data3, sheet3)
+            XLSX.utils.book_append_sheet(workbook, data4, sheet4)
             XLSX.writeFile(workbook, `${filename}.xlsx`)
+        },
+
+        descarExPDF(){
+            this.createPDF()
+            this.createExel()
         },
 
         cancelar() {

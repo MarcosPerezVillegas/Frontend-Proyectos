@@ -17,7 +17,7 @@
                     <v-card-text>
                         <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
                             :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-textarea v-model="proyecto.objetivos" outlined label="Objetivos" style="overflow-y: auto; max-block-size: 300px; "
+                        <v-textarea v-model="proyecto.objetivos" outlined label="Objetivos" style="overflow-y: auto; max-block-size: 300px;"
                             :rules="[$validations.notEmpty]"></v-textarea>
                         <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
                             :rules="[$validations.notEmpty]"></v-text-field>

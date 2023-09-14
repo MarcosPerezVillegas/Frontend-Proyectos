@@ -99,13 +99,13 @@ export default {
             container.innerHTML = line1;
             doc.html(container, {
                 x: 25,
-                y: 55,
+                y: 50,
                 html2canvas: {
                     scale: 0.48,
                     Width: 160,
                 },
                 callback: function (doc) {
-                    doc.save('Certificado.pdf');
+                    doc.save(`Certificado - ${nombre}.pdf`);
                 },
             })
             doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, {maxWidth: 160, align: "justify"})
@@ -116,7 +116,7 @@ export default {
             doc.text(`“Piensa y Trabaja”`, width/2, 164, {align: "center"})
             doc.setFontSize(13)
             doc.setFont("Courier", "bold")
-            doc.text(`“2023, Año del fomento a la formación integral con una`, width/2, 168, {align: "center"})
+            doc.text(`“${año}, Año del fomento a la formación integral con una`, width/2, 168, {align: "center"})
             doc.text(`Red de Centros y Sistemas Multitemáticos”`, width/2, 172, {align: "center"})
             doc.setFontSize(12)
             doc.setFont("Courier", "normal")

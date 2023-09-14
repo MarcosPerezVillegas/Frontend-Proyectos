@@ -25,6 +25,7 @@
 // @ts-nocheck
 
 const CryptoJS = require("crypto-js");
+import { clave } from '@/plugins/globals';
 
 export default {
     name: "ConfirmDialog",
@@ -58,13 +59,18 @@ export default {
         confirmDialog: false,
         roles: {},
         proyecto: {},
-        alum: {},
+        alum: {
+            codigo: "",
+            email: "",
+            nombre: "",
+            proyecto_id: "",
+            telefono: ""
+        },
         id: "",
     }),
 
     methods: {
         async insc() {
-            const clave = "Anitalabalatina"
             const idCifrado = localStorage.getItem("proId")
             const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
             const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
@@ -79,6 +85,8 @@ export default {
                 const responseA = await this.$axios.get(`/alumnos/${rol.codigo}`)
                 this.alum = responseA.data.data
                 this.alum.proyecto_id = this.id
+                console.log(this.alum)
+                console.log(this.id)
                 await this.$axios.put(`/alumnos/${rol.codigo}`, this.alum)
                 this.proyecto.alumnos = pro.alumnos - 1
                 await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)

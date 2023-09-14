@@ -2,6 +2,8 @@
     <v-app dark>
       <v-app-bar fixed app>
         <v-toolbar-title>{{ title }}</v-toolbar-title>
+        <v-spacer/>
+          <v-btn class="elevation-0" to="/">Inicio</v-btn>
       </v-app-bar>
       <v-main>
         <v-container>

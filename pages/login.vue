@@ -84,12 +84,11 @@ export default {
                         await this.$axios.get(`/Maestros/Email/${this.login.email}`)
                     } catch{}
                 await this.$axios.get(`/Alumnos/Email/${this.login.email}`)
+                this.$router.push('/')
                 
             } catch (error) {
                 this.hasError = true
-                return
             }
-            this.$router.push('/')
         }
     }
 }

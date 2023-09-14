@@ -236,7 +236,6 @@ export default {
       }
 
     }
-    localStorage.removeItem("Tarea");
   },
 
 

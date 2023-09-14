@@ -71,6 +71,7 @@ export default {
             hora_limite: "",
             activo: Number
         },
+        tareas: [],
         tareaId: 0,
         estado: ""
     }),
@@ -102,15 +103,18 @@ export default {
                     return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
                 }
                 const resTar = await this.$axios.get(`/Tareas`)
-                const tareas = resTar.data.data
-                for (const tarea of tareas) {
+                this.tareas = resTar.data.data
+                for (const tarea of this.tareas) {
                     if (tarea.Proyecto_id.toString() === this.tarea.Proyecto_id && tarea.nombre === this.tarea.nombre) {
                         return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
                     }
                 }
-                this.tareaId = tareas[tareas.length - 1].id + 1
+                if (this.tareas.length !== 0) {
+                    this.tareaId = this.tareas[this.tareas.length - 1].id;
+                }
+                console.log(this.tareas, this.tareaId)
             } catch { }
-            this.enviarArchivo()
+            this.guardar()
         },
         async enviarArchivo() {
             const formData = new FormData()
@@ -121,7 +125,7 @@ export default {
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
-            this.guardar()
+            this.$router.push('/Tareas')
         },
 
         async guardar() {
@@ -133,8 +137,13 @@ export default {
                 }
 
                 const response = await this.$axios.post('/Tareas', this.tarea)
+                if (this.tareas.length === 0) {
+                    this.tareaId = response.data.data.id;
+                }
+                console.log(response.data.data)
+                console.log(this.tareaId)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/Tareas')
+                this.enviarArchivo()
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

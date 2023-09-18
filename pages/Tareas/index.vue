@@ -3,145 +3,133 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container fluid class="text-center">
-        <v-spacer />
-        <v-menu v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" offset-y>
-            <template #activator="{ on }">
-                <v-btn v-text="'Crear una tarea'" color="primary" v-on="on" />
-            </template>
-            <v-list>
-                <v-list-item v-for="(proyecto, index) in proyectos" :key="index">
-                    <v-list-item @click="selProTarea(proyecto)">{{ proyecto.nombre }}</v-list-item>
-                </v-list-item>
-            </v-list>
-        </v-menu>
+        <v-btn v-if="seleccionado" v-text="'Seleccionar otro proyecto'" color="primary" @click="sel()" />
+        <v-btn v-if="seleccionado" v-text="'Crear una tarea'" color="primary" @click="selProTarea(seleccionado)" />
         <!--<SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />--->
         <br>
-        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" style="font-size: larger ;">Selecciona uno de
-            tus proyectos para mostrarte las tareas</p>
-        <v-menu v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" offset-y>
-            <template #activator="{ on }">
-                <v-btn v-text="'Seleccionar Proyecto'" color="primary" v-on="on" />
-            </template>
-            <v-list>
-                <v-list-item v-for="(proyecto, index) in proyectos" :key="index">
-                    <v-list-item @click="selProyecto(proyecto)">{{ proyecto.nombre }}</v-list-item>
-                </v-list-item>
-            </v-list>
-        </v-menu>
+        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador' && !seleccionado && proyectos.length !== 0" style="font-size: larger ;">
+            Selecciona uno de tus proyectos para mostrarte las tareas</p>
+        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador' && !seleccionado && proyectos.length === 0"
+            style="font-size: larger;">No tienes ningun proyecto al cual se le puedan asignar o ver tareas para tareas</p>
         <br>
-        <v-card-title v-if="seleccionado" style="font-size: x-large;">
-            Tareas del proyecto: {{ seleccionado.nombre }}
-        </v-card-title>
-        <v-card outlined v-if="seleccionado">
-            <v-card-title>
-                Todas las tareas que tienes
+        <v-form style=" padding: 20px; background-color: whitesmoke; box-shadow: 0 0 1px black; border-radius: 2%;">
+            <v-row v-if="!seleccionado && usuario.rol !== 'alumno'">
+                <v-col v-for="proyecto in proyectos" :key="proyecto.id" cols="12" sm="6" md="4" lg="3">
+                    <v-card
+                        style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 5px black; border-radius: 2%;">
+                        <div style="border-color: black; border-width: 1px; border-style: solid;">
+                            <h3>Proyecto: {{ proyecto.nombre }}</h3>
+                            <p>{{ proyecto.statuses[proyecto.statuses.length - 1].Estado }}</p>
+                        </div>
+                        <div>
+                            <v-btn v-text="'Ver tareas'" color="blue" text small @click="selProyecto(proyecto)" />
+                        </div>
+                    </v-card>
+                </v-col>
+            </v-row>
+            <v-card-title v-if="seleccionado" style="font-size: x-large;">
+                <b>Tareas del proyecto: {{ seleccionado.nombre }}</b>
             </v-card-title>
-            <v-data-table :items="tareas" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-menu offset-y>
-                        <template #activator="{ on }">
-                            <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
-                        </template>
-                        <v-list>
-                            <v-list-item>
-                                <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
-                            </v-list-item>
-                            <v-list-item>
-                                <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
-                            </v-list-item>
-                            <v-list-item v-if="item.activo === 'Oculta'">
-                                <v-btn v-text="'Activar'" color="green" text small @click="state(item)" />
-                            </v-list-item>
-                            <v-list-item v-else>
-                                <v-btn v-text="'Desactivar'" color="red" text small @click="state(item)" />
-                            </v-list-item>
-                            <v-list-item>
-                                <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
+            <v-card outlined v-if="seleccionado" class="custom-v-card">
+                <v-card-title>
+                    <b>Todas las tareas que tienes</b>
+                </v-card-title>
+                <v-data-table :items="tareas" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-menu offset-y>
+                            <template #activator="{ on }">
+                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                            </template>
+                            <v-list>
+                                <v-list-item>
+                                    <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
+                                </v-list-item>
+                                <v-list-item v-if="item.activo === 'Oculta'">
+                                    <v-btn v-text="'Activar'" color="green" text small @click="state(item)" />
+                                </v-list-item>
+                                <v-list-item v-else>
+                                    <v-btn v-text="'Desactivar'" color="red" text small @click="state(item)" />
+                                </v-list-item>
+                                <v-list-item>
+                                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
                                 de manera permanente? esta acción no se puede deshacer`" :index="index"
-                                    :item="item.codigo" :itemUrl="`/Tareas/${item.id}`" />
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                    <!--
-                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
-                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
-                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
-                    -->
-                </template>
-            </v-data-table>
-        </v-card>
-        <br>
-        <br>
-        <v-card outlined v-if="seleccionado">
-            <v-card-title>
-                Tareas pendientes de revisar
-            </v-card-title>
-            <v-data-table :items="tareasPen" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-menu offset-y>
-                        <template #activator="{ on }">
-                            <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
-                        </template>
-                        <v-list>
-                            <v-list-item>
-                                <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
-                            </v-list-item>
-                            <v-list-item>
-                                <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
-                            </v-list-item>
-                            <v-list-item>
-                                <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
+                                        :item="item.codigo" :itemUrl="`/Tareas/${item.id}`" />
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </template>
+                </v-data-table>
+            </v-card>
+            <br>
+            <v-card outlined v-if="seleccionado" class="custom-v-card">
+                <v-card-title>
+                    <b>Tareas pendientes de revisar</b>
+                </v-card-title>
+                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-menu offset-y>
+                            <template #activator="{ on }">
+                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                            </template>
+                            <v-list>
+                                <v-list-item>
+                                    <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
+                                </v-list-item>
+                                <v-list-item>
+                                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
                                 de manera permanente? esta acción no se puede deshacer`" :index="index"
-                                    :item="item.codigo" :itemUrl="`/Tareas/${item.id}`" />
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                    <!--
-                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
-                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
-                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
-                    -->
-                </template>
-            </v-data-table>
-        </v-card>
+                                        :item="item.codigo" :itemUrl="`/Tareas/${item.id}`" />
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
+                    </template>
+                </v-data-table>
+            </v-card>
 
-        <v-card outlined v-if="usuario.rol === 'alumno'">
-            <v-card-title>
-                Todas las tareas que tienes
-            </v-card-title>
-            <v-data-table :items="tareas" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
-                    <!--
-                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Tareas/${item.id}`" />
-                    <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea '${item.nombre}'?`"
-                        :itemUrl="`/Tareas/${item.id}`" :index="index" list="" item="" />
-                    -->
-                </template>
-            </v-data-table>
-        </v-card>
-        <br>
-        <v-card outlined v-if="usuario.rol === 'alumno'">
-            <v-card-title>
-                Tareas pendientes de entregar
-            </v-card-title>
-            <v-data-table :items="tareasPen" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
-                </template>
-            </v-data-table>
-        </v-card>
-        <br>
-        <v-card outlined v-if="usuario.rol === 'alumno'">
-            <v-card-title>
-                Tareas entregadas
-            </v-card-title>
-            <v-data-table :items="tareasEnt" :headers="headers">
-                <template v-slot:item.actions="{ item, index }">
-                    <v-btn v-text="'ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
-                </template>
-            </v-data-table>
-        </v-card>
+            <v-card outlined v-if="usuario.rol === 'alumno'" class="custom-v-card">
+                <v-card-title>
+                    Todas las tareas que tienes
+                </v-card-title>
+                <v-data-table :items="tareas" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                    </template>
+                </v-data-table>
+            </v-card>
+            <br>
+            <v-card outlined v-if="usuario.rol === 'alumno'" class="custom-v-card">
+                <v-card-title>
+                    Tareas pendientes de entregar
+                </v-card-title>
+                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                    </template>
+                </v-data-table>
+            </v-card>
+            <br>
+            <v-card outlined v-if="usuario.rol === 'alumno'" class="custom-v-card">
+                <v-card-title>
+                    Tareas entregadas
+                </v-card-title>
+                <v-data-table :items="tareasEnt" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                    <template v-slot:item.actions="{ item, index }">
+                        <v-btn v-text="'ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                    </template>
+                </v-data-table>
+            </v-card>
+        </v-form>
     </v-container>
 </template>
 <script lang="ts">
@@ -215,13 +203,12 @@ export default {
                     return tarea;
                 });
             } else {
-                const respro = await this.$axios.get(`/Proyectos/Usuario/${this.usuario.codigo}`)
+                const respro = await this.$axios.get(`/Proyectos/Usuario/${this.usuario.codigo}`);
                 this.proyectos = respro.data.data.filter(proyecto => {
                     // Obtiene el último estado del arreglo statuses
                     const ultimoEstado = proyecto.statuses[proyecto.statuses.length - 1];
-
-                    // Verifica si el último estado es "En espera" y excluye el proyecto si es cierto
-                    return !(ultimoEstado && ultimoEstado.Estado === "En espera");
+                    // Verifica si el último estado es "En espera" o "Terminado" y excluye el proyecto si es cierto
+                    return !(ultimoEstado && (ultimoEstado.Estado === "En espera" || ultimoEstado.Estado === "Terminado"));
                 });
             }
 
@@ -231,13 +218,13 @@ export default {
                     const res = await this.$axios.get(`/Tareas/Proyecto/${this.pro}`);
                     this.tareas = res.data.data;
                     this.tareas = this.tareas.map(tarea => {
-                    if (tarea.activo === 1) {
-                        tarea.activo = 'Activa';
-                    } else if (tarea.activo === 0) {
-                        tarea.activo = 'Oculta';
-                    }
-                    return tarea;
-                });
+                        if (tarea.activo === 1) {
+                            tarea.activo = 'Activa';
+                        } else if (tarea.activo === 0) {
+                            tarea.activo = 'Oculta';
+                        }
+                        return tarea;
+                    });
                     const tar = this.tareas.filter(tarea => tarea.activo === 'Activa')
                     this.tareasPen = tar.filter((tarea) => {
                         const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
@@ -254,13 +241,13 @@ export default {
                     const responseTareas = await this.$axios.get(`/Tareas/Proyecto/${this.pro}`);
                     this.tareas = this.tareas.concat(responseTareas.data.data);
                     this.tareas = this.tareas.map(tarea => {
-                    if (tarea.activo === 1) {
-                        tarea.activo = 'Activa';
-                    } else if (tarea.activo === 0) {
-                        tarea.activo = 'Oculta';
-                    }
-                    return tarea;
-                });
+                        if (tarea.activo === 1) {
+                            tarea.activo = 'Activa';
+                        } else if (tarea.activo === 0) {
+                            tarea.activo = 'Oculta';
+                        }
+                        return tarea;
+                    });
                 }
             }
 
@@ -288,13 +275,13 @@ export default {
             const res = await this.$axios.get(`/Tareas/Proyecto/${proyecto.id}`);
             this.tareas = res.data.data;
             this.tareas = this.tareas.map(tarea => {
-                    if (tarea.activo === 1) {
-                        tarea.activo = 'Activa';
-                    } else if (tarea.activo === 0) {
-                        tarea.activo = 'Oculta';
-                    }
-                    return tarea;
-                });
+                if (tarea.activo === 1) {
+                    tarea.activo = 'Activa';
+                } else if (tarea.activo === 0) {
+                    tarea.activo = 'Oculta';
+                }
+                return tarea;
+            });
             const tar = this.tareas.filter(tarea => tarea.activo === 'Activa')
             this.tareasPen = tar.filter((tarea) => {
                 const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
@@ -350,6 +337,53 @@ export default {
             }
             location.reload()
         },
+
+        sel() {
+            this.seleccionado = !this.seleccionado
+        },
     }
 }
 </script>
+
+<style>
+.custom-v-card {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px black;
+}
+
+.custom-data-table {
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+/* Estiliza los encabezados de la tabla */
+.custom-data-table .v-data-table-header th {
+    background-color: #ace7ff;
+    /* Color de fondo más oscuro para los encabezados */
+    color: white;
+    /* Color del texto en los encabezados */
+}
+
+/* Estiliza las filas alternas */
+.custom-data-table tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+    /* Fondo gris claro para filas impares */
+}
+
+.custom-data-table tbody tr:nth-of-type(even) {
+    background-color: #cfcfcf;
+    /* Fondo blanco para filas pares */
+}
+
+.custom-data-table .v-data-footer {
+    background-color: #ace7ff;
+}
+
+
+.custom-data-table .v-data-table-header {
+    color: white;
+}
+</style>

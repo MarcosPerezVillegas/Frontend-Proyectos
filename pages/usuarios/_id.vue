@@ -1,36 +1,71 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card v-if="usuario.codigo === cod">
-                <v-card-title>
-                    Información del Usuario
+            <v-card v-if="co" class="custom-v-card">
+                <v-card-title class="headline">
+                    <b>Información del Usuario</b>
                 </v-card-title>
                 <v-card-text>
                     <v-form>
-                        <v-text-field v-model="usuario.nombre" outlined label="Nombre completo" outlined
-                            :readonly="!editar"></v-text-field>
+                        <v-alert ref="codigo" v-show="data.codigo" color="error" icon="$error">
+                            Tu código es necesario y solo debe contener números.
+                        </v-alert>
 
-                        <v-text-field v-model="usuario.email" outlined label="Correo electrónico" outlined
-                            :readonly="!editar"></v-text-field>
+                        <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
+                            Tu nombre es necesario
+                        </v-alert>
 
-                        <v-text-field v-model="usuario.telefono" outlined label="Número de teléfono" outlined
-                            :readonly="!editar"></v-text-field>
+                        <v-alert ref="email" v-show="data.email" color="error" icon="$error">
+                            Tu correo electrónico es necesario y debe ser válido.
+                        </v-alert>
 
-                        <v-text-field v-model="usuario.codigo" outlined label="Código de usuario" outlined
-                            :readonly="!editar"></v-text-field>
+                        <v-row>
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="usuario.codigo" outlined label="Código de usuario"
+                                    :readonly="!editar"
+                                    :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
+                            </v-col>
 
-                        <v-text-field v-if="editar" v-model="pass.cont" outlined label="Contraseña" outlined
-                            type="password"></v-text-field>
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="usuario.nombre" outlined label="Nombre completo" :readonly="!editar"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                            </v-col>
 
-                        <v-text-field v-if="editar" v-model="pass.confCont" outlined label="Confirmar contraseña" outlined
-                            type="password"></v-text-field>
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="usuario.email" outlined label="Correo electrónico"
+                                    :readonly="!editar"
+                                    :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
+                            </v-col>
 
-                        <v-btn @click="toggleeditar" color="primary">{{ editar ? 'Guardar' : 'Editar' }}</v-btn>
+                            <v-col cols="12" md="6">
+                                <v-alert ref="telefono" v-show="data.telefono" color="error" icon="$error">
+                                    Tu número de teléfono debe ser nulo o tener 10 dígitos.
+                                </v-alert>
+                                <v-text-field v-model="usuario.telefono" outlined label="Número de teléfono"
+                                    :readonly="!editar" :rules="[$validations.notPhone]"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-alert ref="iguales" v-show="data.iguales" color="error" icon="$error">
+                            Las contraseñas no coinciden.
+                        </v-alert>
+                        <v-row>
+                            <v-col cols="12" md="5">
+                                <v-text-field v-if="editar" v-model="pass.cont" outlined label="Contraseña"
+                                    type="password"></v-text-field>
+                                <v-text-field v-if="editar" v-model="pass.confCont" outlined label="Confirmar contraseña"
+                                    type="password"></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <v-row justify="center">
+                            <v-btn @click="toggleeditar" color="blue">{{ editar ? 'Guardar' : 'Editar' }}</v-btn>
+                            <v-btn @click="cancelarEditar" color="red">cancelar</v-btn>
+                        </v-row>
                     </v-form>
                 </v-card-text>
             </v-card>
-            <v-card v-else>
-                <v-card-title>Acceso Denegado</v-card-title>
+            <v-card v-else class="custom-v-card">
+                <v-card-title class="headline"><b>Acceso Denegado</b></v-card-title>
                 <v-card-text>
                     <p>No tienes el rol necesario para acceder a esta página.</p>
                 </v-card-text>
@@ -38,24 +73,63 @@
         </v-container>
         <v-container v-else>
             <v-form @submit.prevent="guardar">
-                <v-card>
-                    <v-card-title>
-                        Editar usuario
+                <v-card outlined class="custom-v-card">
+                    <v-card-title class="headline">
+                        <b>Editar usuario</b>
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="usuario.codigo" outlined label="Código"></v-text-field>
-                        <v-text-field v-model="usuario.nombre" outlined label="Nombre"></v-text-field>
-                        <v-text-field v-model="usuario.email" outlined label="Email"
-                            :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                        <v-combobox v-model="rol_usuario" label="Rol" outlined :items="['Administrador', 'Maestro']"></v-combobox>
-                        <v-text-field v-model="usuario.telefono" outlined label="Telefono"></v-text-field>
+                        <v-alert ref="codigo" v-show="data.codigo" color="error" icon="$error">
+                            El código del usuario es necesario y solo debe contener números.
+                        </v-alert>
+
+                        <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
+                            El nombre del usuario es necesario
+                        </v-alert>
+
+                        <v-alert ref="email" v-show="data.email" color="error" icon="$error">
+                            El correo electrónico del usuario es necesario y debe ser válido.
+                        </v-alert>
+                        <v-row>
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="usuario.codigo" outlined label="Código"
+                                    :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="usuario.nombre" outlined label="Nombre"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="usuario.email" outlined label="Email"
+                                    :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-alert ref="telefono" v-show="data.telefono" color="error" icon="$error">
+                            El teléfono del usuario debe ser nulo o tener 10 dígitos.
+                        </v-alert>
+
+                        <v-alert ref="rol" v-show="data.rol" color="error" icon="$error">
+                            El rol del usuario es necesario.
+                        </v-alert>
+                        <v-row>
+                            <v-col cols="12" md="6">
+                                <v-text-field v-model="usuario.telefono" outlined label="Telefono"
+                                    :rules="[$validations.notPhone]"></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12" md="6">
+                                <v-combobox v-if="rol_inicial !== 'Alumno'" v-model="rol_usuario" label="Rol" outlined
+                                    :items="['Administrador', 'Maestro']" :rules="[$validations.notEmpty]"></v-combobox>
+                            </v-col>
+                        </v-row>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
                         <v-btn color="red" @click="Cancelar">
                             Cancelar
                         </v-btn>
-                        <v-btn color="green" type="submit">
+                        <v-btn color="blue" type="submit">
                             Guardar
                         </v-btn>
 
@@ -69,15 +143,24 @@
                     </v-btn>
                 </v-row>
                 <br>
-                <v-card v-if="btn === 1">
-                    <v-card-title>
-                        Ingresa la nueva contraseña
+                <v-card ref="con" v-if="btn === 1" outlined class="custom-v-card">
+                    <v-card-title class="headline">
+                        <b>Ingresa la nueva contraseña</b>
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="pass.cont" label="Nueva contraseña" type="password"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="pass.confCont" label="Confirma la contraseña" type="password"
-                            :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-alert ref="iguales" v-show="data.iguales" color="error" icon="$error">
+                            Las contraseñas no coinciden.
+                        </v-alert>
+                        <v-row>
+                            <v-col cols="12" md="6">
+                                <v-text-field v-model="pass.cont" outlined label="Nueva contraseña"
+                                    type="password"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-text-field v-model="pass.confCont" outlined label="Confirma la contraseña"
+                                    type="password"></v-text-field>
+                            </v-col>
+                        </v-row>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
@@ -114,6 +197,16 @@ export default {
             telefono: "",
             admin: 0,
         },
+        data: {
+            codigo: false,
+            nombre: false,
+            email: false,
+            password: false,
+            passconf: false,
+            telefono: false,
+            rol: false,
+            iguales: false,
+        },
         pass: {
             cont: "",
             confCont: "",
@@ -125,13 +218,42 @@ export default {
         rol_inicial: "",
         url: "",
         editar: false,
-        cod:""
+        cod: "",
+        co: false
     }),
+
+    watch: {
+        usuario: {
+            deep: true,
+            handler() {
+                this.data.codigo = false
+                this.data.nombre = false
+                this.data.email = false
+                this.data.password = false
+                this.data.passconf = false
+                this.data.telefono = false
+                this.data.iguales = false
+            }
+        },
+        rol_usuario: {
+            deep: true,
+            handler() {
+                this.data.rol = false
+            }
+        },
+        pass: {
+            deep: true,
+            handler() {
+                this.data.iguales = false
+            }
+        }
+    },
 
     async beforeMount() {
         try {
             const respons = await this.$axios.get('/login')
             this.rol = respons.data.rol
+            this.codigo = respons.data.codigo
             const url = localStorage.getItem("url")
             if (url !== null) {
                 const urlCryp = CryptoJS.AES.decrypt(url, clave);
@@ -148,7 +270,9 @@ export default {
             this.cod = codigoCryp.toString(CryptoJS.enc.Utf8);
             const response = await this.$axios.get(this.url)
             this.usuario = response.data.data
-            console.log(this.usuario.codigo,this.cod)
+            if (this.cod === this.usuario.codigo) {
+                this.co = true
+            }
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -163,28 +287,86 @@ export default {
     },
 
     methods: {
+        cancelarEditar() {
+            this.editar = !this.editar
+        },
         toggleeditar() {
-            if(this.editar){
+            if (this.editar) {
                 this.guardar()
             }
-            this.editar = !this.editar;
+            else {
+                this.editar = !this.editar;
+            }
+        },
+        scrollHaciaAlerta(elemento) {
+            if (elemento && elemento.$el) {
+                const offset = elemento.$el.offsetTop;
+                window.scrollTo({
+                    top: offset,
+                    behavior: "smooth", // Esto hace que el desplazamiento sea suave
+                });
+            }
         },
         async guardar() {
-            const resRol = await this.$axios.get('/Login')
-            this.rol = resRol.data.rol
-            this.codigo = resRol.data.codigo
+
+            if (this.usuario.codigo === "") {
+                this.data.codigo = true
+                return
+            }
+            if (isNaN(Number(this.usuario.codigo))) {
+                this.data.codigo = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.codigo);
+                });
+                return
+            }
+            if (this.usuario.nombre === "") {
+                this.data.nombre = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.nombre);
+                });
+                return
+            }
+            if (this.usuario.email === "") {
+                this.data.email = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.email);
+                });
+                return
+            }
+            // eslint-disable-next-line no-useless-escape
+            if (!this.usuario.email.match(/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/)) {
+                this.data.email = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.email);
+                });
+                return
+            }
+            if (this.rol_usuario === null || this.rol_usuario === "") {
+                this.data.rol = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.rol);
+                });
+                return
+            }
+            if ((this.usuario.telefono !== "" && this.usuario.telefono.length !== 10) || isNaN(Number(this.usuario.telefono))) {
+                this.data.telefono = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.telefono);
+                });
+                return
+            }
+
             try {
-                if (this.rol_usuario === null) {
-                    return this.$nuxt.$emit('show-snackbar', 'red', "No puedes dejar sin rol al usuario")
-                }
                 if (this.usuario.codigo === this.codigo && this.rol_inicial !== this.rol_usuario) {
                     return this.$nuxt.$emit('show-snackbar', 'red', "No puedes modificar el rol de tu propio usuario")
                 }
             }
             catch (error) {
-                return this.$nuxt.$emit('show-snackbar', 'red', "Algo salió mal: ", (error as Error).message)
+                return this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
             try {
+
                 if (this.rol_inicial !== this.rol_usuario) {
                     if (this.rol_inicial === "Administrador" && this.rol_usuario === "Maestro") {
                         this.usuario.admin = 0
@@ -193,18 +375,21 @@ export default {
                 if (this.rol_inicial === "Maestro" && this.rol_usuario === "Administrador") {
                     this.usuario.admin = 1
                 }
-                const response = await this.$axios.put(this.url, this.usuario)
-                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                if(this.pass.cont !== "" && this.pass.confCont !== ""){
-                    if (this.pass.cont !== this.pass.confCont) {
-                    return this.$nuxt.$emit('show-snackbar', 'red', 'Las contraseñas no coinciden')
-                }
+                await this.$axios.put(this.url, this.usuario)
                 this.CambiarPass()
+                this.$nuxt.$emit('show-snackbar', 'orange', 'Se actualizaron los datos a exepcion de la contraseña')
+                if (this.rol === 'administrador') {
+                    window.history.back()
+                    return
                 }
+                if (!this.data.iguales) {
+                    location.reload()
+                }
+
+
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
-            location.reload()
         },
 
         Cancelar() {
@@ -212,30 +397,57 @@ export default {
         },
 
         CambiarBTN() {
-            this.btn = this.btn === 0 ? 1 : 0;
+            if (this.btn === 0) {
+                this.btn = 1
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.con);
+                });
+            } else {
+                this.btn = 0
+            }
         },
         async CambiarPass() {
+            if (this.editar === 0) {
+                return
+            }
+            if (this.pass.cont === "" && this.pass.confCont === "" && this.rol !== 'administrador') {
+                this.CambiarBTN()
+                return
+            }
+            if (this.pass.cont !== this.pass.confCont) {
+                this.data.iguales = true
+                this.$nextTick(() => {
+                    this.scrollHaciaAlerta(this.$refs.iguales);
+                });
+                return
+            }
             try {
-                if (this.pass.cont === "" || this.pass.confCont === "") {
-                    return this.$nuxt.$emit('show-snackbar', 'orange', 'Ingresa las la contraseña correctamente.')
-                }
-                if (this.pass.cont !== this.pass.confCont) {
-                    return this.$nuxt.$emit('show-snackbar', 'red', 'Las contraseñas no coinciden')
-                }
+
                 this.usuario.password = this.pass.cont
                 const usu = {
                     password: this.pass.cont
                 }
+                await this.$axios.put(this.url, this.usuario)
                 const response = await this.$axios.put(this.url, usu)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
             this.pass.cont = ""
             this.pass.confCont = ""
             this.btn = 0
+            location.reload()
         }
     }
 }
 
 </script>
+<style>
+.custom-v-card {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px black;
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno'" justify-center align-center>
-            <v-card>
+            <v-card class="custom-v-card">
                 <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
                     <p>No tienes el rol necesario para acceder a esta página.</p>
@@ -9,38 +9,76 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="validarTamañoArchivo()">
+            <v-form @submit.prevent="validarTamañoArchivo()" class="custom-v-card" style="border-radius: 2%;">
                 <v-card>
-                    <v-card-title>
-                        Crear una tarea
+                    <v-card-title class="headline">
+                        <b>Crear una tarea</b>
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="tarea.nombre" outlined label="Nombre"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-textarea v-model="tarea.descripcion" outlined style="overflow-y: auto; max-block-size: 300px; "
-                            label="Descripcion" :rules="[$validations.notEmpty]"></v-textarea>
-                        <v-textarea v-model="tarea.comentarios" outlined style="overflow-y: auto; max-block-size: 300px; "
+                        <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
+                            El nombre de la tarea es necesaria.
+                        </v-alert>
+
+                        <v-alert ref="fecha" v-show="data.fecha" color="error" icon="$error">
+                            La fecha de entrega de la tarea es necesaria.
+                        </v-alert>
+
+                        <v-alert ref="hora" v-show="data.hora" color="error" icon="$error">
+                            La hora de entrega de la tarea es necesaria.
+                        </v-alert>
+
+                        <v-row>
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="tarea.nombre" outlined label="Nombre"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="tarea.fecha_limite" outlined label="Fecha limite" type="date"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                            </v-col>
+
+                            <v-col cols="12" md="4">
+                                <v-text-field v-model="tarea.hora_limite" outlined label="Hora limite" type="time"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                            </v-col>
+                        </v-row>
+
+                        <v-alert ref="descripcion" v-show="data.descripcion" color="error" icon="$error">
+                            La descripcion de la tarea es necesaria.
+                        </v-alert>
+
+                        <v-textarea v-model="tarea.descripcion" outlined class="textarea-custom" label="Descripcion"
+                            :rules="[$validations.notEmpty]"></v-textarea>
+
+                        <v-textarea v-model="tarea.comentarios" outlined class="textarea-custom"
                             label="Comentarios del profesor"></v-textarea>
-                        <v-text-field v-model="tarea.fecha_limite" outlined label="Fecha limite" type="date"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="tarea.hora_limite" outlined label="Hora limite" type="time"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-card outlined>
+
+                        <v-alert ref="file" v-show="data.file" color="error" icon="$error">
+                            El archivo no debe superar los 50mb.
+                        </v-alert>
+
+                        <v-card outlined
+                            style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 2px black;">
                             <v-text style="font-size: larger;">Subir material de apoyo</v-text>
                             <br>
                             <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb</v-text>
-                            <v-file-input v-model="archivo" label="Seleccionar archivo"></v-file-input>
+                            <v-file-input v-model="archivo" label="Seleccionar archivo" :rules="[$validations.isFileLessThan50MB]"></v-file-input>
                         </v-card>
                         <br>
+                        <v-alert ref="estado" v-show="data.activo" color="error" icon="$error">
+                            El Estado de la tarea en nesesario.
+                        </v-alert>
+
                         <v-combobox v-model="estado" outlined label="Estado de la tarea" :items="['Activa', 'Oculta']"
                             :rules="[$validations.notEmpty]"></v-combobox>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn @click="cancelar()">
+                        <v-btn class="white--text" color="red" @click="cancelar()">
                             Cancelar
                         </v-btn>
-                        <v-btn type="submit">
+                        <v-btn class="white--text" color="green" type="submit">
                             Guardar
                         </v-btn>
                     </v-card-actions>
@@ -71,10 +109,44 @@ export default {
             hora_limite: "",
             activo: Number
         },
+        data: {
+            nombre: false,
+            descripcion: false,
+            fecha: false,
+            hora: false,
+            activo: false,
+            file: false
+        },
         tareas: [],
         tareaId: 0,
         estado: ""
     }),
+
+    watch: {
+        tarea: {
+            deep: true,
+            handler() {
+                this.data.nombre = false
+                this.data.descripcion = false
+                this.data.fecha = false
+                this.data.hora = false
+                this.data.activo = false
+            }
+        },
+        estado: {
+            deep: true,
+            handler() {
+                this.data.activo = false
+            }
+        },
+        archivo: {
+            deep: true,
+            handler() {
+                this.data.file = false
+            }
+        }
+    },
+
     async beforeMount() {
         try {
             const res = await this.$axios.get('/Login')
@@ -88,19 +160,63 @@ export default {
         }
     },
     methods: {
+        scrollHaciaAlerta(elemento) {
+            if (elemento && elemento.$el) {
+                const offset = elemento.$el.offsetTop;
+                window.scrollTo({
+                    top: offset,
+                    behavior: "smooth", // Esto hace que el desplazamiento sea suave
+                });
+            }
+        },
+        
         async validarTamañoArchivo() {
             // Verificar si se ha seleccionado un archivo
             if (this.archivo) {
                 const tamañoMaximo = 50 * 1024 * 1024; // 50 MB (ajusta según tus necesidades)
                 if (this.archivo.size > tamañoMaximo) {
-                    this.$nuxt.$emit('show-snackbar', 'red', 'El archivo seleccionado es demasiado grande. Por favor, elige un archivo más pequeño.');
-                    this.archivo = null; // Limpia el archivo seleccionado
+                    this.data.file = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.file);
+                    });
+                    return
                 }
             }
             try {
-                if (this.tarea.nombre === "" || this.tarea.descripcion === "" ||
-                    this.tarea.fecha_limite === "" || this.tarea.hora_limite === "" || this.estado === "") {
-                    return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
+                if (this.tarea.nombre === "") {
+                    this.data.nombre = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.nombre);
+                    });
+                    return
+                }
+                if (this.tarea.fecha_limite === "") {
+                    this.data.fecha = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fecha);
+                    });
+                    return
+                }
+                if (this.tarea.hora_limite === "" ) {
+                    this.data.hora = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.hora);
+                    });
+                    return
+                }
+                if (this.tarea.descripcion === "") {
+                    this.data.descripcion = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.descripcion);
+                    });
+                    return
+                }
+                if (this.estado === "") {
+                    this.data.activo = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.activo);
+                    });
+                    return
                 }
                 const resTar = await this.$axios.get(`/Tareas`)
                 this.tareas = resTar.data.data
@@ -109,10 +225,6 @@ export default {
                         return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
                     }
                 }
-                if (this.tareas.length !== 0) {
-                    this.tareaId = this.tareas[this.tareas.length - 1].id;
-                }
-                console.log(this.tareas, this.tareaId)
             } catch { }
             this.guardar()
         },
@@ -137,11 +249,7 @@ export default {
                 }
 
                 const response = await this.$axios.post('/Tareas', this.tarea)
-                if (this.tareas.length === 0) {
-                    this.tareaId = response.data.data.id;
-                }
-                console.log(response.data.data)
-                console.log(this.tareaId)
+                this.tareaId = response.data.data.id;
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.enviarArchivo()
             } catch (error) {
@@ -157,3 +265,20 @@ export default {
 }
 
 </script>
+
+<style>
+.custom-v-card {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px black;
+}
+
+.textarea-custom .v-label::before {
+    content: unset;
+    transform: translateY(-10px);
+    /* Ajusta la posición vertical del label */
+    font-size: 14px;
+    /* Ajusta el tamaño de fuente del label */
+}
+</style>

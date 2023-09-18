@@ -45,6 +45,10 @@ export default {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
         this.$store.commit('setTitle', 'Proyectos')
         try {
+            await this.$axios.get('/login')
+            this.$router.push('/Proyectos')
+        } catch { }
+        try {
             const response = await this.$axios.get('/Proyectos')
             this.proyectos = response.data.data.filter(proyecto => {
                 // Obtiene el último estado del arreglo statuses

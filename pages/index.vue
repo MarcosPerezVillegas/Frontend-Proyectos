@@ -1,11 +1,11 @@
 <template>
-  <v-container>
+  <v-container class="ma-5">
     <v-row justify="center">
       <v-col cols="12" md="6" class="text-center">
-        <img src="/udg.png" width="200" height="250" alt="Vuetify.js" class="mb-5" />
-        <blockquote class="blockquote">
-          &#8220;Este sistema almacena datos de proyectos tecnológicos y ayuda a gestionar el progreso de los proyectos&#8221;
-          <footer>
+        <img src="/udg.png" width="200" height="250" alt="Vuetify.js" class="mx-auto" />
+        <blockquote class="blockquote text-center">
+          <p class="mb-0">&#8220;Este sistema almacena datos de proyectos tecnológicos y ayuda a gestionar el progreso de los mismos&#8221;</p>
+          <footer class="blockquote-footer">
             <small>
               <em>Centro Universitario de los Valles</em>
             </small>
@@ -21,19 +21,23 @@
 
 export default {
   name: 'Index',
-  layout:'inicio',
+  layout:'default',
   data() {
     return {
     }
   },
 
+  
+
   async beforeMount(){
     this.$store.commit('setTitle', 'CUValles')
     try {
       await this.$axios.get('/login')
-      this.$nuxt.setLayout('default');
-    } catch {}
+    } catch {
+      this.$nuxt.setLayout('inicio');
+    }
   },
+  
 
   methods: {
   },

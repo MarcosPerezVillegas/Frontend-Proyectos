@@ -4,28 +4,32 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card>
-                <v-card-title>Acceso Denegado</v-card-title>
+            <v-card elevation="4" class="custom-v-card">
+                <v-card-title><b>Acceso Denegado</b></v-card-title>
                 <v-card-text>
                     <p>No tienes el rol necesario para acceder a esta página.</p>
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-card-title>
-                Lista de todos los usuarios
+            <v-card-title class="headline">
+                <b>Listas de todos los usuarios</b>
             </v-card-title>
             <v-row>
                 <v-spacer />
-                <v-btn color="orange" to="/Usuarios/Restore">Recuperar usuarios</v-btn>
-                <v-btn color="green" to="/Usuarios/Create">Registrar usuarios</v-btn>
+                <v-btn class="white--text" color="orange" to="/Usuarios/Restore">Recuperar o decartar usuarios</v-btn>
+            </v-row>
+            <v-row>
+                <v-spacer />
+                <v-btn class="white--text" color="green" to="/Usuarios/Create">Registrar usuarios</v-btn>
             </v-row>
             <br>
             <v-card-title>
                 Administradores
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="administradores" :headers="headers">
+            <v-card outlined class="custom-v-card">
+                <v-data-table :items="administradores" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -33,12 +37,12 @@
                             </template>
                             <v-list>
                                 <v-list-item>
-                                    <v-btn v-text="'Editar'" color="blue" text small
+                                    <v-btn v-text="'Editar usuario'" color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Administrador')" />
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog
-                                        :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
+                                        :description="`¿Está seguro de querer eliminar el usuario '${item.nombre}'?`"
                                         :index="index" :item="item.codigo" :itemUrl="`/Maestros/${item.codigo}`"
                                         :list="'Administradores'" />
                                 </v-list-item>
@@ -57,8 +61,9 @@
             <v-card-title>
                 Maestros
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="maestros" :headers="headers">
+            <v-card outlined class="custom-v-card">
+                <v-data-table :items="maestros" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -66,12 +71,12 @@
                             </template>
                             <v-list>
                                 <v-list-item>
-                                    <v-btn v-text="'Editar'" color="blue" text small
+                                    <v-btn v-text="'Editar usuario'" color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Maestro')" />
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog
-                                        :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
+                                        :description="`¿Está seguro de querer eliminar el usuario '${item.nombre}'?`"
                                         :index="index" :item="item.codigo" :itemUrl="`/Maestros/${item.codigo}`"
                                         :list="'Maestros'" />
                                 </v-list-item>
@@ -90,8 +95,9 @@
             <v-card-title>
                 Alumnos
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="alumnos" :headers="headers">
+            <v-card outlined class="custom-v-card">
+                <v-data-table :items="alumnos" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -99,12 +105,12 @@
                             </template>
                             <v-list>
                                 <v-list-item>
-                                    <v-btn v-text="'Editar'" color="blue" text small
+                                    <v-btn v-text="'Editar usuario'" color="blue" text small
                                         @click="editItem(`/Alumnos/${item.codigo}`, item, 'Alumno')" />
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog
-                                        :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
+                                        :description="`¿Está seguro de querer eliminar el usuario '${item.nombre}'?`"
                                         :index="index" :item="item.codigo" :itemUrl="`/Alumnos/${item.codigo}`"
                                         :list="'Alumnos'" />
                                 </v-list-item>
@@ -213,3 +219,44 @@ export default Vue.extend({
 
 </script>
   
+<style>
+.custom-v-card{
+    margin-top: 0px;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px black;
+}
+.custom-data-table {
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+/* Estiliza los encabezados de la tabla */
+.custom-data-table .v-data-table-header th {
+    background-color: #ace7ff;
+    /* Color de fondo más oscuro para los encabezados */
+    color: white;
+    /* Color del texto en los encabezados */
+}
+
+/* Estiliza las filas alternas */
+.custom-data-table tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+    /* Fondo gris claro para filas impares */
+}
+
+.custom-data-table tbody tr:nth-of-type(even) {
+    background-color: #cfcfcf;
+    /* Fondo blanco para filas pares */
+}
+
+.custom-data-table .v-data-footer {
+    background-color: #ace7ff;
+}
+
+
+.custom-data-table .v-data-table-header {
+    color: white;
+}
+</style>

@@ -8,8 +8,8 @@
                             <v-alert v-show="hasError" color="error" icon="$error">
                                 Usuario no encontrado o contraseña incorrecta.
                             </v-alert>
-                            <v-card>
-                                <v-card-title>
+                            <v-card elevation="4">
+                                <v-card-title class="text-h5">
                                     <v-spacer />
                                     Bienvenido
                                     <v-spacer />

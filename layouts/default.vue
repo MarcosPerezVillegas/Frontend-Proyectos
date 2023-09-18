@@ -223,8 +223,10 @@ export default {
   },
   async beforeMount() {
     this.$nuxt.$on('show-snackbar', this.showSnackbar)
-    const responseR = await this.$axios.get('/login')
-    this.roles = responseR.data
+    try {
+      const responseR = await this.$axios.get('/login')
+    this.roles = responseR.data 
+    } catch  { }
 
     if (this.roles.rol === 'alumno') {
       const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
@@ -276,7 +278,6 @@ export default {
     logout() {
       localStorage.clear()
       this.$auth.logout();
-      location.reload()
     },
   },
 };

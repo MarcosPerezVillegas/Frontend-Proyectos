@@ -4,27 +4,28 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card>
-                <v-card-title>Acceso Denegado</v-card-title>
+            <v-card class="custom-v-card">
+                <v-card-title class="headline"><b>Acceso Denegado</b></v-card-title>
                 <v-card-text>
                     <p>No tienes el rol necesario para acceder a esta página.</p>
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-card-title>
-                Lista de todos los usuarios que han sido eliminados
+            <v-card-title class="headline" style="font-size: large;">
+                <b>Listas de todos los usuarios que han sido eliminados</b>
             </v-card-title>
             <v-row>
                 <v-spacer />
-                <v-btn to="/Usuarios">Cancelar</v-btn>
+                <v-btn class="white--text" color="red" to="/Usuarios">Cancelar</v-btn>
             </v-row>
             <br>
             <v-card-title>
-                Administradores
+                <b>Administradores</b>
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="administradores" :headers="headers">
+            <v-card outlined class="custom-v-card">
+                <v-data-table :items="administradores" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -59,8 +60,9 @@
             <v-card-title>
                 Maestros
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="maestros" :headers="headers">
+            <v-card outlined class="custom-v-card">
+                <v-data-table :items="maestros" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -94,8 +96,9 @@
             <v-card-title>
                 Alumnos
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="alumnos" :headers="headers">
+            <v-card outlined class="custom-v-card">
+                <v-data-table :items="alumnos" :headers="headers" class="custom-data-table"
+                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -206,3 +209,44 @@ export default {
 
 </script>
   
+<style>
+.custom-v-card{
+    margin-top: 0px;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px black;
+}
+.custom-data-table {
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+}
+
+/* Estiliza los encabezados de la tabla */
+.custom-data-table .v-data-table-header th {
+    background-color: #ace7ff;
+    /* Color de fondo más oscuro para los encabezados */
+    color: white;
+    /* Color del texto en los encabezados */
+}
+
+/* Estiliza las filas alternas */
+.custom-data-table tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+    /* Fondo gris claro para filas impares */
+}
+
+.custom-data-table tbody tr:nth-of-type(even) {
+    background-color: #cfcfcf;
+    /* Fondo blanco para filas pares */
+}
+
+.custom-data-table .v-data-footer {
+    background-color: #ace7ff;
+}
+
+
+.custom-data-table .v-data-table-header {
+    color: white;
+}
+</style>

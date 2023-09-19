@@ -17,14 +17,20 @@
             </v-card-title>
             <v-row>
                 <v-spacer />
-                <v-btn color="green" to="/Carreras/Create">Registrar una nueva carrera</v-btn>
+                <v-btn dark rounded color="green" to="/Carreras/Create">
+                    <v-icon dark>
+                        mdi-plus
+                    </v-icon>
+                    Registrar una nueva carrera
+                </v-btn>
             </v-row>
             <br>
             <v-card-title>
                 Carreras
             </v-card-title>
             <v-card outlined>
-                <v-data-table :items="carreras" :headers="headers">
+                <v-data-table :items="carreras" :headers="headers" class="rows-blue" :header-props="headerProps"
+                :footer-props="{itemsPerPageText: 'Carreras por página', pageText: '{0} - {1} de {2}'}">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Editar'" color="blue" text small :to="`/Carreras/${item.clave}`" />
                         <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
@@ -49,6 +55,9 @@ export default Vue.extend({
         return {
             rol: "",
             carreras: [],
+            headerProps: {
+                sortByText: "Ordenar por"
+            },
             headers: [
                 { text: 'Nombre', value: 'nombre' },
                 { text: 'Clave', value: 'clave' },
@@ -80,4 +89,18 @@ export default Vue.extend({
 })
 
 </script>
+
+<style>
+
+.rows-blue .v-data-table-header {
+    background-color: #64B5F6;
+}
+
+.rows-blue {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #64B5F6;
+}
+
+</style>
   

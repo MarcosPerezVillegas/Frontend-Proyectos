@@ -4,34 +4,61 @@
             <v-card>
                 <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                    <p>No tienes el rol necesario para acceder a esta página.</p> 
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
             <v-form @submit.prevent="guardar">
-                <v-card>
-                    <v-card-title>
-                        Editar proyecto
+                <v-card outlined>
+                    <v-card-title class="headline">
+                        <b>Editar proyecto</b>
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="proyecto.id" outlined label="ID"></v-text-field>
-                        <v-text-field v-model="proyecto.nombre" outlined label="Nombre"></v-text-field>
-                        <v-textarea v-model="proyecto.objetivos" outlined style="overflow-y: auto; max-block-size: 300px; " label="Objetivos"></v-textarea>
-                        <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"></v-text-field>
-                        <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"></v-text-field>
-                        <v-text-field v-model="proyecto.alumnos" outlined label="Cupos"></v-text-field>
-                        <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"></v-combobox>
+                        <v-form>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"
+                                    :rules="[$validations.notEmpty]"></v-combobox>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.alumnos" outlined label="Cupos"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="8">
+                                    <v-textarea v-model="proyecto.objetivos" outlined 
+                                    style="overflow-y: auto; max-block-size: 300px; " label="Objetivos" 
+                                    :rules="[$validations.notEmpty]"></v-textarea>
+                                </v-col>
+                            </v-row>
+                            <v-row justify="center">
+                                <v-btn dark @click="guardar()" color="blue" small>
+                                    Guardar
+                                    <v-icon>
+                                        mdi-checkbox-marked-circle
+                                    </v-icon>
+                                </v-btn>
+                                <v-btn dark @click="cancelar()" color="red" small>
+                                    Cancelar
+                                    <v-icon>
+                                        mdi-cancel
+                                    </v-icon>
+                                </v-btn>
+                            </v-row>
+                        </v-form>
                     </v-card-text>
-                    <v-card-actions>
-                        <v-spacer />
-                        <v-btn type="submit">
-                            Guardar
-                        </v-btn>
-                        <v-btn @click="cancelar()" color="red">
-                            Cancelar
-                        </v-btn>
-                    </v-card-actions>
                 </v-card>
             </v-form>
         </v-container>
@@ -48,7 +75,6 @@ export default {
     data: () => ({
         rol: "",
         proyecto: {
-            id: "",
             nombre: "",
             objetivos: "",
             fechainicio: "",

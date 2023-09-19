@@ -1,42 +1,52 @@
 <template>
     <v-container>
         <v-form @submit.prevent="guardar">
-            <v-card>
-                <v-card-title>
-                    {{proyecto.nombre}}
+            <v-card outlined 
+                style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
+                padding: 20px; border-radius: 1%;">
+                <v-card-title class="justify-center">
+                <font size=5>
+                    <b>{{proyecto.nombre}}</b>
+                </font>
                 </v-card-title>
                 <v-card-text v-if="estado === 'Activo'">
-                    Objetivos: {{proyecto.objetivos}}
+                <font size=3>
+                    <b>Objetivos:</b>  {{proyecto.objetivos}}
                     <v-spacer />
-                    Carrera: {{carrera}}
+                    <b>Carrera:</b> {{carrera}} 
                     <v-spacer />
-                    Encargado: {{maestro}}
+                    <b>Encargado:</b> {{maestro}} </h3>
                     <v-spacer />
-                    Fecha de inicio: {{proyecto.fechainicio}}
+                    <b>Fecha de inicio:</b> {{proyecto.fechainicio}} </h3>
                     <v-spacer />
-                    Fecha de termino: {{proyecto.fechafinal}}
+                    <b>Fecha de termino:</b> {{proyecto.fechafinal}} </h3>
                     <v-spacer />
-                    Cupos restantes: {{proyecto.alumnos}}
+                    <b>Cupos restantes:</b> {{proyecto.alumnos}} </h3>
+                </font>
                 </v-card-text>
                 <v-card-text v-if="estado === 'Terminado'">
-                    Objetivos: {{proyecto.objetivos}}
+                <font size=3>
+                    <b>Objetivos:</b> {{proyecto.objetivos}} 
                     <v-spacer />
-                    Carrera: {{carrera}}
+                    <b>Carrera:</b> {{carrera}} 
                     <v-spacer />
-                    Encargado: {{maestro}}
+                    <b>Encargado:</b> {{maestro}}
                     <v-spacer />
-                    Fecha de inicio: {{proyecto.fechainicio}}
+                    <b>Fecha de inicio:</b> {{proyecto.fechainicio}}
                     <v-spacer />
-                    Fecha de termino: {{proyecto.fechafinal}}
+                    <b>Fecha de termino:</b> {{proyecto.fechafinal}}
                     <v-spacer />
-                    Estado: {{estado}}
+                    <b>Estado:</b> {{estado}}
+                </font>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn @click="cancelar()" color="red">
+                    <v-btn style="color: white" rounded @click="cancelar()" color="red" small>
                         Cancelar
                     </v-btn>
-                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== 0 && estado === 'Activo'" :description="`¿Está seguro de querer unirce al proyecto '${proyecto.nombre}'? Esta acción no se puede deshacer.`" />
+                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== 0 && estado === 'Activo'" 
+                        :description="`¿Está seguro de querer unirce al proyecto '${proyecto.nombre}'? Esta acción no se puede deshacer.`"
+                        :itemUrl="`/alumnos/${roles.codigo}`" :index="proyecto.id" :item="`${proyecto.id}`"/>
                 </v-card-actions>
             </v-card>
         </v-form>
@@ -48,6 +58,7 @@
 // @ts-nocheck
 import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
 
 export default {
     name: 'ProyectosSelect',

@@ -15,15 +15,31 @@
                         Editar usuario
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="carrera.clave" outlined label="Clave"></v-text-field>
-                        <v-text-field v-model="carrera.nombre" outlined label="Nombre"></v-text-field>
+                        <v-form>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="carrera.clave" outlined label="Clave"
+                                        :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="7">
+                                    <v-text-field v-model="carrera.nombre" outlined label="Nombre"
+                                        :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-form>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn color="red" to="/Carreras">
+                        <v-btn dark rounded color="red" to="/Carreras" small>
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn color="green" type="submit">
+                        <v-btn dark rounded color="green" type="submit" small>
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
 

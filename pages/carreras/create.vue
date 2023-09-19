@@ -12,19 +12,34 @@
             <v-form @submit.prevent="guardar">
                 <v-card>
                     <v-card-title>
-                        Crear una carrera
+                        <b>Crear una carrera</b>
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="carrera.nombre" outlined label="Nombre"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="carrera.clave" outlined label="Clave" :rules="[$validations.notEmpty]"></v-text-field>
+                        <v-form>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="carrera.clave" outlined label="Clave" 
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="7">
+                                   <v-text-field v-model="carrera.nombre" outlined label="Nombre"
+                                    :rules="[$validations.notEmpty]"></v-text-field> 
+                                </v-col>
+                            </v-row>
+                        </v-form>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn to="/Carreras" color="red">
+                        <v-btn dark rounded to="/Carreras" color="red" small>
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn type="submit" color="green">
+                        <v-btn dark rounded type="submit" color="green" small>
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
                     </v-card-actions>

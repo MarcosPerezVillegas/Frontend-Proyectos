@@ -2,7 +2,12 @@
 <template>
     <v-dialog v-model="removeState" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn v-text="'Eliminar'" color="red" text small v-bind="attrs" v-on="on" @click="removeState = true" />
+            <v-btn dark rounded color="red" text small v-bind="attrs" v-on="on" @click="removeState = true" small>
+                <v-icon small>
+                    mdi-delete
+                </v-icon>
+                Eliminar
+            </v-btn>
         </template>
         <v-card>
             <v-card-title>

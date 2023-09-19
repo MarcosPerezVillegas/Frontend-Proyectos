@@ -3,7 +3,10 @@
         <v-form @submit.prevent="guardar">
             <v-row>
                 <v-spacer />
-                <v-btn to="/login" color="red">
+                <v-btn dark rounded to="/login" color="red" small>
+                    <v-icon>
+                        mdi-arrow-left
+                    </v-icon>
                     Cancelar
                 </v-btn>
             </v-row>
@@ -20,7 +23,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn color="green" @click="envEmail()" >
+                    <v-btn dark rounded color="green" @click="envEmail()" small>
+                        <v-icon small>
+                            mdi-email
+                        </v-icon>
                         enviar correo
                     </v-btn>
                 </v-card-actions>
@@ -35,8 +41,11 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn type="submit" color="green">
-                        enviar
+                    <v-btn dark rounded type="submit" color="green" small>
+                        <v-icon small>
+                            mdi-checkbox-marked-circle
+                        </v-icon>
+                        Guardar
                     </v-btn>
                 </v-card-actions>
             </v-card>

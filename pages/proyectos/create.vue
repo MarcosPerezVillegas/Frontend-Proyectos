@@ -12,32 +12,56 @@
             <v-form @submit.prevent="guardar">
                 <v-card>
                     <v-card-title>
-                        Crear proyecto
+                        <b>Crear proyecto</b>
                     </v-card-title>
                     <v-card-text>
-                        <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-textarea v-model="proyecto.objetivos" outlined label="Objetivos" style="margin-top: 30px ; overflow-y: auto; max-block-size: 300px;"
-                            :rules="[$validations.notEmpty]"></v-textarea>
-                        <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-text v-if="roles.rol === 'maestro'" outlined>Encargado</v-text><br>
-                        <v-text v-if="roles.rol === 'maestro'" outlined style="font-size: larger;">{{ encargado_nombre }}</v-text>
-                        <v-combobox v-if="roles.rol === 'administrador'" outlined v-model="encargado_nombre" label="Encargado"
-                            :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
-                        <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados" type="integer"
-                            :rules="[$validations.notEmpty]"></v-text-field>
-                        <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"
-                            :rules="[$validations.notEmpty]"></v-combobox>
+                        <v-form>
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text v-if="roles.rol === 'maestro'" outlined>Encargado <br></v-text>
+                                    <v-text v-if="roles.rol === 'maestro'" outlined style="font-size: larger;">{{ encargado_nombre }}</v-text>
+                                    <v-combobox v-if="roles.rol === 'administrador'" outlined v-model="encargado_nombre" label="Encargado"
+                                    :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"
+                                    :rules="[$validations.notEmpty]"></v-combobox>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados" type="integer"
+                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="8">
+                                    <v-textarea v-model="proyecto.objetivos" outlined label="Objetivos" style="margin-top: 30px ; overflow-y: auto; max-block-size: 300px;"
+                                    :rules="[$validations.notEmpty]"></v-textarea>
+                                </v-col>
+                            </v-row>
+                        </v-form>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn @click="cancelar()" color="red">
+                        <v-btn dark rounded @click="cancelar()" color="red" small>
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn type="submit" color="green">
+                        <v-btn dark rounded type="submit" color="green" small>
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
                     </v-card-actions>

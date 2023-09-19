@@ -17,7 +17,10 @@
             </v-card-title>
             <v-row>
                 <v-spacer />
-                <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
+                <v-btn dark rounded v-if="btn === 0" @click="CambiarBTN()" color="green">
+                    <v-icon dark>
+                        mdi-plus
+                    </v-icon>
                     Agregar estado
                 </v-btn>
             </v-row>
@@ -32,11 +35,17 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn color="red" @click="CambiarBTN()">
+                    <v-btn dark rounded color="red" @click="CambiarBTN()" small>
                         Cancelar
+                        <v-icon>
+                            mdi-cancel
+                        </v-icon>
                     </v-btn>
-                    <v-btn @click="CrearEstado()" color="green">
+                    <v-btn dark rounded @click="CrearEstado()" color="green" small>
                         Guardar
+                        <v-icon>
+                            mdi-checkbox-marked-circle
+                        </v-icon>
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -45,7 +54,8 @@
                 Estados
             </v-card-title>
             <v-card outlined>
-                <v-data-table :items="estados" :headers="headers">
+                <v-data-table :items="estados" :headers="headers" class="rows-blue" :header-props="headerProps"
+                :footer-props="{itemsPerPageText: 'Estados por página', pageText: '{0} - {1} de {2}'}">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 " v-text="'Editar'" color="blue" text small @click="CambiarBT(item.id, item.Estado)"/>
                         <DeleteDialog v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 "
@@ -67,11 +77,17 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn color="red" @click="cancelar()">
+                    <v-btn dark rounded color="red" @click="cancelar()" small>
                         Cancelar
+                        <v-icon>
+                            mdi-cancel
+                        </v-icon>
                     </v-btn>
-                    <v-btn @click="ActEstado()" color="green">
+                    <v-btn dark rounded @click="ActEstado()" color="green" small>
                         Guardar
+                        <v-icon>
+                            mdi-checkbox-marked-circle
+                        </v-icon>
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -98,6 +114,9 @@ export default Vue.extend({
                 Estado: ""
             },
             estados: [],
+            headerProps: {
+                sortByText: "Ordenar por"
+            },
             headers: [
                 { text: 'ID', value: 'id' },
                 { text: 'Estado', value: 'Estado' },
@@ -179,4 +198,18 @@ export default Vue.extend({
 })
 
 </script>
+
+<style>
+
+.rows-blue .v-data-table-header {
+    background-color: #64B5F6;
+}
+
+.rows-blue {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #64B5F6;
+}
+
+</style>
   

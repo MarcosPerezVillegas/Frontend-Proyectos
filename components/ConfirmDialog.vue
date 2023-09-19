@@ -2,7 +2,12 @@
 <template>
     <v-dialog v-model="confirmDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn v-text="'Inscribirse'" color="verde" text small v-bind="attrs" v-on="on" />
+            <v-btn rounded color="white" text small v-bind="attrs" v-on="on">
+                <v-icon small>
+                    mdi-plus
+                </v-icon>
+                Inscribirse
+            </v-btn>
         </template>
         <v-card>
             <v-card-title>
@@ -48,11 +53,7 @@ export default {
         index: {
             type: Number,
             required: true,
-        },
-        list: {
-            type: String,
-            required: true,
-        },
+        }
     },
 
     data: () => ({
@@ -85,8 +86,6 @@ export default {
                 const responseA = await this.$axios.get(`/alumnos/${rol.codigo}`)
                 this.alum = responseA.data.data
                 this.alum.proyecto_id = this.id
-                console.log(this.alum)
-                console.log(this.id)
                 await this.$axios.put(`/alumnos/${rol.codigo}`, this.alum)
                 this.proyecto.alumnos = pro.alumnos - 1
                 await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)

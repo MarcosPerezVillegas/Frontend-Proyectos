@@ -5,18 +5,36 @@
 <!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
-        <v-btn color="red" to="/">Atras</v-btn>
+        <v-btn dark color="red" to="/" small>
+            <v-icon>
+                mdi-arrow-left
+            </v-icon>
+            Atras
+        </v-btn>
         <br>
         <br>
+        <v-card-title>
+            <b>Todos los Proyectos</b>
+            <v-spacer></v-spacer>
+            <v-text-field
+                v-model="search"
+                label="Buscar proyecto"
+                single-line
+                hide-details
+            ></v-text-field>
+        </v-card-title>
         <v-card outlined>
-            <v-card-title>
-                Todos los Proyectos
-            </v-card-title>
-            <v-data-table :items="proyectos" :headers="headers">
+            <v-data-table :items="proyectos" :headers="headers" class="rows-green" :search="search" :header-props="headerProps"
+                :footer-props="{itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}'}">
                 <template v-slot:item.statuses="item, index">
                     <span>
                         {{ item.item.statuses[item.item.statuses.length - 1].Estado }}
                     </span>
+                </template>
+                <template v-slot:no-results>
+                    <v-alert :value="true" color="error">
+                        No se encontraron resultados de "{{ search }}".
+                    </v-alert>
                 </template>
             </v-data-table>
         </v-card>
@@ -33,6 +51,10 @@ export default {
 
     data: () => ({
         proyectos: [],
+        search: "",
+        headerProps: {
+            sortByText: "Ordenar por"
+        },
         headers: [
             { text: 'Nombre', value: 'nombre' },
             { text: 'Estado actual del proyecto', value: 'statuses' },
@@ -65,3 +87,17 @@ export default {
 }
 
 </script>
+
+<style>
+
+.rows-green .v-data-table-header {
+    background-color: #66BB6A;
+}
+
+.rows-green {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #66BB6A;
+}
+
+</style>

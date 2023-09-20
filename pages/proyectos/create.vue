@@ -16,6 +16,39 @@
                     </v-card-title>
                     <v-card-text>
                         <v-form>
+                            <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
+                                El nombre del proyecto es necesario.
+                            </v-alert>
+                            <v-alert ref="encargado" v-show="data.codigo" color="error" icon="$error">
+                                El nombre del encargado del proyecto es necesario.
+                            </v-alert>
+                            <v-alert ref="encargadov" v-show="data.enc_nom" color="error" icon="$error">
+                                El nombre del encargado es invalido.
+                            </v-alert>
+                            <v-alert ref="carrera" v-show="data.carrera_clave" color="error" icon="$error">
+                                El nombre de la carrera es necesario.
+                            </v-alert>
+                            <v-alert ref="carrerav" v-show="data.carr_nom" color="error" icon="$error">
+                                El nombre de la carrera es invalido.
+                            </v-alert>
+                            <v-alert ref="fechai" v-show="data.fechainicio" color="error" icon="$error">
+                                La fecha de inicio es necesaria.
+                            </v-alert>
+                            <v-alert ref="fechaiv" v-show="data.val_fi" color="error" icon="$error">
+                                La fecha de inicio debe ser la fecha actual o una posterior.
+                            </v-alert>
+                            <v-alert ref="fechaf" v-show="data.fechafinal" color="error" icon="$error">
+                                La fecha de fin es necesaria.
+                            </v-alert>
+                            <v-alert ref="fechafv" v-show="data.val_ff" color="error" icon="$error">
+                                La fecha de fin debe ser posterior a la fecha de inicio y no menor a 6 meses.
+                            </v-alert>
+                            <v-alert ref="participantes" v-show="data.alumnos" color="error" icon="$error">
+                                El número de participantes es necesario y solo debe contener números.
+                            </v-alert>
+                            <v-alert ref="objetivos" v-show="data.objetivos" color="error" icon="$error">
+                                Los objetivos del proyecto son necesarios.
+                            </v-alert>
                             <v-row>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
@@ -75,6 +108,8 @@
 
 // @ts-nocheck
 
+import moment from 'moment';
+
 export default {
     name: 'ProyectosCreate',
     middleware: 'auth',
@@ -90,11 +125,43 @@ export default {
             codigo: "",
             alumnos: ""
         },
+        data: {
+            nombre: false,
+            objetivos: false,
+            fechainicio: false,
+            fechafinal: false,
+            carrera_clave: false,
+            codigo: false,
+            alumnos: false,
+            carr_nom: false,
+            enc_nom: false,
+            val_fi: false, 
+            val_ff: false
+        },
         encargado_nombre: "",
         carrera_nombre: "",
         carreras: [],
         encargados: [],
     }),
+
+    watch: {
+        proyecto: {
+            deep: true,
+            handler() {
+                this.data.nombre = false
+                this.data.objetivos = false
+                this.data.fechainicio = false
+                this.data.fechafinal = false
+                this.data.carrera_clave = false
+                this.data.codigo = false
+                this.data.alumnos = false
+                this.data.carr_nom = false
+                this.data.enc_nom = false
+                this.data.val_fi = false
+                this.data.val_ff = false
+            }
+        },
+    },
 
     async beforeMount() {
         try {
@@ -110,21 +177,125 @@ export default {
 
 
     methods: {
-        async guardar() {
-            if (this.proyecto.nombre === "" || this.proyecto.objetivos === "" || this.carrera_nombre === "" ||
-                this.proyecto.fechainicio === "" || this.proyecto.fechafinal === "" || this.proyecto.alumnos === "") {
-                return this.$nuxt.$emit('show-snackbar', 'red', "Llena los espacios requeridos")
+        scrollHaciaAlerta(elemento) {
+            if (elemento && elemento.$el) {
+                const offset = elemento.$el.offsetTop;
+                window.scrollTo({
+                    top: offset,
+                    behavior: "smooth", // Esto hace que el desplazamiento sea suave
+                });
             }
+        },
+        async guardar() {
+            const hoy = new Date();
+            const año = hoy.getFullYear();
+            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            const fecha = `${año}-${mes}-${dia}`;
             try {
-                const resEnca = await this.$axios.get(`/Maestros/Nombre/${this.encargado_nombre}`)
-                const Encargado = resEnca.data.data
-                this.proyecto.codigo = Encargado.codigo
-                const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
-                const Carrera = resCar.data.data
-                this.proyecto.carrera_clave = Carrera.clave
-                const response = await this.$axios.post('/proyectos', this.proyecto)
-                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                this.$router.push('/proyectos')
+                if (this.proyecto.nombre === "") {
+                    this.data.nombre = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.nombre);
+                    });
+                    return
+                }
+                if (this.proyecto.objetivos === "") {
+                    this.data.objetivos = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.objetivos);
+                    });
+                    return
+                }
+                if (this.proyecto.fechainicio === "") {
+                    this.data.fechainicio = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fechai);
+                    });
+                    return
+                }
+                var date = moment(this.proyecto.fechainicio).format("yyyy-MM-DD")
+                if(date < fecha){
+                    this.data.val_fi = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fechaiv);
+                    });
+                    return
+                }
+                if (this.proyecto.fechafinal === "") {
+                    this.data.fechafinal = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fechaf);
+                    });
+                    return
+                }
+                var date2 = moment(date).add(6, "M");
+                var date3 = moment(date2).format("yyyy-MM-DD")
+                var date4 = moment(this.proyecto.fechafinal).format("yyyy-MM-DD")
+                if (date4 < date3) {
+                    this.data.val_ff = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fechafv);
+                    });
+                    return
+                }
+                if (this.proyecto.alumnos === "") {
+                    this.data.alumnos = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.participantes);
+                    });
+                    return
+                }
+                if (isNaN(Number(this.proyecto.alumnos))) {
+                    this.data.alumnos = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.participantes);
+                    });
+                    return
+                }
+                if (this.encargado_nombre === "") {
+                    this.data.codigo = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.encargado);
+                    });
+                    return
+                }
+                if (this.carrera_nombre === "") {
+                    this.data.carrera_clave = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.carrera);
+                    });
+                    return
+                }
+                try{
+                    const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
+                    const Carrera = resCar.data.data
+                    this.proyecto.carrera_clave = Carrera.clave
+                    try{
+                        const resEnca = await this.$axios.get(`/Maestros/Nombre/${this.encargado_nombre}`)
+                        const Encargado = resEnca.data.data
+                        this.proyecto.codigo = Encargado.codigo
+                        try{
+                            const response = await this.$axios.post('/proyectos', this.proyecto)
+                            this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
+                            this.$router.push('/proyectos')
+                        } catch (error) {
+                            this.$nuxt.$emit('show-snackbar', 'red', error.message)
+                        }
+                    } catch (error) {
+                        this.data.enc_nom = true
+                        this.$nextTick(() => {
+                            this.scrollHaciaAlerta(this.$refs.encargadov);
+                        });
+                        return
+                    }
+                } catch (error) {
+                    this.data.carr_nom = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.carrerav);
+                    });
+                    return
+                }
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }

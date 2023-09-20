@@ -63,7 +63,7 @@
                                     <v-btn v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
                                 </v-list-item-action>
                             </v-list-item>
-                            <v-list-item>
+                            <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado === 'Terminado'">
                                 <v-list-item-action>
                                     <v-btn v-text="'Constancia'" color="green" text small @click="contPro(item.id)" />
                                 </v-list-item-action>
@@ -128,12 +128,12 @@
                                         :itemUrl="`/proyectos/${item.id}`" :index="index" />
                                 </v-list-item-action>
                             </v-list-item>
-                            <v-list-item v-if="item.statuses.some(estado => estado.Estado !== 'En espera')">
+                            <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado !== 'En espera'">
                                 <v-list-item-action>
                                     <v-btn v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
                                 </v-list-item-action>
                             </v-list-item>
-                            <v-list-item v-if="item.statuses.some(estado => estado.Estado !== 'En espera')">
+                            <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado === 'Terminado'">
                                 <v-list-item-action>
                                     <v-btn v-text="'Constancia'" color="green" text small @click="contPro(item.id)" />
                                 </v-list-item-action>

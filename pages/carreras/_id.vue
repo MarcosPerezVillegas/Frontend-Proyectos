@@ -16,6 +16,12 @@
                     </v-card-title>
                     <v-card-text>
                         <v-form>
+                            <v-alert ref="clave" v-show="data.clave" color="error" icon="$error">
+                                La clave de la carrera es necesario.
+                            </v-alert>
+                            <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
+                                El nombre de la carrera es necesario.
+                            </v-alert>
                             <v-row>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="carrera.clave" outlined label="Clave"
@@ -64,7 +70,21 @@ export default {
             clave: "",
             nombre: "",
         },
+        data: {
+            nombre: false,
+            clave: false
+        }
     }),
+
+    watch: {
+        carrera: {
+            deep: true,
+            handler() {
+                this.data.nombre = false
+                this.data.clave = false
+            }
+        },
+    },
 
     async beforeMount() {
         this.clave = this.$route.params.id
@@ -81,8 +101,31 @@ export default {
     },
 
     methods: {
+        scrollHaciaAlerta(elemento) {
+            if (elemento && elemento.$el) {
+                const offset = elemento.$el.offsetTop;
+                window.scrollTo({
+                    top: offset,
+                    behavior: "smooth", // Esto hace que el desplazamiento sea suave
+                });
+            }
+        },
         async guardar() {
             try {
+                if (this.carrera.nombre === "") {
+                    this.data.nombre = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.nombre);
+                    });
+                    return
+                }
+                if (this.carrera.clave === "") {
+                    this.data.clave = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.Clave);
+                    });
+                    return
+                }
                 const response = await this.$axios.put(`/Carreras/${this.clave}`, this.carrera)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.$router.push('/Carreras')

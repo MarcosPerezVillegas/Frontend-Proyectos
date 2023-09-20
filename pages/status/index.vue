@@ -31,6 +31,12 @@
                         Crear nuevo estado
                     </v-card-title>
                     <v-card-text>
+                        <v-alert ref="estado" v-show="data.Estado" color="error" icon="$error">
+                            El nombre del estado es necesario.
+                        </v-alert>
+                        <v-alert ref="estado2" v-show="data.val_est" color="error" icon="$error">
+                            Este estado ya existe.
+                        </v-alert>
                         <v-text-field outlined v-model="estado.Estado" label="Ingresa el estado"
                             :rules="[$validations.notEmpty]"></v-text-field>
                     </v-card-text>
@@ -98,6 +104,12 @@
                         Editar estado ' {{ this.Estado }} '
                     </v-card-title>
                     <v-card-text>
+                        <v-alert ref="estado3" v-show="data.Estado" color="error" icon="$error">
+                            El nombre del estado es necesario.
+                        </v-alert>
+                        <v-alert ref="estado4" v-show="data.val_est" color="error" icon="$error">
+                            Este estado ya existe.
+                        </v-alert>
                         <v-text-field outlined v-model="estado.Estado"
                             label="Ingresa el nuevo valor del estado"></v-text-field>
                     </v-card-text>
@@ -140,6 +152,10 @@ export default Vue.extend({
             estado: {
                 Estado: ""
             },
+            data: {
+                Estado: false,
+                val_est: false
+            },
             estados: [],
             headerProps: {
                 sortByText: "Ordenar por"
@@ -152,6 +168,15 @@ export default Vue.extend({
         }
     },
 
+    watch: {
+        estado: {
+            deep: true,
+            handler() {
+                this.data.Estado = false,
+                this.data.val_est = false
+            }
+        },
+    },
 
     async beforeMount() {
         this.$nuxt.$on('remove-from-list', this.deleteElement)
@@ -168,6 +193,15 @@ export default Vue.extend({
     },
 
     methods: {
+        scrollHaciaAlerta(elemento) {
+            if (elemento && elemento.$el) {
+                const offset = elemento.$el.offsetTop;
+                window.scrollTo({
+                    top: offset,
+                    behavior: "smooth", // Esto hace que el desplazamiento sea suave
+                });
+            }
+        },
         deleteElement(index: number) {
             this.estados.splice(index, 1);
         },
@@ -191,11 +225,19 @@ export default Vue.extend({
         async CrearEstado() {
             try {
                 if (this.estado.Estado === "") {
-                    return this.CambiarBTN()
+                    this.data.Estado = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.estado);
+                    });
+                    return
                 }
                 try {
                     await this.$axios.get(`/Status/Estado/${this.estado.Estado}`)
-                    return this.$nuxt.$emit('show-snackbar', 'red', 'Ya existe ese Estado')
+                    this.data.val_est = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.estado2);
+                    });
+                    return
                 } catch { }
                 const response = await this.$axios.post(`/Status`, this.estado)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
@@ -207,11 +249,19 @@ export default Vue.extend({
         async ActEstado() {
             try {
                 if (this.estado.Estado === "") {
-                    return this.cancelar()
+                    this.data.Estado = true
+                    this.$nextTick(() => {
+                        this.$refs.estado3
+                    });
+                    return
                 }
                 try {
                     await this.$axios.get(`/Status/Estado/${this.estado.Estado}`)
-                    return this.$nuxt.$emit('show-snackbar', 'red', 'Ya existe ese Estado')
+                    this.data.val_est = true
+                    this.$nextTick(() => {
+                        this.$refs.estado4
+                    });
+                    return
                 } catch { }
                 const response = await this.$axios.put(`/Status/${this.id}`, this.estado)
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)

@@ -17,7 +17,7 @@
             </v-card-title>
             <v-row>
                 <v-spacer />
-                <v-btn dark rounded color="green" to="/Carreras/Create">
+                <v-btn dark rounded color="#43B63B" to="/Carreras/Create">
                     <v-icon dark>
                         mdi-plus
                     </v-icon>
@@ -28,8 +28,8 @@
             <v-card-title>
                 Carreras
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="carreras" :headers="headers" class="rows-blue" :header-props="headerProps"
+            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+                <v-data-table :items="carreras" :headers="headers" class="custom-data-table-carreras" :header-props="headerProps"
                 :footer-props="{itemsPerPageText: 'Carreras por página', pageText: '{0} - {1} de {2}'}">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Editar'" color="blue" text small :to="`/Carreras/${item.clave}`" />
@@ -92,15 +92,43 @@ export default Vue.extend({
 
 <style>
 
-.rows-blue .v-data-table-header {
-    background-color: #64B5F6;
+.custom-v-card {
+    margin-top: 0px;
+    padding: 20px;
+    box-shadow: 0 0 20px black;
 }
 
-.rows-blue {
+.custom-data-table-carreras {
     border-style: solid;
     border-width: 2px;
     border-color: #64B5F6;
 }
 
+/* Estiliza los encabezados de la tabla */
+.custom-data-table-carreras .v-data-table-header th {
+    background-color: #64B5F6;
+    /* Color de fondo más oscuro para los encabezados */
+    color: white;
+    /* Color del texto en los encabezados */
+}
+
+/* Estiliza las filas alternas */
+.custom-data-table-carreras tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+    /* Fondo gris claro para filas impares */
+}
+
+.custom-data-table-carreras tbody tr:nth-of-type(even) {
+    background-color: #c7eeff;
+    /* Fondo blanco para filas pares */
+}
+
+.custom-data-table-carreras .v-data-footer {
+    background-color: #e1e2e3;
+}
+
+
+.custom-data-table-carreras .v-data-table-header {
+    color: white;
+}
 </style>
-  

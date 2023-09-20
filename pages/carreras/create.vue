@@ -9,7 +9,7 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar">
+            <v-form @submit.prevent="guardar" class="custom-v-form" style="background-color: #c7eeff;">
                 <v-card>
                     <v-card-title>
                         <b>Crear una carrera</b>
@@ -30,13 +30,13 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn dark rounded to="/Carreras" color="red" small>
+                        <v-btn dark rounded to="/Carreras" color="#FF0000">
                             <v-icon>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn dark rounded type="submit" color="green" small>
+                        <v-btn dark rounded type="submit" color="#43B63B">
                             <v-icon>
                                 mdi-checkbox-marked-circle
                             </v-icon>
@@ -94,3 +94,11 @@ export default {
 }
 
 </script>
+
+<style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    box-shadow: 0 0 20px black;
+}
+</style>

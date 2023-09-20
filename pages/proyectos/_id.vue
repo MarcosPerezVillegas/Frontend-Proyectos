@@ -9,8 +9,8 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar">
-                <v-card outlined>
+            <v-form @submit.prevent="guardar" class="custom-v-form">
+                <v-card>
                     <v-card-title class="headline">
                         <b>Editar proyecto</b>
                     </v-card-title>
@@ -39,22 +39,22 @@
                                 </v-col>
                                 <v-col cols="12" md="8">
                                     <v-textarea v-model="proyecto.objetivos" outlined 
-                                    style="overflow-y: auto; max-block-size: 300px; " label="Objetivos" 
+                                    class="textarea-custom" label="Objetivos" 
                                     :rules="[$validations.notEmpty]"></v-textarea>
                                 </v-col>
                             </v-row>
                             <v-row justify="center">
-                                <v-btn dark @click="guardar()" color="blue" small>
-                                    Guardar
-                                    <v-icon>
-                                        mdi-checkbox-marked-circle
-                                    </v-icon>
-                                </v-btn>
-                                <v-btn dark @click="cancelar()" color="red" small>
-                                    Cancelar
+                                <v-btn dark rounded @click="cancelar()" color="red">
                                     <v-icon>
                                         mdi-cancel
                                     </v-icon>
+                                    Cancelar
+                                </v-btn>
+                                <v-btn dark rounded @click="guardar()" color="blue">
+                                    <v-icon>
+                                        mdi-checkbox-marked-circle
+                                    </v-icon>
+                                    Guardar
                                 </v-btn>
                             </v-row>
                         </v-form>
@@ -142,10 +142,17 @@ export default {
 </script>
 
 <style>
-.expansible-text-field {
-  resize: vertical; /* Permite redimensionar verticalmente */
-  min-height: 50px; /* Establece la altura mínima */
-  max-height: 300px; /* Establece la altura máxima (ajusta según tus necesidades) */
-  overflow-y: auto; /* Agrega una barra de desplazamiento vertical si es necesario */
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+}
+.textarea-custom .v-label::before {
+    content: unset;
+    transform: translateY(-10px);
+    /* Ajusta la posición vertical del label */
+    font-size: 14px;
+    /* Ajusta el tamaño de fuente del label */
 }
 </style>

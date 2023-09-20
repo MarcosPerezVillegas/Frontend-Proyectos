@@ -1,55 +1,62 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container>
-        <v-container v-if="rol === 'alumno'" justify-center align-center>
-            <v-card class="custom-v-card" style="border-radius: 2%;">
-                <v-card-title class="headline"><b>Acceso Denegado</b></v-card-title>
+        <v-container v-if="access" justify-center align-center>
+            <v-card style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 20px black;">
+                <v-card-title><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                    <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
             <v-container v-if="ver === 'true'" class="mt-5">
-                <v-card outlined class="custom-v-card">
-                            <v-card-title class="headline">
-                                {{ tarea.nombre }}
-                            </v-card-title>
-                            <v-card-text style="border-width: 1px; border-style: solid; border-color: gray;">
-                                <p></p>
-                                <b style="font-size: medium;">Descripción de la tarea:</b>
-                                <p class="text-body-1">
-                                    {{ tarea.descripcion }}
-                                </p>
+                <v-form class="custom-v-form-edit">
+                    <v-card>
+                        <v-card-title class="headline">
+                            {{ tarea.nombre }}
+                        </v-card-title>
+                        <v-card-text style="border-width: 1px; border-style: solid; border-color: gray;">
+                            <p></p>
+                            <b style="font-size: medium;">Descripción de la tarea:</b>
+                            <p class="text-body-1">
+                                {{ tarea.descripcion }}
+                            </p>
+                        </v-card-text>
+                        <br>
+                        <v-card-text v-if="tarea.comentarios !== ''"
+                            style="border-width: 1px; border-style: solid; border-color: gray;">
+                            <b style="font-size: medium;">Comentarios del profesor:</b>
+                            <p>{{ tarea.comentarios }}</p>
+                        </v-card-text>
+                        <br>
+                        <v-row class="text-center">
+                            <v-card-text v-if="entregada" class="mb-3" justify="center">
+                                <b style="font-size: medium;">Descargar la tarea del alumno</b>
                             </v-card-text>
-                            <br>
-                            <v-card-text v-if="tarea.comentarios !== ''"
-                                style="border-width: 1px; border-style: solid; border-color: gray;">
-                                <b style="font-size: medium;">Comentarios del profesor:</b>
-                                <p>{{ tarea.comentarios }}</p>
+                        </v-row>
+                        <v-row justify="center">
+                            <v-btn rounded v-if="entregada" color="primary" @click="descargarArchivo">
+                                Descargar Archivo
+                            </v-btn>
+                        </v-row>
+                        <v-row class="text-center">
+                            <v-card-text v-if="!entregada" class="mb-3" justify="center">
+                                <b style="font-size: medium;">Esta tarea no tiene archivos para descargar.</b>
                             </v-card-text>
-                            <br>
-                            <v-row class="text-center">
-                                <v-card-text v-if="entregada" class="mb-3" justify="center">
-                                    <b style="font-size: medium;">Descargar la tarea del alumno</b>
-                                </v-card-text>
-                            </v-row>
-                            <v-row justify="center">
-                                <v-btn v-if="entregada" color="primary" @click="descargarArchivo">
-                                    Descargar Archivo
-                                </v-btn>
-                            </v-row>
-                            <v-row class="text-center">
-                                <v-card-text v-if="!entregada" class="mb-3" justify="center">
-                                    <b style="font-size: medium;">Esta tarea no tiene archivos para descargar.</b>
-                                </v-card-text>
-                            </v-row>
-                        </v-card>
+                        </v-row>
+                    </v-card>
+                </v-form>
                 <v-row class="mt-3" justify="center">
-                    <v-btn v-text="'Atrás'" color="red" class="white--text" @click="cancelar()" />
+                    <v-btn rounded color="#FF0000" class="white--text" @click="cancelar()">
+                        <v-icon>
+                            mdi-keyboard-backspace
+                        </v-icon>
+                        Atrás
+                    </v-btn>
                 </v-row>
             </v-container>
-            <v-form v-else @submit.prevent="validarTamañoArchivo()" class="custom-v-card" style="border-radius: 2%;">
+            <v-form v-else @submit.prevent="validarTamañoArchivo()" class="custom-v-form-edit" style="border-radius: 2%;">
                 <v-card>
                     <v-card-title class="headline">
                         <b>Editar tarea</b>
@@ -116,10 +123,16 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn @click="cancelar()" class="white--text" color="red">
+                        <v-btn @click="cancelar()" dark rounded class="white--text" color="#FF0000">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn type="submit" class="white--text" color="green">
+                        <v-btn dark rounded class="white--text" type="submit" color="#43B63B">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
                     </v-card-actions>
@@ -154,6 +167,7 @@ export default {
             activo: false,
             file: false
         },
+        access: false,
         archivo: null,
         tareaId: 0,
         estado: "",
@@ -197,6 +211,10 @@ export default {
         this.ver = localStorage.getItem("ver")
         const res = await this.$axios.get('/Login')
         this.rol = res.data.rol
+        if (this.rol === 'alumno') {
+            this.access = true
+            return
+        }
         try {
             const response = await this.$axios.get(`/Tareas/${id}`)
             this.tarea = response.data.data
@@ -363,10 +381,10 @@ export default {
 </script>
 
 <style>
-.custom-v-card {
+.custom-v-form-edit {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #e1fffd;
     box-shadow: 0 0 20px black;
 }
 

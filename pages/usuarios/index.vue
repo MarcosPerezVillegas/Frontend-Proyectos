@@ -4,10 +4,10 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card elevation="4" class="custom-v-card">
-                <v-card-title><b>Acceso Denegado</b></v-card-title>
+            <v-card style="margin-top: 0px; padding: 20px; background-color: #c7eeff; box-shadow: 0 0 20px black;">
+                <v-card-title><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                    <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
         </v-container>
@@ -17,19 +17,31 @@
             </v-card-title>
             <v-row>
                 <v-spacer />
-                <v-btn class="white--text" color="orange" to="/Usuarios/Restore">Recuperar o decartar usuarios</v-btn>
+                <v-btn dark rounded color="orange" to="/Usuarios/Restore">
+                    <v-icon dark>
+                        mdi-restore
+                    </v-icon>
+                    Recuperar o decartar usuarios
+                </v-btn>
             </v-row>
+            <p></p>
             <v-row>
                 <v-spacer />
-                <v-btn class="white--text" color="green" to="/Usuarios/Create">Registrar usuarios</v-btn>
+                <v-btn dark rounded color="#43B63B" to="/Usuarios/Create">
+                    <v-icon dark>
+                        mdi-plus
+                    </v-icon>
+                    Registrar usuarios
+                </v-btn>
             </v-row>
             <br>
             <v-card-title>
                 Administradores
             </v-card-title>
-            <v-card outlined class="custom-v-card">
-                <v-data-table :items="administradores" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+                <v-data-table :items="administradores" :headers="headers" class="custom-data-table-usuario"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Administradores por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -61,9 +73,10 @@
             <v-card-title>
                 Maestros
             </v-card-title>
-            <v-card outlined class="custom-v-card">
-                <v-data-table :items="maestros" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+                <v-data-table :items="maestros" :headers="headers" class="custom-data-table-usuario"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Maestros por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -95,9 +108,10 @@
             <v-card-title>
                 Alumnos
             </v-card-title>
-            <v-card outlined class="custom-v-card">
-                <v-data-table :items="alumnos" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+                <v-data-table :items="alumnos" :headers="headers" class="custom-data-table-usuario"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Alumnos por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -145,6 +159,9 @@ export default Vue.extend({
         administradores: [],
         maestros: [],
         alumnos: [],
+        headerProps: {
+            sortByText: "Ordenar por"
+        },
         headers: [
             { text: 'Codigo', value: 'codigo' },
             { text: 'Nombre', value: 'nombre' },
@@ -162,6 +179,9 @@ export default Vue.extend({
         try {
             const response = await this.$axios.get('/login')
             this.rol = response.data.rol
+            if (this.rol !== 'administrador') {
+                return
+            }
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)
         }
@@ -220,43 +240,43 @@ export default Vue.extend({
 </script>
   
 <style>
-.custom-v-card{
+.custom-v-card {
     margin-top: 0px;
     padding: 20px;
     background-color: whitesmoke;
     box-shadow: 0 0 20px black;
 }
-.custom-data-table {
+
+.custom-data-table-usuario {
     border-style: solid;
     border-width: 2px;
-    border-color: black;
+    border-color: #64B5F6;
 }
 
 /* Estiliza los encabezados de la tabla */
-.custom-data-table .v-data-table-header th {
-    background-color: #ace7ff;
+.custom-data-table-usuario .v-data-table-header th {
+    background-color: #64B5F6;
     /* Color de fondo más oscuro para los encabezados */
     color: white;
     /* Color del texto en los encabezados */
 }
 
 /* Estiliza las filas alternas */
-.custom-data-table tbody tr:nth-of-type(odd) {
+.custom-data-table-usuario tbody tr:nth-of-type(odd) {
     background-color: #fff;
     /* Fondo gris claro para filas impares */
 }
 
-.custom-data-table tbody tr:nth-of-type(even) {
-    background-color: #cfcfcf;
+.custom-data-table-usuario tbody tr:nth-of-type(even) {
+    background-color: #c7eeff;
     /* Fondo blanco para filas pares */
 }
 
-.custom-data-table .v-data-footer {
-    background-color: #ace7ff;
+.custom-data-table-usuario .v-data-footer {
+    background-color: #e1e2e3;
 }
 
 
-.custom-data-table .v-data-table-header {
+.custom-data-table-usuario .v-data-table-header {
     color: white;
-}
-</style>
+}</style>

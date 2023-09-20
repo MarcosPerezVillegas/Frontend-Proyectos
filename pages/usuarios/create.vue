@@ -1,15 +1,15 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card class="custom-v-card">
-                <v-card-title class="headline"><b>Acceso Denegado</b></v-card-title>
+            <v-card style="margin-top: 0px; padding: 20px; background-color: #c7eeff; box-shadow: 0 0 20px black;">
+                <v-card-title><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                    <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar" class="custom-v-card" style="border-radius: 2%;">
+            <v-form @submit.prevent="guardar" class="custom-v-card" style="border-radius: 2%;background-color: #c7eeff;">
                 <v-card>
                     <v-card-title class="headline">
                         <b>Registrar Usuario</b>
@@ -87,10 +87,16 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn class="white--text" to="/Usuarios" color="red">
+                        <v-btn dark rounded class="white--text" to="/Usuarios" color="#FF0000">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn class="white--text" type="submit" color="green">
+                        <v-btn dark rounded class="white--text" type="submit" color="#43B63B">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
                     </v-card-actions>

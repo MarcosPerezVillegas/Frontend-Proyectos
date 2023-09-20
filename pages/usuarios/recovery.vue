@@ -1,29 +1,29 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
+        <v-form @submit.prevent="guardar" class="custom-v-form">
             <v-row>
                 <v-spacer />
-                <v-btn dark rounded to="/login" color="red" small>
+                <v-btn dark rounded to="/login" color="#FF0000">
                     <v-icon>
-                        mdi-arrow-left
+                        mdi-keyboard-backspace
                     </v-icon>
                     Cancelar
                 </v-btn>
             </v-row>
             <br>
             <v-card>
-                <v-card-title>
-                    Cambiar Contraseña
+                <v-card-title class="headline">
+                    <b>Cambiar Contraseña</b>
                 </v-card-title>
                 <v-card-text>
-                    Ingresa tu codigo para enviarte un codigo de validacion de cambio de contraseña
+                <b>Ingresa tu codigo para enviarte un codigo de validacion de cambio de contraseña</b>
                 </v-card-text>
                 <v-card-text>
-                    <v-text-field v-model="usuario.codigo" label="Codigo" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field outlined v-model="usuario.codigo" label="Codigo" :rules="[$validations.notEmpty]"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn dark rounded color="green" @click="envEmail()" small>
+                    <v-btn dark rounded color="#43B63B" @click="envEmail()">
                         <v-icon small>
                             mdi-email
                         </v-icon>
@@ -33,15 +33,16 @@
             </v-card>
             <v-card v-if="btn === 1">
                 <v-card-text>
-                    <v-text-field v-model="usuario.password" outlined label="Nueva contraseña" type="password" 
+                    <v-text-field v-model="usuario.password" outlined label="Nueva contraseña" type="password"
                         :rules="[$validations.notEmpty]"></v-text-field>
                     <v-text-field v-model="passconf" outlined label="Confirma la contraseña" type="password"
                         :rules="[$validations.notEmpty]"></v-text-field>
-                    <v-text-field v-model="validacion" outlined label="codigo de validación" :rules="[$validations.notEmpty]"></v-text-field>
+                    <v-text-field v-model="validacion" outlined label="codigo de validación"
+                        :rules="[$validations.notEmpty]"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn dark rounded type="submit" color="green" small>
+                    <v-btn dark rounded type="submit" color="green">
                         <v-icon small>
                             mdi-checkbox-marked-circle
                         </v-icon>
@@ -82,33 +83,33 @@ export default {
                 if (this.validacion === "" || this.usuario.password === "" || this.passconf === "") {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'Completa todos los espación obligatorios antes de continuar')
                 }
-                if(this.usuario.password !== this.passconf){
+                if (this.usuario.password !== this.passconf) {
                     return this.$nuxt.$emit('show-snackbar', 'red', 'Las contraseñas no coinciden')
                 }
-                if (this.validacion === this.password){
+                if (this.validacion === this.password) {
                     try {
-                        if(this.maestro === 1){
-                            const user = await this.$axios.put(`/Maestros/Cambiar/${this.usuario.codigo}`,  this.usuario)
+                        if (this.maestro === 1) {
+                            const user = await this.$axios.put(`/Maestros/Cambiar/${this.usuario.codigo}`, this.usuario)
                             this.$nuxt.$emit('show-snackbar', 'green', "contraseña cambiada")
                         }
-                        else{
-                            const user = await this.$axios.put(`/Alumnos/Cambiar/${this.usuario.codigo}`,  this.usuario)
+                        else {
+                            const user = await this.$axios.put(`/Alumnos/Cambiar/${this.usuario.codigo}`, this.usuario)
                             this.$nuxt.$emit('show-snackbar', 'green', "contraseña cambiada")
                         }
                         this.$router.push('/login')
-                    } catch(error){
+                    } catch (error) {
                         this.$nuxt.$emit('show-snackbar', 'red', error.message)
                     }
                 }
-                if (this.validacion !== this.password){
+                if (this.validacion !== this.password) {
                     return this.$nuxt.$emit('show-snackbar', 'orange', 'codigo de validacion invalido')
                 }
-                
+
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },
-        async envEmail(){
+        async envEmail() {
             const Email = { send: function (a) { return new Promise(function (n, e) { a.nocache = Math.floor(1e6 * Math.random() + 1), a.Action = "Send"; var t = JSON.stringify(a); Email.ajaxPost("https://smtpjs.com/v3/smtpjs.aspx?", t, function (e) { n(e) }) }) }, ajaxPost: function (e, n, t) { var a = Email.createCORSRequest("POST", e); a.setRequestHeader("Content-type", "application/x-www-form-urlencoded"), a.onload = function () { var e = a.responseText; null != t && t(e) }, a.send(n) }, ajax: function (e, n) { var t = Email.createCORSRequest("GET", e); t.onload = function () { var e = t.responseText; null != n && n(e) }, t.send() }, createCORSRequest: function (e, n) { var t = new XMLHttpRequest; return "withCredentials" in t ? t.open(e, n, !0) : "undefined" != typeof XDomainRequest ? (t = new XDomainRequest).open(e, n) : t = null, t } }
             try {
                 if (this.usuario.codigo === "") {
@@ -121,23 +122,23 @@ export default {
                     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
                     const charLength = chars.length
                     var result = ""
-                    for ( var i = 0; i < length; i++ ) {
+                    for (var i = 0; i < length; i++) {
                         result += chars.charAt(Math.floor(Math.random() * charLength))
                     }
                     return result
                 }
                 this.password = genRandonString(12)
                 Email.send({
-                    SecureToken : "fb442f98-2143-4d14-bc28-55d308ed573f",
-                    To : this.usuario.email,
-                    From : 'martin.lbarboza@alumnos.udg.mx',
-                    Subject : "Cambio de contraseña",
-                    Body : `Tu codigo de verificación es ${this.password}`
+                    SecureToken: "fb442f98-2143-4d14-bc28-55d308ed573f",
+                    To: this.usuario.email,
+                    From: 'martin.lbarboza@alumnos.udg.mx',
+                    Subject: "Cambio de contraseña",
+                    Body: `Tu codigo de verificación es ${this.password}`
                 }).then();
                 this.btn = 1
                 this.$nuxt.$emit('show-snackbar', 'green', "Correo de recuperacion enviado")
             } catch (error) {
-                try{
+                try {
                     const user = await this.$axios.get(`/Maestros/${this.usuario.codigo}`)
                     this.usuario.email = user.data.data.email
                     this.usuario.nombre = user.data.data.nombre
@@ -147,28 +148,37 @@ export default {
                         const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()'
                         const charLength = chars.length
                         var result = ""
-                        for ( var i = 0; i < length; i++ ) {
+                        for (var i = 0; i < length; i++) {
                             result += chars.charAt(Math.floor(Math.random() * charLength))
                         }
                         return result
                     }
                     this.password = genRandonString(12)
                     Email.send({
-                        SecureToken : "fb442f98-2143-4d14-bc28-55d308ed573f",
-                        To : this.usuario.email,
-                        From : 'martin.lbarboza@alumnos.udg.mx',
-                        Subject : "Cambio de contraseña",
-                        Body : `Tu codigo de verificación es ${this.password}`
+                        SecureToken: "fb442f98-2143-4d14-bc28-55d308ed573f",
+                        To: this.usuario.email,
+                        From: 'martin.lbarboza@alumnos.udg.mx',
+                        Subject: "Cambio de contraseña",
+                        Body: `Tu codigo de verificación es ${this.password}`
                     }).then();
                     this.btn = 1
                     this.$nuxt.$emit('show-snackbar', 'green', "Correo de recuperacion enviado")
-                }  catch (error){
+                } catch (error) {
                     this.$nuxt.$emit('show-snackbar', 'red', "Usuario no encontrado")
                 }
-                
+
             }
         }
     }
 }
 
 </script>
+
+<style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #c7eeff;
+    box-shadow: 0 0 20px black;
+}
+</style>

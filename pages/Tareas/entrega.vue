@@ -1,15 +1,18 @@
 <template>
     <v-container>
-        <v-form class="custom-v-card" style="border-radius: 2%;">
+        <v-form class="custom-v-form" style="border-radius: 2%;">
             <v-container v-if="entregada === 1">
                 <v-card>
                     <v-card-title class="text-center">
-                        Ya Entregaste esta tarea
+                        <b>Ya entregaste esta tarea.</b>
                     </v-card-title>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn @click="cancelar()" color="primary">
-                            Cancelar
+                        <v-btn @click="cancelar()" rounded color="primary">
+                            <v-icon>
+                                mdi-keyboard-backspace
+                            </v-icon>
+                            Atrás
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -36,7 +39,7 @@
                         <v-row justify="center">
                             <v-text v-if="!Material" style="font-size: large;">No hay material de apoyo para esta
                                 tarea</v-text>
-                            <v-btn color="primary" v-if="Material" @click="descargarArchivo">Descargar material de
+                            <v-btn rounded color="primary" v-if="Material" @click="descargarArchivo">Descargar material de
                                 apoyo</v-btn>
                         </v-row>
                         <br>
@@ -53,7 +56,11 @@
                         </v-card>
                         <br>
                         <v-row justify="center">
-                            <v-btn @click="validarTamañoArchivo()" color="primary">Enviar archivo</v-btn>
+                            <v-btn @click="validarTamañoArchivo()" rounded class="white--text" color="#43B63B">
+                                <v-icon>
+                                    mdi-file
+                                </v-icon>
+                                Enviar archivo</v-btn>
                         </v-row>
                         <br>
                     </v-card-text>
@@ -62,19 +69,27 @@
 
             <v-container v-else>
                 <v-card>
+                    <v-card-title class="text-center" style="font-size: larger;">
+                        <b>Ya no puedes hacer entregas de esta tarea.</b>
+                    </v-card-title>
                     <v-card-actions>
-                        <p>Ya no puedes hacer entregas de esta tarea</p>
                         <v-spacer />
-                        <v-btn @click="cancelar()" color="red" class="white--text">
-                            Cancelar
+                        <v-btn @click="cancelar()" rounded color="#FF0000" class="white--text">
+                            <v-icon>
+                                mdi-keyboard-backspace
+                            </v-icon>
+                            Atrás
                         </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-container>
         </v-form>
         <br>
-        <v-row v-if="entrega < fecha" justify="center">
-            <v-btn @click="cancelar()" color="red" class="white--text">
+        <v-row v-if="entrega < fecha && entregada !== 1" justify="center">
+            <v-btn @click="cancelar()" rounded color="#FF0000" class="white--text">
+                <v-icon>
+                    mdi-cancel
+                </v-icon>
                 Cancelar
             </v-btn>
         </v-row>
@@ -234,10 +249,10 @@ export default {
 </script>
 
 <style>
-.custom-v-card {
+.custom-v-form {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #ace7ff;
     box-shadow: 0 0 20px black;
 }
 

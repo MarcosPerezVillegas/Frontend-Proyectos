@@ -5,7 +5,7 @@
 <!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
-        <v-btn dark color="red" to="/" small>
+        <v-btn rounded dark color="red" to="/">
             <v-icon>
                 mdi-arrow-left
             </v-icon>
@@ -28,7 +28,9 @@
                 :footer-props="{itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}'}">
                 <template v-slot:item.statuses="item, index">
                     <span>
-                        {{ item.item.statuses[item.item.statuses.length - 1].Estado }}
+                        <v-chip :color="getColor(item.item.statuses[item.item.statuses.length - 1].Estado)" style="color: white">
+                            {{ item.item.statuses[item.item.statuses.length - 1].Estado }}
+                        </v-chip>
                     </span>
                 </template>
                 <template v-slot:no-results>
@@ -84,6 +86,13 @@ export default {
         }
 
     },
+    methods: {
+        getColor (estado) {
+            if (estado === 'Activo') return 'green'
+            else if (estado === 'Terminado') return 'red'
+            else return 'orange'
+        },
+    }
 }
 
 </script>

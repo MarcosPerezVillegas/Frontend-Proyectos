@@ -8,13 +8,13 @@
         <v-form @submit.prevent="guardar">
             <v-row>
                 <v-spacer />
-                <v-btn dark v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()" color="red" small>
+                <v-btn rounded dark v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()" color="red">
                     <v-icon>
                         mdi-arrow-left
                     </v-icon>
                     Regresar
                 </v-btn>
-                <v-btn dark rounded v-if="roles.rol == 'alumno' && estado == 'Terminado'" @click="contPro()" color="blue" small>
+                <v-btn dark rounded v-if="roles.rol == 'alumno' && estado == 'Terminado'" @click="contPro()" color="blue">
                     <v-icon>
                         mdi-download
                     </v-icon>
@@ -22,10 +22,10 @@
                 </v-btn>
                 <v-menu offset-y v-if="roles.rol == 'maestro' && estado == 'Activo' || roles.rol == 'administrador'">
                     <template v-slot:activator="{ on }">
-                        <v-btn dark color="blue" v-on="on" text small> 
+                        <v-btn dark color="blue" v-on="on" text small>
                             <v-icon>
                                 mdi-cogs
-                            </v-icon> 
+                            </v-icon>
                         </v-btn>
                     </template>
                     <v-list>
@@ -43,9 +43,8 @@
                 </v-menu>
             </v-row>
             <br>
-            <v-card outlined 
-                style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
-                padding: 20px; border-radius: 1%;">
+            <v-card outlined style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
+                padding: 20px; border-radius: 1%; box-shadow: 0 0 10px black;">
                 <v-card-title>
                     {{ proyecto.nombre }}
                 </v-card-title>
@@ -65,9 +64,8 @@
                 </v-card-text>
             </v-card>
             <br>
-            <v-card outlined 
-                style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
-                padding: 20px; border-radius: 1%;">
+            <v-card outlined style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
+                padding: 20px; border-radius: 1%; box-shadow: 0 0 10px black;">
                 <v-card-title>
                     Objetivos
                 </v-card-title>
@@ -78,7 +76,7 @@
                     Fecha de Entrega
                 </v-card-title>
                 <v-card-text>
-                    {{ proyecto.fechafinal}}
+                    {{ proyecto.fechafinal }}
                 </v-card-text>
             </v-card>
             <br>
@@ -87,25 +85,25 @@
             </v-card-title>
             <v-card outlined v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <v-data-table :items="tareas" :headers="headers" class="rows-green" :header-props="headerProps"
-                    :footer-props="{itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}'}">
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn dark color="blue" text small @click="verItem(item)" small>
+                        <v-btn dark color="blue" rounded text small @click="verItem(item)">
                             <v-icon small>
                                 mdi-clipboard-text
                             </v-icon>
                             Ver tarea
                         </v-btn>
-                        <v-btn v-if="item.activo == 0" color="green" text small
-                            @click="activar(item.id)">
+                        <v-btn v-if="item.activo == 0" color="green" text small @click="activar(item.id)">
                             <v-icon dark small>
                                 mdi-lock-open
                             </v-icon>
+                            Activar
                         </v-btn>
-                        <v-btn dark v-if="item.activo == 1" color="red" text small
-                            @click="desactivar(item.id)">
+                        <v-btn dark v-if="item.activo == 1" color="red" text small @click="desactivar(item.id)">
                             <v-icon dark small>
                                 mdi-lock
                             </v-icon>
+                            Desactivar
                         </v-btn>
                     </template>
                 </v-data-table>
@@ -113,11 +111,11 @@
             <v-card-title v-if="roles.rol == 'alumno'">
                 <b>Tareas</b>
             </v-card-title>
-            <v-card outlined v-if="roles.rol == 'alumno'">
+            <v-card outlined v-if="roles.rol == 'alumno'" style="box-shadow: 0 0 10px black; background-color: #66BB6A;">
                 <v-data-table :items="tareas2" :headers="headers" class="rows-green" :header-props="headerProps"
-                    :footer-props="{itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}'}">
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn dark color="blue" @click="entregaTarea(item.id)" small>
+                        <v-btn dark rounded color="blue" @click="entregaTarea(item.id)">
                             <v-icon small>
                                 mdi-clipboard-text
                             </v-icon>
@@ -127,54 +125,57 @@
                 </v-data-table>
             </v-card>
             <br>
-            <v-row v-if=" estado !== 'En espera'">
+            <v-row v-if="estado !== 'En espera'">
                 <v-spacer />
                 <v-btn dark rounded v-if="roles.rol == 'maestro' || roles.rol == 'administrador' && estatus === 0"
-                    @click="CambiarEstatus()" color="green" small>
+                    @click="CambiarEstatus()" color="green">
                     <v-icon dark>
                         mdi-plus
                     </v-icon>
                     Agregar un estado al proyecto
                 </v-btn>
             </v-row>
-            <br> 
-            <v-card outlined v-if="estatus === 1 ">
-                <v-card-title>
-                    Agregar un Estado al proyecto
-                </v-card-title>
-                <v-card-text>
-                    <v-combobox v-model="est.estado" outlined label="Estado" :items="estados"
-                        :rules="[$validations.notEmpty]"></v-combobox>
-                    <v-textarea v-model="est.nota" outlined style="overflow-y: auto; max-block-size: 300px; " label="Nota"></v-textarea>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn dark rounded color="red" @click="CambiarEstatus()" small>
-                        Cancelar
-                        <v-icon>
-                            mdi-cancel
-                        </v-icon>
-                    </v-btn>
-                    <v-btn dark rounded @click="agregarStatus()" color="green" small>
-                        Guardar
-                        <v-icon>
-                            mdi-checkbox-marked-circle
-                        </v-icon>
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
+            <br>
+            <v-form v-if="estatus === 1" class="custom-v-form">
+                <v-card>
+                    <v-card-title>
+                        Agregar un estado al proyecto
+                    </v-card-title>
+                    <v-card-text>
+                        <v-combobox v-model="est.estado" outlined label="Estado" :items="estados"
+                            :rules="[$validations.notEmpty]"></v-combobox>
+                        <v-textarea v-model="est.nota" outlined style="overflow-y: auto; max-block-size: 300px; "
+                            label="Nota"></v-textarea>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn dark rounded color="red" @click="CambiarEstatus()">
+                            Cancelar
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
+                        </v-btn>
+                        <v-btn dark rounded @click="agregarStatus()" color="green">
+                            Guardar
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
             <br>
             <v-card-title v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <b>Registro Histórico</b>
             </v-card-title>
-            <v-card outlined v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" >
+            <v-card outlined v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <v-data-table :items="registros" :headers="headersH" class="rows-green" :header-props="headerProps"
-                    :footer-props="{itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}'}">
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
-                    <RemoveState v-if="item.Estado !== 'En espera' && item.Estado !== 'Activo'"
-                        :description="`¿Está seguro de querer eliminar el registro del estado '${item.Estado}'?. Esta acción no se puede deshacer`"
-                        :id="id" :index="index" :estado="item.Estado" @remove-from-list="deleteElement" />
-                </template>
+                        <RemoveState v-if="item.Estado !== 'En espera' && item.Estado !== 'Activo'"
+                            :description="`¿Está seguro de querer eliminar el registro del estado '${item.Estado}'?. Esta acción no se puede deshacer`"
+                            :id="id" :index="index" :estado="item.Estado" @remove-from-list="deleteElement" />
+                    </template>
                 </v-data-table>
             </v-card>
         </v-form>
@@ -184,7 +185,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-import {jsPDF} from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { clave } from '@/plugins/globals';
 import { encabezado, piepagina } from '@/plugins/imagesbase64';
 import RemoveState from '~/components/RemoveState.vue';
@@ -247,13 +248,13 @@ export default {
                 Estado: status.Estado,
                 Nota: status.statusProyecto.nota,
             }));
-            this.proyecto.fechafinal= new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
+            this.proyecto.fechafinal = new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
             this.registros = Estados;
             const responseS = await this.$axios.get(`/Status`);
             responseS.data.data.map(status => (this.estados = this.estados.concat(status.Estado)));
-            this.estados.splice(0,1)
-            this.estados.splice(0,1)
-            const term = this.estados.splice(0,1)
+            this.estados.splice(0, 1)
+            this.estados.splice(0, 1)
+            const term = this.estados.splice(0, 1)
             this.estados.push(term)
             this.carrera = this.proyecto.Carrera.nombre;
             this.maestro = this.proyecto.encargado.nombre;
@@ -262,7 +263,7 @@ export default {
             this.maestro = this.proyecto.encargado.nombre
             this.participantes = this.proyecto.Alumnos
             const utl = this.proyecto.statuses.length
-            this.estado = this.proyecto.statuses[utl-1].Estado
+            this.estado = this.proyecto.statuses[utl - 1].Estado
             const responseT = await this.$axios.get(`/tareas/proyecto/${this.id}`);
             this.tareas = responseT.data.data;
             this.tareas2 = this.tareas.filter(item => item.activo === 1);
@@ -303,7 +304,7 @@ export default {
             const img2 = new Image()
             const hoy = new Date();
             const año = hoy.getFullYear();
-            const mes = new Intl.DateTimeFormat('es-ES', { month: 'long'}).format(new Date())
+            const mes = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(new Date())
             const dia = String(hoy.getDate()).padStart(2, '0');
             img.src = encabezado
             img2.src = piepagina
@@ -332,25 +333,25 @@ export default {
                     doc.save(`Certificado - ${nombre}.pdf`);
                 },
             })
-            doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, {maxWidth: 160, align: "justify"})
+            doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, { maxWidth: 160, align: "justify" })
             doc.setFontSize(12)
             doc.setFont("Courier", "bold")
-            doc.text(`ATENTAMENTE`, width/2, 160, {align: "center"})
+            doc.text(`ATENTAMENTE`, width / 2, 160, { align: "center" })
             doc.setFont("Courier", "normal")
-            doc.text(`“Piensa y Trabaja”`, width/2, 164, {align: "center"})
+            doc.text(`“Piensa y Trabaja”`, width / 2, 164, { align: "center" })
             doc.setFontSize(13)
             doc.setFont("Courier", "bold")
-            doc.text(`“${año}, Año del fomento a la formación integral con una`, width/2, 168, {align: "center"})
-            doc.text(`Red de Centros y Sistemas Multitemáticos”`, width/2, 172, {align: "center"})
+            doc.text(`“${año}, Año del fomento a la formación integral con una`, width / 2, 168, { align: "center" })
+            doc.text(`Red de Centros y Sistemas Multitemáticos”`, width / 2, 172, { align: "center" })
             doc.setFontSize(12)
             doc.setFont("Courier", "normal")
-            doc.text(`Ameca, Jalisco, ${dia} de ${mes} del ${año}`, width/2, 176, {align: "center"})
+            doc.text(`Ameca, Jalisco, ${dia} de ${mes} del ${año}`, width / 2, 176, { align: "center" })
             doc.setFontSize(13)
             doc.setFont("Courier", "bold")
-            doc.text(`Dr. Héctor Huerta Avila`, width/2, 186, {align: "center"})
+            doc.text(`Dr. Héctor Huerta Avila`, width / 2, 186, { align: "center" })
             doc.setFont("Courier", "normal")
-            doc.text(`Jefe de Departamento`, width/2, 190, {align: "center"})
-            doc.addImage(img2, 'PNG', 50, 270, 110, 16, {align: "center"});
+            doc.text(`Jefe de Departamento`, width / 2, 190, { align: "center" })
+            doc.addImage(img2, 'PNG', 50, 270, 110, 16, { align: "center" });
         },
         verItem(item) {
             localStorage.setItem("ver", "true");
@@ -412,6 +413,12 @@ export default {
 </script>
 
 <style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+}
 
 .rows-green .v-data-table-header {
     background-color: #66BB6A;
@@ -422,5 +429,4 @@ export default {
     border-width: 2px;
     border-color: #66BB6A;
 }
-
 </style>

@@ -1,79 +1,83 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card v-if="co" class="custom-v-card">
-                <v-card-title class="headline">
-                    <b>Información del Usuario</b>
-                </v-card-title>
+            <v-form v-if="co" class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline">
+                        <b>Información del Usuario</b>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-form>
+                            <v-alert ref="codigo" v-show="data.codigo" color="error" icon="$error">
+                                Tu código es necesario y solo debe contener números.
+                            </v-alert>
+
+                            <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
+                                Tu nombre es necesario
+                            </v-alert>
+
+                            <v-alert ref="email" v-show="data.email" color="error" icon="$error">
+                                Tu correo electrónico es necesario y debe ser válido.
+                            </v-alert>
+
+                            <v-row>
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="usuario.codigo" outlined label="Código de usuario"
+                                        :readonly="!editar"
+                                        :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="usuario.nombre" outlined label="Nombre completo"
+                                        :readonly="!editar" :rules="[$validations.notEmpty]"></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+                                    <v-text-field v-model="usuario.email" outlined label="Correo electrónico"
+                                        :readonly="!editar"
+                                        :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
+                                </v-col>
+
+                                <v-col cols="12" md="6">
+                                    <v-alert ref="telefono" v-show="data.telefono" color="error" icon="$error">
+                                        Tu número de teléfono debe ser nulo o tener 10 dígitos.
+                                    </v-alert>
+                                    <v-text-field v-model="usuario.telefono" outlined label="Número de teléfono"
+                                        :readonly="!editar" :rules="[$validations.notPhone]"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-alert ref="iguales" v-show="data.iguales" color="error" icon="$error">
+                                Las contraseñas no coinciden.
+                            </v-alert>
+                            <v-row>
+                                <v-col cols="12" md="5">
+                                    <v-text-field v-if="editar" v-model="pass.cont" outlined label="Contraseña"
+                                        type="password"></v-text-field>
+                                    <v-text-field v-if="editar" v-model="pass.confCont" outlined
+                                        label="Confirmar contraseña" type="password"></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row justify="center">
+                                <v-btn @click="toggleeditar" dark rounded class="white--text" color="primary">{{ editar ?
+                                    'Guardar' : 'Editar' }}</v-btn>
+                                <v-btn @click="cancelarEditar" dark rounded class="white--text"
+                                    color="#FF0000">cancelar</v-btn>
+                            </v-row>
+                        </v-form>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+            <v-card v-else style="margin-top: 0px; padding: 20px; background-color: #c7eeff; box-shadow: 0 0 20px black;">
+                <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
-                    <v-form>
-                        <v-alert ref="codigo" v-show="data.codigo" color="error" icon="$error">
-                            Tu código es necesario y solo debe contener números.
-                        </v-alert>
-
-                        <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
-                            Tu nombre es necesario
-                        </v-alert>
-
-                        <v-alert ref="email" v-show="data.email" color="error" icon="$error">
-                            Tu correo electrónico es necesario y debe ser válido.
-                        </v-alert>
-
-                        <v-row>
-                            <v-col cols="12" md="4">
-                                <v-text-field v-model="usuario.codigo" outlined label="Código de usuario"
-                                    :readonly="!editar"
-                                    :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12" md="4">
-                                <v-text-field v-model="usuario.nombre" outlined label="Nombre completo" :readonly="!editar"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12" md="4">
-                                <v-text-field v-model="usuario.email" outlined label="Correo electrónico"
-                                    :readonly="!editar"
-                                    :rules="[$validations.notEmpty, $validations.isValidEmail]"></v-text-field>
-                            </v-col>
-
-                            <v-col cols="12" md="6">
-                                <v-alert ref="telefono" v-show="data.telefono" color="error" icon="$error">
-                                    Tu número de teléfono debe ser nulo o tener 10 dígitos.
-                                </v-alert>
-                                <v-text-field v-model="usuario.telefono" outlined label="Número de teléfono"
-                                    :readonly="!editar" :rules="[$validations.notPhone]"></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-alert ref="iguales" v-show="data.iguales" color="error" icon="$error">
-                            Las contraseñas no coinciden.
-                        </v-alert>
-                        <v-row>
-                            <v-col cols="12" md="5">
-                                <v-text-field v-if="editar" v-model="pass.cont" outlined label="Contraseña"
-                                    type="password"></v-text-field>
-                                <v-text-field v-if="editar" v-model="pass.confCont" outlined label="Confirmar contraseña"
-                                    type="password"></v-text-field>
-                            </v-col>
-                        </v-row>
-
-                        <v-row justify="center">
-                            <v-btn @click="toggleeditar" color="blue">{{ editar ? 'Guardar' : 'Editar' }}</v-btn>
-                            <v-btn @click="cancelarEditar" color="red">cancelar</v-btn>
-                        </v-row>
-                    </v-form>
-                </v-card-text>
-            </v-card>
-            <v-card v-else class="custom-v-card">
-                <v-card-title class="headline"><b>Acceso Denegado</b></v-card-title>
-                <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                    <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar">
-                <v-card outlined class="custom-v-card">
+            <v-form @submit.prevent="guardar" class="custom-v-form">
+                <v-card>
                     <v-card-title class="headline">
                         <b>Editar usuario</b>
                     </v-card-title>
@@ -126,10 +130,16 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn color="red" @click="Cancelar">
+                        <v-btn dark rounded class="white--text" color="#FF0000" @click="Cancelar">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn color="blue" type="submit">
+                        <v-btn dark rounded class="white--text" color="#43B63B" type="submit">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
 
@@ -138,7 +148,10 @@
                 <br>
                 <v-row>
                     <v-spacer />
-                    <v-btn v-if="btn === 0" @click="CambiarBTN()" color="green">
+                    <v-btn v-if="btn === 0" @click="CambiarBTN()" dark rounded class="white--text" color="#43B63B">
+                        <v-icon>
+                            mdi-account-box
+                        </v-icon>
                         Cambiar contraseña
                     </v-btn>
                 </v-row>
@@ -164,10 +177,16 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn color="red" @click="CambiarBTN()">
+                        <v-btn dark rounded class="white--text" color="#FF0000" @click="CambiarBTN()">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn @click="CambiarPass()" color="green">
+                        <v-btn @click="CambiarPass()" dark rounded class="white--text" color="#43B63B">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
                     </v-card-actions>
@@ -254,6 +273,11 @@ export default {
             const respons = await this.$axios.get('/login')
             this.rol = respons.data.rol
             this.codigo = respons.data.codigo
+            const codi = this.$route.params.id
+            if (codi !== this.codigo && this.rol !== 'administrador') {
+                this.co = false
+                return
+            }
             const url = localStorage.getItem("url")
             if (url !== null) {
                 const urlCryp = CryptoJS.AES.decrypt(url, clave);
@@ -274,7 +298,6 @@ export default {
                 this.co = true
             }
         } catch (error) {
-            this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     },
 
@@ -288,7 +311,12 @@ export default {
 
     methods: {
         cancelarEditar() {
-            this.editar = !this.editar
+            if (this.editar) {
+                this.editar = !this.editar
+            }
+            else{
+                window.history.back()
+            }
         },
         toggleeditar() {
             if (this.editar) {
@@ -444,10 +472,10 @@ export default {
 
 </script>
 <style>
-.custom-v-card {
+.custom-v-form {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #c7eeff;
     box-shadow: 0 0 20px black;
 }
 </style>

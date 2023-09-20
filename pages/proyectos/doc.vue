@@ -11,7 +11,7 @@
         <v-container v-else>
             <v-row>
                 <v-spacer />
-                <v-btn dark @click="cancelar()" color="red" small>
+                <v-btn rounded dark @click="cancelar()" color="red">
                     <v-icon>
                         mdi-arrow-left
                     </v-icon>

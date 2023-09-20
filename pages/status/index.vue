@@ -4,7 +4,7 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card>
+            <v-card class="custom-v-card">
                 <v-card-title>Acceso Denegado</v-card-title>
                 <v-card-text>
                     <p>No tienes el rol necesario para acceder a esta página.</p>
@@ -25,40 +25,44 @@
                 </v-btn>
             </v-row>
             <br>
-            <v-card outlined v-if="btn === 1">
-                <v-card-title>
-                    Crear nuevo estado
-                </v-card-title>
-                <v-card-text>
-                    <v-text-field outlined v-model="estado.Estado" label="Ingresa el estado"
-                        :rules="[$validations.notEmpty]"></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn dark rounded color="red" @click="CambiarBTN()" small>
-                        Cancelar
-                        <v-icon>
-                            mdi-cancel
-                        </v-icon>
-                    </v-btn>
-                    <v-btn dark rounded @click="CrearEstado()" color="green" small>
-                        Guardar
-                        <v-icon>
-                            mdi-checkbox-marked-circle
-                        </v-icon>
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
+            <v-form class="custom-v-card" style="background-color: #c7eeff;" v-if="btn === 1">
+                <v-card>
+                    <v-card-title>
+                        Crear nuevo estado
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field outlined v-model="estado.Estado" label="Ingresa el estado"
+                            :rules="[$validations.notEmpty]"></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn dark rounded color="red" @click="CambiarBTN()">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
+                            Cancelar
+                        </v-btn>
+                        <v-btn dark rounded @click="CrearEstado()" color="green">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
             <br>
             <v-card-title>
                 Estados
             </v-card-title>
-            <v-card outlined>
-                <v-data-table :items="estados" :headers="headers" class="rows-blue" :header-props="headerProps"
-                :footer-props="{itemsPerPageText: 'Estados por página', pageText: '{0} - {1} de {2}'}">
+            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+                <v-data-table :items="estados" :headers="headers" class="custom-data-table-status"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Estados por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 " v-text="'Editar'" color="blue" text small @click="CambiarBT(item.id, item.Estado)"/>
-                        <DeleteDialog v-if="item.id !== 1 && item.id !== 2 && item.id !== 3 "
+                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3" v-text="'Editar'" color="blue" text
+                            small @click="CambiarBT(item.id, item.Estado)" />
+                        <DeleteDialog v-if="item.id !== 1 && item.id !== 2 && item.id !== 3"
                             :description="`¿Está seguro de querer eliminar el status '${item.Estado}'?. Esta acción no se puede deshacer`"
                             :itemUrl="`/Status/${item.id}`" :index="index" list="" @remove-from-list="deleteElement" />
                         <span v-else>
@@ -68,29 +72,32 @@
                 </v-data-table>
             </v-card>
             <br>
-            <v-card outlined v-if="bt === 1">
-                <v-card-title>
-                    Editar estado ' {{ this.Estado }} '
-                </v-card-title>
-                <v-card-text>
-                    <v-text-field outlined v-model="estado.Estado" label="Ingresa el nuevo valor del estado"></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn dark rounded color="red" @click="cancelar()" small>
-                        Cancelar
-                        <v-icon>
-                            mdi-cancel
-                        </v-icon>
-                    </v-btn>
-                    <v-btn dark rounded @click="ActEstado()" color="green" small>
-                        Guardar
-                        <v-icon>
-                            mdi-checkbox-marked-circle
-                        </v-icon>
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
+            <v-form class="custom-v-card" style="background-color: #c7eeff;" v-if="bt === 1">
+                <v-card>
+                    <v-card-title>
+                        Editar estado ' {{ this.Estado }} '
+                    </v-card-title>
+                    <v-card-text>
+                        <v-text-field outlined v-model="estado.Estado"
+                            label="Ingresa el nuevo valor del estado"></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer />
+                        <v-btn dark rounded color="red" @click="cancelar()">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
+                            Cancelar
+                        </v-btn>
+                        <v-btn dark rounded @click="ActEstado()" color="green">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
+                            Guardar
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-form>
             <br>
         </v-container>
     </v-container>
@@ -200,16 +207,44 @@ export default Vue.extend({
 </script>
 
 <style>
-
-.rows-blue .v-data-table-header {
-    background-color: #64B5F6;
+.custom-v-card {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px black;
 }
 
-.rows-blue {
+.custom-data-table-status {
     border-style: solid;
     border-width: 2px;
     border-color: #64B5F6;
 }
 
+/* Estiliza los encabezados de la tabla */
+.custom-data-table-status .v-data-table-header th {
+    background-color: #64B5F6;
+    /* Color de fondo más oscuro para los encabezados */
+    color: white;
+    /* Color del texto en los encabezados */
+}
+
+/* Estiliza las filas alternas */
+.custom-data-table-status tbody tr:nth-of-type(odd) {
+    background-color: #fff;
+    /* Fondo gris claro para filas impares */
+}
+
+.custom-data-table-status tbody tr:nth-of-type(even) {
+    background-color: #c7eeff;
+    /* Fondo blanco para filas pares */
+}
+
+.custom-data-table-status .v-data-footer {
+    background-color: #e1e2e3;
+}
+
+
+.custom-data-table-status .v-data-table-header {
+    color: white;
+}
 </style>
-  

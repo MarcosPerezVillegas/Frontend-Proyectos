@@ -67,11 +67,17 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn to="/login" color="red">
+                    <v-btn to="/login" dark rounded class="white--text" color="#FF0000">
+                        <v-icon>
+                                mdi-cancel
+                            </v-icon>
                         Cancelar
                     </v-btn>
-                    <v-btn type="submit" color="green">
-                        Guardar
+                    <v-btn dark rounded class="white--text" type="submit" color="#43B63B">
+                        <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
+                            Guardar
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -242,7 +248,7 @@ export default {
 .custom-v-card {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #c7eeff;
     box-shadow: 0 0 20px black;
 }
 </style>

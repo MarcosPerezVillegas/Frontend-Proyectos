@@ -3,21 +3,25 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container fluid class="text-center">
-        <v-btn v-if="seleccionado" v-text="'Seleccionar otro proyecto'" color="primary" @click="sel()" />
-        <v-btn v-if="seleccionado" v-text="'Crear una tarea'" color="primary" @click="selProTarea(seleccionado)" />
+        <v-btn rounded v-if="seleccionado" v-text="'Seleccionar otro proyecto'" color="primary" @click="sel()" />
+        <v-btn rounded v-if="seleccionado" v-text="'Crear una tarea'" color="primary" @click="selProTarea(seleccionado)" />
         <!--<SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />--->
         <br>
-        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador' && !seleccionado && proyectos.length !== 0" style="font-size: larger ;">
+
+        <p v-if="(usuario.rol === 'maestro' || usuario.rol === 'administrador') && !seleccionado && proyectos.length !== 0"
+            style="font-size: larger ;">
             Selecciona uno de tus proyectos para mostrarte las tareas</p>
-        <p v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador' && !seleccionado && proyectos.length === 0"
+
+        <p v-if="(usuario.rol === 'maestro' || usuario.rol === 'administrador') && !seleccionado && proyectos.length === 0"
             style="font-size: larger;">No tienes ningun proyecto al cual se le puedan asignar o ver tareas para tareas</p>
+
         <br>
-        <v-form style=" padding: 20px; background-color: whitesmoke; box-shadow: 0 0 1px black; border-radius: 2%;">
+        <v-form style=" padding: 20px; background-color: #e1fffd; box-shadow: 0 0 1px black; border-radius: 2%;">
             <v-row v-if="!seleccionado && usuario.rol !== 'alumno'">
                 <v-col v-for="proyecto in proyectos" :key="proyecto.id" cols="12" sm="6" md="4" lg="3">
                     <v-card
                         style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 5px black; border-radius: 2%;">
-                        <div style="border-color: black; border-width: 1px; border-style: solid;">
+                        <div style="border-color: #64B5F6; border-width: 3px; border-style: solid;">
                             <h3>Proyecto: {{ proyecto.nombre }}</h3>
                             <p>{{ proyecto.statuses[proyecto.statuses.length - 1].Estado }}</p>
                         </div>
@@ -33,9 +37,12 @@
             <v-card outlined v-if="seleccionado" class="custom-v-card">
                 <v-card-title>
                     <b>Todas las tareas que tienes</b>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search" label="Buscar tarea" single-line hide-details></v-text-field>
                 </v-card-title>
-                <v-data-table :items="tareas" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                <v-data-table :items="tareas" :headers="headers" class="custom-data-table" :search="search"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -62,15 +69,23 @@
                             </v-list>
                         </v-menu>
                     </template>
+                    <template v-slot:no-results>
+                        <v-alert :value="true" color="error">
+                            No se encontraron resultados de "{{ search }}".
+                        </v-alert>
+                    </template>
                 </v-data-table>
             </v-card>
             <br>
             <v-card outlined v-if="seleccionado" class="custom-v-card">
                 <v-card-title>
                     <b>Tareas pendientes de revisar</b>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search2" label="Buscar tarea" single-line hide-details></v-text-field>
                 </v-card-title>
-                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table" :search="search2"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
@@ -91,29 +106,49 @@
                             </v-list>
                         </v-menu>
                     </template>
+                    <template v-slot:no-results>
+                        <v-alert :value="true" color="error">
+                            No se encontraron resultados de "{{ search2 }}".
+                        </v-alert>
+                    </template>
                 </v-data-table>
             </v-card>
 
             <v-card outlined v-if="usuario.rol === 'alumno'" class="custom-v-card">
                 <v-card-title>
-                    Todas las tareas que tienes
+                    <b>Todas las tareas que tienes</b>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search3" label="Buscar tarea" single-line hide-details></v-text-field>
                 </v-card-title>
-                <v-data-table :items="tareas" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                <v-data-table :items="tareas" :headers="headers" class="custom-data-table" :search="search3"
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                    </template>
+                    <template v-slot:no-results>
+                        <v-alert :value="true" color="error">
+                            No se encontraron resultados de "{{ search3 }}".
+                        </v-alert>
                     </template>
                 </v-data-table>
             </v-card>
             <br>
             <v-card outlined v-if="usuario.rol === 'alumno'" class="custom-v-card">
                 <v-card-title>
-                    Tareas pendientes de entregar
+                    <b>Tareas pendientes de entregar</b>
+                    <v-spacer></v-spacer>
+                    <v-text-field v-model="search4" label="Buscar tarea" single-line hide-details></v-text-field>
                 </v-card-title>
-                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table"
+                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table" :search="search4" :header-props="headerProps"
                     :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                    </template>
+                    <template v-slot:no-results>
+                        <v-alert :value="true" color="error">
+                            No se encontraron resultados de "{{ search4 }}".
+                        </v-alert>
                     </template>
                 </v-data-table>
             </v-card>
@@ -122,8 +157,8 @@
                 <v-card-title>
                     Tareas entregadas
                 </v-card-title>
-                <v-data-table :items="tareasEnt" :headers="headers" class="custom-data-table"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                <v-data-table :items="tareasEnt" :headers="headers" class="custom-data-table" :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn v-text="'ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
                     </template>
@@ -150,8 +185,15 @@ export default {
         tareasPen: [],
         proyectos: [],
         tareasEnt: [],
+        search: '',
+        search2: '',
+        search3: '',
+        search4: '',
         seleccionado: null,
         pro: "",
+        headerProps: {
+            sortByText: "Ordenar por"
+        },
         headers: [
             { text: 'Nombre de la tarea', value: 'nombre' },
             { text: 'Fecha de entrega', value: 'fecha_limite' },
@@ -356,7 +398,7 @@ export default {
 .custom-data-table {
     border-style: solid;
     border-width: 2px;
-    border-color: black;
+    border-color: #ace7ff;
 }
 
 /* Estiliza los encabezados de la tabla */
@@ -374,12 +416,12 @@ export default {
 }
 
 .custom-data-table tbody tr:nth-of-type(even) {
-    background-color: #cfcfcf;
+    background-color: #e1fffd;
     /* Fondo blanco para filas pares */
 }
 
 .custom-data-table .v-data-footer {
-    background-color: #ace7ff;
+    background-color: #d3d6d7;
 }
 
 

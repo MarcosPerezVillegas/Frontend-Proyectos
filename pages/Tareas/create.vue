@@ -1,15 +1,15 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno'" justify-center align-center>
-            <v-card class="custom-v-card">
-                <v-card-title>Acceso Denegado</v-card-title>
+            <v-card style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 20px black;">
+                <v-card-title><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
+                    <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="validarTamañoArchivo()" class="custom-v-card" style="border-radius: 2%;">
+            <v-form @submit.prevent="validarTamañoArchivo()" class="custom-v-form-create" style="border-radius: 2%;">
                 <v-card>
                     <v-card-title class="headline">
                         <b>Crear una tarea</b>
@@ -63,7 +63,8 @@
                             <v-text style="font-size: larger;">Subir material de apoyo</v-text>
                             <br>
                             <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb</v-text>
-                            <v-file-input v-model="archivo" label="Seleccionar archivo" :rules="[$validations.isFileLessThan50MB]"></v-file-input>
+                            <v-file-input v-model="archivo" label="Seleccionar archivo"
+                                :rules="[$validations.isFileLessThan50MB]"></v-file-input>
                         </v-card>
                         <br>
                         <v-alert ref="estado" v-show="data.activo" color="error" icon="$error">
@@ -75,10 +76,16 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn class="white--text" color="red" @click="cancelar()">
+                        <v-btn dark rounded class="white--text" color="#FF0000" @click="cancelar()">
+                            <v-icon>
+                                mdi-cancel
+                            </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn class="white--text" color="green" type="submit">
+                        <v-btn dark rounded class="white--text" type="submit" color="#43B63B">
+                            <v-icon>
+                                mdi-checkbox-marked-circle
+                            </v-icon>
                             Guardar
                         </v-btn>
                     </v-card-actions>
@@ -151,6 +158,9 @@ export default {
         try {
             const res = await this.$axios.get('/Login')
             this.rol = res.data.rol
+            if (this.rol === 'alumno') {
+                return
+            }
             await this.$axios.get(`/Proyectos/Usuario/${res.data.codigo}`)
             const id = localStorage.getItem("ProId")
             const bytes = CryptoJS.AES.decrypt(id, clave);
@@ -169,7 +179,7 @@ export default {
                 });
             }
         },
-        
+
         async validarTamañoArchivo() {
             // Verificar si se ha seleccionado un archivo
             if (this.archivo) {
@@ -197,7 +207,7 @@ export default {
                     });
                     return
                 }
-                if (this.tarea.hora_limite === "" ) {
+                if (this.tarea.hora_limite === "") {
                     this.data.hora = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.hora);
@@ -267,10 +277,10 @@ export default {
 </script>
 
 <style>
-.custom-v-card {
+.custom-v-form-create {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #e1fffd;
     box-shadow: 0 0 20px black;
 }
 

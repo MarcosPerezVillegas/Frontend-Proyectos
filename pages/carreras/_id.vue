@@ -9,7 +9,7 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar">
+            <v-form @submit.prevent="guardar" class="custom-v-form" style="background-color: #c7eeff;">
                 <v-card>
                     <v-card-title>
                         Editar usuario
@@ -30,13 +30,13 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn dark rounded color="red" to="/Carreras" small>
+                        <v-btn dark rounded color="#FF0000 " to="/Carreras">
                             <v-icon>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn dark rounded color="green" type="submit" small>
+                        <v-btn dark rounded color="#43B63B  " type="submit">
                             <v-icon>
                                 mdi-checkbox-marked-circle
                             </v-icon>
@@ -94,3 +94,11 @@ export default {
 }
 
 </script>
+
+<style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    box-shadow: 0 0 20px black;
+}
+</style>

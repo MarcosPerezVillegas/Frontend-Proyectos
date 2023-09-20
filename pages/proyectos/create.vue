@@ -9,7 +9,7 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-form @submit.prevent="guardar">
+            <v-form @submit.prevent="guardar" class="custom-v-form">
                 <v-card>
                     <v-card-title>
                         <b>Crear proyecto</b>
@@ -44,7 +44,7 @@
                                     :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="8">
-                                    <v-textarea v-model="proyecto.objetivos" outlined label="Objetivos" style="margin-top: 30px ; overflow-y: auto; max-block-size: 300px;"
+                                    <v-textarea outlined class="textarea-custom" v-model="proyecto.objetivos" label="Objetivos"
                                     :rules="[$validations.notEmpty]"></v-textarea>
                                 </v-col>
                             </v-row>
@@ -52,13 +52,13 @@
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer />
-                        <v-btn dark rounded @click="cancelar()" color="red" small>
+                        <v-btn dark rounded @click="cancelar()" color="red">
                             <v-icon>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
-                        <v-btn dark rounded type="submit" color="green" small>
+                        <v-btn dark rounded type="submit" color="green">
                             <v-icon>
                                 mdi-checkbox-marked-circle
                             </v-icon>
@@ -179,3 +179,19 @@ export default {
 }
 
 </script>
+
+<style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+}
+.textarea-custom .v-label::before {
+    content: unset;
+    transform: translateY(-10px);
+    /* Ajusta la posición vertical del label */
+    font-size: 14px;
+    /* Ajusta el tamaño de fuente del label */
+}
+</style>

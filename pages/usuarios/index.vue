@@ -45,12 +45,21 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: #e1e2e3;">
                                 <v-list-item>
-                                    <v-btn v-text="'Editar usuario'" color="blue" text small
-                                        @click="editItem(`/Maestros/${item.codigo}`, item, 'Administrador')" />
+                                    <v-btn color="blue" text small
+                                        @click="editItem(`/Maestros/${item.codigo}`, item, 'Administrador')">
+                                        <v-icon>
+                                        mdi-border-color
+                                        </v-icon>
+                                        Editar usuario
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog
@@ -80,9 +89,13 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: #e1e2e3;">
                                 <v-list-item>
                                     <v-btn v-text="'Editar usuario'" color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Maestro')" />
@@ -115,9 +128,13 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: #e1e2e3;">
                                 <v-list-item>
                                     <v-btn v-text="'Editar usuario'" color="blue" text small
                                         @click="editItem(`/Alumnos/${item.codigo}`, item, 'Alumno')" />
@@ -279,4 +296,5 @@ export default Vue.extend({
 
 .custom-data-table-usuario .v-data-table-header {
     color: white;
-}</style>
+}
+</style>

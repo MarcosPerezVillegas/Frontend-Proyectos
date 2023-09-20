@@ -12,8 +12,8 @@
             </v-card>
         </v-container>
         <v-container v-else>
-            <v-card-title>
-                Lista de todos los estados posibles para los proyectos
+            <v-card-title class="headline">
+                <b>Lista de todos los estados posibles para los proyectos</b>
             </v-card-title>
             <v-row>
                 <v-spacer />
@@ -60,11 +60,31 @@
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Estados por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3" v-text="'Editar'" color="blue" text
-                            small @click="CambiarBT(item.id, item.Estado)" />
-                        <DeleteDialog v-if="item.id !== 1 && item.id !== 2 && item.id !== 3"
-                            :description="`¿Está seguro de querer eliminar el status '${item.Estado}'?. Esta acción no se puede deshacer`"
-                            :itemUrl="`/Status/${item.id}`" :index="index" list="" @remove-from-list="deleteElement" />
+                        <v-menu offset-y v-if="item.id !== 1 && item.id !== 2 && item.id !== 3">
+                            <template #activator="{ on }">
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list style="background-color: #e1e2e3;">
+                                <v-list-item>
+                                    <v-list-item-action>
+                                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3" v-text="'Editar'"
+                                            color="blue" text small @click="CambiarBT(item.id, item.Estado)" />
+                                    </v-list-item-action>
+                                </v-list-item>
+                                <v-list-item>
+                                    <v-list-item-action>
+                                        <DeleteDialog
+                                            :description="`¿Está seguro de querer eliminar el status '${item.Estado}'?. Esta acción no se puede deshacer`"
+                                            :itemUrl="`/Status/${item.id}`" :index="index" list=""
+                                            @remove-from-list="deleteElement" />
+                                    </v-list-item-action>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
                         <span v-else>
                             Este estado no se puede eliminar ni modificar
                         </span>

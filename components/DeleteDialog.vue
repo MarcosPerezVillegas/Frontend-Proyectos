@@ -2,7 +2,12 @@
 <template>
     <v-dialog v-model="deleteDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn v-text="'Eliminar'" color="red" text small v-bind="attrs" v-on="on" @click="deleteDialog = true" />
+            <v-btn color="red" text small v-bind="attrs" v-on="on" @click="deleteDialog = true">
+                <v-icon>
+                    mdi-delete
+                </v-icon>
+                Eliminar
+            </v-btn>
         </template>
         <v-card>
             <v-card-title>
@@ -59,35 +64,35 @@ export default {
     }),
 
 
-methods: {
+    methods: {
         async eliminar() {
-        try {
-            const resRol = await this.$axios.get('/Login')
             try {
+                const resRol = await this.$axios.get('/Login')
+                try {
+                    const response1 = await this.$axios.get(`Maestros/${resRol.data.codigo}`)
+                    if (this.item === response1.data.data.codigo) {
+                        this.deleteDialog = false
+                        return this.$nuxt.$emit('show-snackbar', 'red', "No puedes eliminar tu propio usuario")
+                    }
+                } catch { }
                 const response1 = await this.$axios.get(`Maestros/${resRol.data.codigo}`)
                 if (this.item === response1.data.data.codigo) {
                     this.deleteDialog = false
                     return this.$nuxt.$emit('show-snackbar', 'red', "No puedes eliminar tu propio usuario")
                 }
-            } catch { }
-            const response1 = await this.$axios.get(`Maestros/${resRol.data.codigo}`)
-            if (this.item === response1.data.data.codigo) {
+                const response = await this.$axios.delete(this.itemUrl)
+                this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.deleteDialog = false
-                return this.$nuxt.$emit('show-snackbar', 'red', "No puedes eliminar tu propio usuario")
+                if (this.list === "") {
+                    this.$nuxt.$emit('remove-from-list', this.index)
+                } else {
+                    this.$nuxt.$emit('remove-from-list', this.index, this.list)
+                }
+            } catch (error) {
+                this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
-            const response = await this.$axios.delete(this.itemUrl)
-            this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-            this.deleteDialog = false
-            if (this.list === "") {
-                this.$nuxt.$emit('remove-from-list', this.index)
-            } else {
-                this.$nuxt.$emit('remove-from-list', this.index, this.list)
-            }
-        } catch (error) {
-            this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
     }
-}
 }
 
 </script>

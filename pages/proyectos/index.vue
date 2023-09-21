@@ -95,8 +95,12 @@
                             </v-list-item>
                         </v-list>
                     </v-menu>
-                    <v-btn v-if="roles.rol == 'alumno'" @click="selecID(item.id)" v-text="'ver proyecto'" color="green" text
-                        small />
+                    <v-btn v-if="roles.rol == 'alumno'" @click="selecID(item.id)"" color="green" text small>
+                        <v-icon small>
+                            mdi-book
+                        </v-icon>
+                        Ver proyecto
+                    </v-btn>
                 </template>
                 <template v-slot:no-results>
                     <v-alert :value="true" color="error">
@@ -186,11 +190,26 @@
                         </v-list>
                     </v-menu>
                     <v-btn v-if="roles.rol == 'maestro' && item.statuses[item.statuses.length - 1].Estado === 'En espera'"
-                        v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`" />
+                        text small color="blue" :to="`/proyectos/${item.id}`">
+                        <v-icon small>
+                            mdi-border-color
+                        </v-icon>
+                        Editar
+                    </v-btn>
                     <v-btn v-if="roles.rol == 'maestro' && item.statuses.some(estado => estado.Estado !== 'En espera')"
-                        v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
+                        text small color="green" @click="genProg(item.id)">
+                        <v-icon small>
+                            mdi-chart-box-outline
+                        </v-icon>
+                        Progreso
+                    </v-btn>
                     <v-btn v-if="roles.rol == 'maestro' && item.statuses.some(estado => estado.Estado !== 'En espera')"
-                        @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
+                        @click="selecPro(item.id)" color="green" text small>
+                        <v-icon small>
+                            mdi-book
+                        </v-icon>
+                        Ver proyecto
+                    </v-btn>
                     <span v-else-if="roles.rol == 'maestro'">
                         El proyecto está en proceso de validación
                     </span>

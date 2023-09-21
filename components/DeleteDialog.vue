@@ -3,7 +3,7 @@
     <v-dialog v-model="deleteDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
             <v-btn color="red" text small v-bind="attrs" v-on="on" @click="deleteDialog = true">
-                <v-icon>
+                <v-icon small>
                     mdi-delete
                 </v-icon>
                 Eliminar

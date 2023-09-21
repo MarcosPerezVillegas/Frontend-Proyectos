@@ -37,6 +37,9 @@
                         </v-row>
                         <v-row justify="center">
                             <v-btn rounded v-if="entregada" color="primary" @click="descargarArchivo">
+                                <v-icon small>
+                                    mdi-download
+                                </v-icon>
                                 Descargar Archivo
                             </v-btn>
                         </v-row>
@@ -45,6 +48,8 @@
                                 <b style="font-size: medium;">Esta tarea no tiene archivos para descargar.</b>
                             </v-card-text>
                         </v-row>
+                        <br>
+                        <br>
                     </v-card>
                 </v-form>
                 <v-row class="mt-3" justify="center">

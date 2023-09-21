@@ -3,8 +3,18 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container fluid class="text-center">
-        <v-btn rounded v-if="seleccionado" v-text="'Seleccionar otro proyecto'" color="primary" @click="sel()" />
-        <v-btn rounded v-if="seleccionado" v-text="'Crear una tarea'" color="primary" @click="selProTarea(seleccionado)" />
+        <v-btn rounded v-if="seleccionado" color="primary" @click="sel()">
+            <v-icon>
+                mdi-book
+            </v-icon>
+            Seleccionar otro proyecto
+        </v-btn>
+        <v-btn rounded v-if="seleccionado" color="primary" @click="selProTarea(seleccionado)">
+            <v-icon small>
+                mdi-plus
+            </v-icon>
+            Crear una tarea
+        </v-btn>
         <!--<SelectDialog v-if="usuario.rol === 'maestro' || usuario.rol === 'administrador'" :proyectos="proyectos" />--->
         <br>
 
@@ -176,8 +186,9 @@
                     :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.activo="item, index">
                         <span>
-                            <v-chip v-if="getColorF(item.item) === 'green'" :color="getColorF(item.item)" style="color: white">
-                                {{ item.item.activo}}
+                            <v-chip v-if="getColorF(item.item) === 'green'" :color="getColorF(item.item)"
+                                style="color: white">
+                                {{ item.item.activo }}
                             </v-chip>
                             <v-chip v-else color="red" style="color: white">
                                 Fecha alcanzada
@@ -207,7 +218,8 @@
                     <v-text-field v-model="search4" label="Buscar tarea" single-line hide-details></v-text-field>
                 </v-card-title>
                 <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table" :search="search4"
-                :header-props="headerProps" :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
+                    :header-props="headerProps"
+                    :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.activo="item, index">
                         <span>
                             <v-chip class="white--text" style="background-color: rgb(0, 122, 210);">
@@ -407,7 +419,7 @@ export default {
         getColorF(item) {
             const fecha = `${item.fecha_limite} ${item.hora_limite}`;
             const date = new Date(fecha)
-            if (date > new Date(this.date)){
+            if (date > new Date(this.date)) {
                 return 'green'
             }
             else return 'red'

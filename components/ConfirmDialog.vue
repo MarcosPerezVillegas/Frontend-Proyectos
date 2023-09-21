@@ -2,7 +2,7 @@
 <template>
     <v-dialog v-model="confirmDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn rounded color="white" text small v-bind="attrs" v-on="on">
+            <v-btn rounded class="white--text" color="#66BB6A" v-bind="attrs" v-on="on">
                 <v-icon small>
                     mdi-plus
                 </v-icon>

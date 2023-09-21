@@ -59,10 +59,21 @@
                             </v-row>
 
                             <v-row justify="center">
-                                <v-btn @click="toggleeditar" dark rounded class="white--text" color="primary">{{ editar ?
+                                <v-btn @click="toggleeditar" dark rounded class="white--text" color="primary">
+                                    <v-icon v-if="!editar" small>
+                                        mdi-border-color
+                                    </v-icon>
+                                    <v-icon v-else small>
+                                        mdi-checkbox-marked-circle
+                                    </v-icon>
+                                {{ editar ?
                                     'Guardar' : 'Editar' }}</v-btn>
                                 <v-btn @click="cancelarEditar" dark rounded class="white--text"
-                                    color="#FF0000">cancelar</v-btn>
+                                    color="#FF0000">
+                                    <v-icon small>
+                                        mdi-cancel
+                                    </v-icon>
+                                    Cancelar</v-btn>
                             </v-row>
                         </v-form>
                     </v-card-text>
@@ -131,13 +142,13 @@
                     <v-card-actions>
                         <v-spacer />
                         <v-btn dark rounded class="white--text" color="#FF0000" @click="Cancelar">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
                         <v-btn dark rounded class="white--text" color="#43B63B" type="submit">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-checkbox-marked-circle
                             </v-icon>
                             Guardar
@@ -149,7 +160,7 @@
                 <v-row>
                     <v-spacer />
                     <v-btn v-if="btn === 0" @click="CambiarBTN()" dark rounded class="white--text" color="#43B63B">
-                        <v-icon>
+                        <v-icon small>
                             mdi-account-box
                         </v-icon>
                         Cambiar contraseña
@@ -178,13 +189,13 @@
                     <v-card-actions>
                         <v-spacer />
                         <v-btn dark rounded class="white--text" color="#FF0000" @click="CambiarBTN()">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
                         <v-btn @click="CambiarPass()" dark rounded class="white--text" color="#43B63B">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-checkbox-marked-circle
                             </v-icon>
                             Guardar

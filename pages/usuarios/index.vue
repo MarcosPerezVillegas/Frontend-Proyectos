@@ -18,7 +18,7 @@
             <v-row>
                 <v-spacer />
                 <v-btn dark rounded color="orange" to="/Usuarios/Restore">
-                    <v-icon dark>
+                    <v-icon small dark>
                         mdi-restore
                     </v-icon>
                     Recuperar o decartar usuarios
@@ -28,7 +28,7 @@
             <v-row>
                 <v-spacer />
                 <v-btn dark rounded color="#43B63B" to="/Usuarios/Create">
-                    <v-icon dark>
+                    <v-icon small dark>
                         mdi-plus
                     </v-icon>
                     Registrar usuarios
@@ -46,7 +46,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -55,7 +55,7 @@
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Administrador')">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-border-color
                                         </v-icon>
                                         Editar usuario
@@ -90,7 +90,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -99,7 +99,7 @@
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Maestro')">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-border-color
                                         </v-icon>
                                         Editar usuario
@@ -134,7 +134,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -143,7 +143,7 @@
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Alumnos/${item.codigo}`, item, 'Alumno')">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-border-color
                                         </v-icon>
                                         Editar usuario</v-btn>

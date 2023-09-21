@@ -88,13 +88,13 @@
                     <v-card-actions>
                         <v-spacer />
                         <v-btn dark rounded class="white--text" to="/Usuarios" color="#FF0000">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
                         <v-btn dark rounded class="white--text" type="submit" color="#43B63B">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-checkbox-marked-circle
                             </v-icon>
                             Guardar

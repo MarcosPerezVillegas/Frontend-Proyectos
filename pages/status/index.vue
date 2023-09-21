@@ -74,11 +74,16 @@
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #e1e2e3;">
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
                                     <v-list-item-action>
-                                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3" v-text="'Editar'"
-                                            color="blue" text small @click="CambiarBT(item.id, item.Estado)" />
+                                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3"
+                                            color="blue" text small @click="CambiarBT(item.id, item.Estado)">
+                                            <v-icon small>
+                                                mdi-border-color
+                                            </v-icon>
+                                            Editar
+                                        </v-btn>
                                     </v-list-item-action>
                                 </v-list-item>
                                 <v-list-item>

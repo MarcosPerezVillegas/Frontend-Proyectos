@@ -32,7 +32,12 @@
                 <v-data-table :items="carreras" :headers="headers" class="custom-data-table-carreras" :header-props="headerProps"
                 :footer-props="{itemsPerPageText: 'Carreras por página', pageText: '{0} - {1} de {2}'}">
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Editar'" color="blue" text small :to="`/Carreras/${item.clave}`" />
+                        <v-btn text small color="blue" text small :to="`/Carreras/${item.clave}`">
+                            <v-icon small>
+                                mdi-border-color
+                            </v-icon>
+                            Editar
+                        </v-btn>
                         <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'?`"
                             :itemUrl="`/Carreras/${item.clave}`" :index="index" list="" @remove-from-list="deleteElement" />
                     </template>

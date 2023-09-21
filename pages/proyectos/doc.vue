@@ -32,7 +32,7 @@
                                 <h3 align="center">Formato Exel</h3>
                                 <v-btn @click="createExel" text small color="green">
                                     <v-icon dark small>
-                                        mdi-file
+                                        mdi-file-excel-box
                                     </v-icon>
                                     Descargar
                                 </v-btn>
@@ -46,7 +46,7 @@
                                 <h3 align="center">Formato PDF</h3>
                                 <v-btn @click="createPDF" text small color="red">
                                     <v-icon dark small>
-                                        mdi-file
+                                        mdi-file-document-outline
                                     </v-icon>
                                     Descargar
                                 </v-btn>
@@ -60,9 +60,12 @@
                                 <h3 align="center">Descargar Exel y PDF</h3>
                                 <v-btn @click="descarExPDF" text small color="blue">
                                     <v-icon dark small>
-                                        mdi-file
+                                        mdi-file-document-outline
                                     </v-icon>
                                     Descargar
+                                    <v-icon dark small>
+                                        mdi-file-excel-box
+                                    </v-icon>
                                 </v-btn>
                             </div>
                         </v-card>
@@ -150,7 +153,7 @@ export default {
                     Width: 160,
                 },
                 callback: function (doc) {
-                    doc.save('Progreso.pdf');
+                    doc.save(`Progreso - Proyecto ${pro.nombre}.pdf`);
                 },
             })
             doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, {maxWidth: 160, align: "justify"})
@@ -213,12 +216,12 @@ export default {
             const sheet2 = 'Datos de Participantes'
             const sheet3 = 'Hisorial de estados'
             const sheet4 = 'Hisorial de Tareas'
-            const filename = 'Progreso'
+            const filename = pro.nombre
             XLSX.utils.book_append_sheet(workbook, data, sheet1)
             XLSX.utils.book_append_sheet(workbook, data2, sheet2)
             XLSX.utils.book_append_sheet(workbook, data3, sheet3)
             XLSX.utils.book_append_sheet(workbook, data4, sheet4)
-            XLSX.writeFile(workbook, `${filename}.xlsx`)
+            XLSX.writeFile(workbook, `Progreso - Proyecto ${filename}.xlsx`)
         },
 
         descarExPDF(){

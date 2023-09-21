@@ -43,23 +43,54 @@
                 <v-data-table :items="tareas" :headers="headers" class="custom-data-table" :search="search"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
+                    <template v-slot:item.activo="item, index">
+                        <span>
+                            <v-chip :color="getColor(item.item.activo)" style="color: white">
+                                {{ item.item.activo }}
+                            </v-chip>
+                        </span>
+                    </template>
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text small v-on="on">
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
                             <v-list>
                                 <v-list-item>
-                                    <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
+                                    <v-btn color="green" text small @click="verItem(item)">
+                                        <v-icon>
+                                            mdi-clipboard-text
+                                        </v-icon>
+                                        Ver
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item>
-                                    <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
+                                    <v-btn color="blue" text small @click="editItem(item)">
+                                        <v-icon>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item v-if="item.activo === 'Oculta'">
-                                    <v-btn v-text="'Activar'" color="green" text small @click="state(item)" />
+                                    <v-btn color="green" text small @click="state(item)">
+                                        <v-icon>
+                                            mdi-lock-open
+                                        </v-icon>
+                                        Activar
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item v-else>
-                                    <v-btn v-text="'Desactivar'" color="red" text small @click="state(item)" />
+                                    <v-btn color="red" text small @click="state(item)">
+                                        <v-icon>
+                                            mdi-lock
+                                        </v-icon>
+                                        Desactivar
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
@@ -86,17 +117,38 @@
                 <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table" :search="search2"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
+                    <template v-slot:item.activo="item, index">
+                        <span>
+                            <v-chip class="white--text" style="background-color: orange;">
+                                Pendiente de revisar
+                            </v-chip>
+                        </span>
+                    </template>
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text small v-on="on">
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
                             <v-list>
                                 <v-list-item>
-                                    <v-btn v-text="'Ver'" color="green" text small @click="verItem(item)" />
+                                    <v-btn color="green" text small @click="verItem(item)">
+                                        <v-icon>
+                                            mdi-clipboard-text
+                                        </v-icon>
+                                        Ver
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item>
-                                    <v-btn v-text="'Editar'" color="blue" text small @click="editItem(item)" />
+                                    <v-btn color="blue" text small @click="editItem(item)">
+                                        <v-icon>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog :description="`¿Está seguro de querer eliminar la tarea ${item.nombre}
@@ -123,8 +175,23 @@
                 <v-data-table :items="tareas" :headers="headers" class="custom-data-table" :search="search3"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
+                    <template v-slot:item.activo="item, index">
+                        <span>
+                            <v-chip v-if="getColorF(item.item) === 'green'" :color="getColorF(item.item)" style="color: white">
+                                {{ item.item.activo}}
+                            </v-chip>
+                            <v-chip v-else color="red" style="color: white">
+                                Fecha alcanzada
+                            </v-chip>
+                        </span>
+                    </template>
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                        <v-btn color="blue" text small @click="entregaTarea(item.id)">
+                            <v-icon>
+                                mdi-clipboard-text
+                            </v-icon>
+                            Ver tarea
+                        </v-btn>
                     </template>
                     <template v-slot:no-results>
                         <v-alert :value="true" color="error">
@@ -140,10 +207,22 @@
                     <v-spacer></v-spacer>
                     <v-text-field v-model="search4" label="Buscar tarea" single-line hide-details></v-text-field>
                 </v-card-title>
-                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table" :search="search4" :header-props="headerProps"
-                    :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
+                <v-data-table :items="tareasPen" :headers="headers" class="custom-data-table" :search="search4"
+                :header-props="headerProps" :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
+                    <template v-slot:item.activo="item, index">
+                        <span>
+                            <v-chip class="white--text" style="background-color: rgb(0, 122, 210);">
+                                En fecha de entrega
+                            </v-chip>
+                        </span>
+                    </template>
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'Ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                        <v-btn color="blue" text small @click="entregaTarea(item.id)">
+                            <v-icon>
+                                mdi-clipboard-text
+                            </v-icon>
+                            Ver tarea
+                        </v-btn>
                     </template>
                     <template v-slot:no-results>
                         <v-alert :value="true" color="error">
@@ -159,8 +238,20 @@
                 </v-card-title>
                 <v-data-table :items="tareasEnt" :headers="headers" class="custom-data-table" :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Tareas por página', pageText: '{0} - {1} de {2}' }">
+                    <template v-slot:item.activo="item, index">
+                        <span>
+                            <v-chip class="white--text" style="background-color: rgb(0, 160, 0);">
+                                Entregada
+                            </v-chip>
+                        </span>
+                    </template>
                     <template v-slot:item.actions="{ item, index }">
-                        <v-btn v-text="'ver tarea'" color="blue" text small @click="entregaTarea(item.id)" />
+                        <v-btn color="blue" text small @click="entregaTarea(item.id)">
+                            <v-icon>
+                                mdi-clipboard-text
+                            </v-icon>
+                            Ver tarea
+                        </v-btn>
                     </template>
                 </v-data-table>
             </v-card>
@@ -189,6 +280,7 @@ export default {
         search2: '',
         search3: '',
         search4: '',
+        entreg: '',
         seleccionado: null,
         pro: "",
         headerProps: {
@@ -270,8 +362,8 @@ export default {
                     const tar = this.tareas.filter(tarea => tarea.activo === 'Activa')
                     this.tareasPen = tar.filter((tarea) => {
                         const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
-                        const entrega = new Date(dateEntrega)
-                        return entrega < new Date(this.date);
+                        this.entrega = new Date(dateEntrega)
+                        return this.entrega < new Date(this.date);
                     });
                     this.seleccionado = respro.data.data
 
@@ -298,8 +390,8 @@ export default {
                 this.tareas = this.tareas.filter((tarea) => tarea.activo === 'Activa');
                 this.tareasPen = this.tareas.filter((tarea) => {
                     const dateEntrega = `${tarea.fecha_limite} ${tarea.hora_limite}`;
-                    const entrega = new Date(dateEntrega)
-                    return entrega > new Date(this.date) && tarea.entregada !== 1;
+                    this.entrega = new Date(dateEntrega)
+                    return this.entrega > new Date(this.date) && tarea.entregada !== 1;
                 });
                 this.tareasEnt = this.tareas.filter((tarea) => tarea.entregada === 1);
             }
@@ -309,6 +401,18 @@ export default {
     },
 
     methods: {
+        getColor(estado) {
+            if (estado === 'Activa') return 'green'
+            else return 'red'
+        },
+        getColorF(item) {
+            const fecha = `${item.fecha_limite} ${item.hora_limite}`;
+            const date = new Date(fecha)
+            if (date > new Date(this.date)){
+                return 'green'
+            }
+            else return 'red'
+        },
         async selProyecto(proyecto) {
             this.seleccionado = proyecto
             const id = proyecto.id.toString()

@@ -2,7 +2,12 @@
 <template>
     <v-dialog v-model="restoreDialog" persistent>
         <template v-slot:activator="{ on, attrs }">
-            <v-btn v-text="'Restaurar'" color="blue" text small v-bind="attrs" v-on="on" />
+            <v-btn color="blue" text small v-bind="attrs" v-on="on">
+            <v-icon>
+                mdi-backup-restore
+            </v-icon>
+            Restaurar
+        </v-btn>
         </template>
         <v-card>
             <v-card-title>

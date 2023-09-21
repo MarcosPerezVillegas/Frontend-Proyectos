@@ -51,12 +51,12 @@
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #e1e2e3;">
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Administrador')">
                                         <v-icon>
-                                        mdi-border-color
+                                            mdi-border-color
                                         </v-icon>
                                         Editar usuario
                                     </v-btn>
@@ -95,10 +95,15 @@
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #e1e2e3;">
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
-                                    <v-btn v-text="'Editar usuario'" color="blue" text small
-                                        @click="editItem(`/Maestros/${item.codigo}`, item, 'Maestro')" />
+                                    <v-btn color="blue" text small
+                                        @click="editItem(`/Maestros/${item.codigo}`, item, 'Maestro')">
+                                        <v-icon>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar usuario
+                                    </v-btn>
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog
@@ -134,10 +139,14 @@
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #e1e2e3;">
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
-                                    <v-btn v-text="'Editar usuario'" color="blue" text small
-                                        @click="editItem(`/Alumnos/${item.codigo}`, item, 'Alumno')" />
+                                    <v-btn color="blue" text small
+                                        @click="editItem(`/Alumnos/${item.codigo}`, item, 'Alumno')">
+                                        <v-icon>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar usuario</v-btn>
                                 </v-list-item>
                                 <v-list-item>
                                     <DeleteDialog

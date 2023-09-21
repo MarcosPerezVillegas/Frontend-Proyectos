@@ -4,12 +4,14 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card style="margin-top: 0px; padding: 20px; background-color: #c7eeff; box-shadow: 0 0 20px black;">
-                <v-card-title><b>Acceso denegado</b></v-card-title>
-                <v-card-text>
-                    <b>No tienes el rol necesario para acceder a esta página.</b>
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-card">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-card-title class="headline">
@@ -38,20 +40,21 @@
             <v-card-title>
                 Administradores
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="administradores" :headers="headers" class="custom-data-table-usuario"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Administradores por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                <v-btn color="#64B5F6" text v-on="on">
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Administrador')">
@@ -82,20 +85,21 @@
             <v-card-title>
                 Maestros
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="maestros" :headers="headers" class="custom-data-table-usuario"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Maestros por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                <v-btn color="#64B5F6" text v-on="on">
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Maestros/${item.codigo}`, item, 'Maestro')">
@@ -126,20 +130,21 @@
             <v-card-title>
                 Alumnos
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="alumnos" :headers="headers" class="custom-data-table-usuario"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Alumnos por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                <v-btn color="#64B5F6" text v-on="on">
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="blue" text small
                                         @click="editItem(`/Alumnos/${item.codigo}`, item, 'Alumno')">
@@ -269,7 +274,7 @@ export default Vue.extend({
 .custom-v-card {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #c7eeff;
     box-shadow: 0 0 20px black;
 }
 
@@ -305,5 +310,4 @@ export default Vue.extend({
 
 .custom-data-table-usuario .v-data-table-header {
     color: white;
-}
-</style>
+}</style>

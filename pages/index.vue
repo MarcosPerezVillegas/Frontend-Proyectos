@@ -11,7 +11,8 @@
             </small>
           </footer>
         </blockquote>
-        <a href="/Proyectos/Disponibles"><p>Ver proyectos disponibles</p></a>
+        <a v-if="log" href="/Proyectos"><p>Ver proyectos disponibles</p></a>
+        <a v-else href="/Proyectos/Disponibles"><p>Ver proyectos disponibles</p></a>
       </v-col>
     </v-row>
   </v-container>
@@ -24,6 +25,7 @@ export default {
   layout:'default',
   data() {
     return {
+      log: false
     }
   },
 
@@ -33,6 +35,7 @@ export default {
     this.$store.commit('setTitle', 'CUValles')
     try {
       await this.$axios.get('/login')
+      this.log = true
     } catch {
       this.$nuxt.setLayout('inicio');
     }

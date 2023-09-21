@@ -1,12 +1,14 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno'" justify-center align-center>
-            <v-card style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 20px black;">
-                <v-card-title><b>Acceso denegado</b></v-card-title>
-                <v-card-text>
-                    <b>No tienes el rol necesario para acceder a esta página.</b>
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-form-create">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-form @submit.prevent="validarTamañoArchivo()" class="custom-v-form-create" style="border-radius: 2%;">
@@ -16,15 +18,20 @@
                     </v-card-title>
                     <v-card-text>
                         <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
-                            El nombre de la tarea es necesaria.
+                            El nombre de la tarea es obligatorio.
                         </v-alert>
 
                         <v-alert ref="fecha" v-show="data.fecha" color="error" icon="$error">
-                            La fecha de entrega de la tarea es necesaria.
+                            La fecha de entrega de la tarea es obligatoria.
+                        </v-alert>
+
+                        <v-alert ref="fechaC" v-show="data.val_fi" color="error" icon="$error">
+                            La fecha de entrega debe ser posterior o igual a la fecha actual
+                            y no puede ser posterior a la fecha de entrega final del proyecto ({{ dateE }}).
                         </v-alert>
 
                         <v-alert ref="hora" v-show="data.hora" color="error" icon="$error">
-                            La hora de entrega de la tarea es necesaria.
+                            La hora de entrega de la tarea es obligatoria.
                         </v-alert>
 
                         <v-row>
@@ -45,7 +52,7 @@
                         </v-row>
 
                         <v-alert ref="descripcion" v-show="data.descripcion" color="error" icon="$error">
-                            La descripcion de la tarea es necesaria.
+                            La descripcion de la tarea es obligatoria.
                         </v-alert>
 
                         <v-textarea v-model="tarea.descripcion" outlined class="textarea-custom" label="Descripcion"
@@ -60,15 +67,15 @@
 
                         <v-card outlined
                             style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 2px black;">
-                            <v-text style="font-size: larger;">Subir material de apoyo</v-text>
+                            <v-text style="font-size: larger;">Subir material de apoyo.</v-text>
                             <br>
-                            <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb</v-text>
+                            <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb.</v-text>
                             <v-file-input v-model="archivo" label="Seleccionar archivo"
                                 :rules="[$validations.isFileLessThan50MB]"></v-file-input>
                         </v-card>
                         <br>
                         <v-alert ref="estado" v-show="data.activo" color="error" icon="$error">
-                            El Estado de la tarea en nesesario.
+                            El estado de la tarea en obligatorio.
                         </v-alert>
 
                         <v-combobox v-model="estado" outlined label="Estado de la tarea" :items="['Activa', 'Oculta']"
@@ -77,13 +84,13 @@
                     <v-card-actions>
                         <v-spacer />
                         <v-btn dark rounded class="white--text" color="#FF0000" @click="cancelar()">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
                         <v-btn dark rounded class="white--text" type="submit" color="#43B63B">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-checkbox-marked-circle
                             </v-icon>
                             Guardar
@@ -98,6 +105,7 @@
 <script lang="ts">
 
 // @ts-nocheck
+import moment from 'moment';
 import { clave } from '@/plugins/globals';
 const CryptoJS = require("crypto-js");
 export default {
@@ -116,14 +124,17 @@ export default {
             hora_limite: "",
             activo: Number
         },
+        proyecto: {},
         data: {
             nombre: false,
             descripcion: false,
             fecha: false,
             hora: false,
             activo: false,
-            file: false
+            file: false,
+            val_fi: false,
         },
+        dateE: "",
         tareas: [],
         tareaId: 0,
         estado: ""
@@ -138,6 +149,7 @@ export default {
                 this.data.fecha = false
                 this.data.hora = false
                 this.data.activo = false
+                this.data.val_fi = false
             }
         },
         estado: {
@@ -165,6 +177,9 @@ export default {
             const id = localStorage.getItem("ProId")
             const bytes = CryptoJS.AES.decrypt(id, clave);
             this.tarea.Proyecto_id = bytes.toString(CryptoJS.enc.Utf8);
+            const resp = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
+            this.proyecto = resp.data.data
+
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -211,6 +226,20 @@ export default {
                     this.data.hora = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.hora);
+                    });
+                    return
+                }
+                const hoy = new Date();
+                const año = hoy.getFullYear();
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
+                var date = moment(this.tarea.fecha_limite).format("yyyy-MM-DD")
+                this.dateE = moment(this.proyecto.fechafinal).format("yyyy-MM-DD")
+                if (date < fecha || this.dateE < this.tarea.fecha_limite) {
+                    this.data.val_fi = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fechaC);
                     });
                     return
                 }

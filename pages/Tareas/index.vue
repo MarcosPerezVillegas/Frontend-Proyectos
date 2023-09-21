@@ -20,21 +20,26 @@
 
         <p v-if="(usuario.rol === 'maestro' || usuario.rol === 'administrador') && !seleccionado && proyectos.length !== 0"
             style="font-size: larger ;">
-            Selecciona uno de tus proyectos para mostrarte las tareas</p>
+            <b>Selecciona uno de tus proyectos para mostrarte las tareas.</b></p>
 
         <p v-if="(usuario.rol === 'maestro' || usuario.rol === 'administrador') && !seleccionado && proyectos.length === 0"
-            style="font-size: larger;">No tienes ningun proyecto al cual se le puedan asignar o ver tareas para tareas</p>
+            style="font-size: larger;"><b>No tienes ningún proyecto al cual se le puedan asignar o ver tareas.</b></p>
 
         <br>
-        <v-form style=" padding: 20px; background-color: #e1fffd; box-shadow: 0 0 1px black; border-radius: 2%;">
-            <v-row v-if="!seleccionado && usuario.rol !== 'alumno'">
+        <v-form style=" padding: 20px; background-color: #e1fffd; box-shadow: 0 0 1px black; border-radius: 5px;">
+            <div v-if="proyectos.length === 0" justify="center">
+                <v-icon large>
+                    mdi-grid-off
+                </v-icon>
+                <p style="font-size: larger;">No hay proyectos.</p>
+            </div>
+            <v-row v-else-if="!seleccionado && usuario.rol !== 'alumno'" justify="center">
                 <v-col v-for="proyecto in proyectos" :key="proyecto.id" cols="12" sm="6" md="4" lg="3">
-                    <v-card
-                        style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 5px black; border-radius: 2%;">
-                        <div style="border-color: #64B5F6; border-width: 3px; border-style: solid;">
-                            <h3>Proyecto: {{ proyecto.nombre }}</h3>
+                    <v-card class="project-card">
+                        <div class="project-header">
+                            <h3>{{ proyecto.nombre }}</h3>
                         </div>
-                        <div>
+                        <div class="project-actions">
                             <v-btn v-text="'Ver tareas'" color="blue" text small @click="selProyecto(proyecto)" />
                         </div>
                     </v-card>
@@ -63,12 +68,12 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text small v-on="on">
-                                    <v-icon> small
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="green" text small @click="verItem(item)">
                                         <v-icon small>
@@ -137,12 +142,12 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text small v-on="on">
-                                    <v-icon small>
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="green" text small @click="verItem(item)">
                                         <v-icon small>
@@ -543,4 +548,23 @@ export default {
 .custom-data-table .v-data-table-header {
     color: white;
 }
+
+.project-card {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.project-header {
+  border-bottom: 3px solid #64B5F6;
+  padding-bottom: 10px;
+}
+
+.project-actions {
+  margin-top: 10px;
+  text-align: center;
+}
+
 </style>

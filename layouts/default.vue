@@ -187,7 +187,7 @@ export default {
         {
           icon: 'mdi-compass',
           title: 'Proyectos',
-          to: '/Proyectos/datos',
+          to: '/Proyectos/Datos',
         },
         {
           icon: 'mdi-clock-alert',
@@ -229,7 +229,7 @@ export default {
     } catch  { }
 
     if (this.roles.rol === 'alumno') {
-      const responseA = await this.$axios.get(`/alumnos/${this.roles.codigo}`)
+      const responseA = await this.$axios.get(`/Alumnos/${this.roles.codigo}`)
       this.alum = responseA.data.data
       if (this.alum.proyecto_id) {
         const idPro = this.alum.proyecto_id.toString()

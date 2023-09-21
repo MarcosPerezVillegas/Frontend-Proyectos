@@ -1,12 +1,14 @@
 <template>
     <v-container>
         <v-container v-if="rol.rol === 'alumno'" justify-center align-center>
-            <v-card>
-                <v-card-title>Acceso Denegado</v-card-title>
-                <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-row>
@@ -104,6 +106,7 @@ export default {
     async beforeMount() {
         const response = await this.$axios.get('/login')
         this.rol = response.data
+        if (this.rol === 'alumno') { return }
         const idCifrado = localStorage.getItem("proId")
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
@@ -236,3 +239,12 @@ export default {
 }
 
 </script>
+
+<style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+}
+</style>

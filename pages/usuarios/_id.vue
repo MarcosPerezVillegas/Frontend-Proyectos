@@ -79,12 +79,14 @@
                     </v-card-text>
                 </v-card>
             </v-form>
-            <v-card v-else style="margin-top: 0px; padding: 20px; background-color: #c7eeff; box-shadow: 0 0 20px black;">
+            <v-form v-else class="custom-v-form">
+                <v-card>
                 <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
                     <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-form @submit.prevent="guardar" class="custom-v-form">

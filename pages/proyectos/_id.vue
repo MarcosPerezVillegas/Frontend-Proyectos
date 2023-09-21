@@ -1,12 +1,14 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno'" justify-center align-center>
-            <v-card>
-                <v-card-title>Acceso Denegado</v-card-title>
-                <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p> 
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-form @submit.prevent="guardar" class="custom-v-form">
@@ -46,28 +48,27 @@
                             <v-row>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                        :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"
-                                    :rules="[$validations.notEmpty]"></v-combobox>
+                                        :rules="[$validations.notEmpty]"></v-combobox>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.alumnos" outlined label="Cupos"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                        :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                    <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio"
+                                        type="date" :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                        :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="8">
-                                    <v-textarea v-model="proyecto.objetivos" outlined 
-                                    class="textarea-custom" label="Objetivos" 
-                                    :rules="[$validations.notEmpty]"></v-textarea>
+                                    <v-textarea v-model="proyecto.objetivos" outlined class="textarea-custom"
+                                        label="Objetivos" :rules="[$validations.notEmpty]"></v-textarea>
                                 </v-col>
                             </v-row>
                             <v-row justify="center">
@@ -119,7 +120,7 @@ export default {
             carrera_clave: false,
             alumnos: false,
             carr_nom: false,
-            val_fi: false, 
+            val_fi: false,
             val_ff: false
         },
         carrera_nombre: "",
@@ -149,7 +150,7 @@ export default {
         try {
             const responseR = await this.$axios.get('/login')
             this.rol = responseR.data.rol
-            console.log(this.rol)
+            if (this.rol === 'alumno') { return }
             const response = await this.$axios.get(`/proyectos/${id}`)
             this.proyecto = response.data.data
             this.carrera_nombre = this.proyecto.Carrera.nombre
@@ -175,7 +176,8 @@ export default {
             const mes = String(hoy.getMonth() + 1).padStart(2, '0');
             const dia = String(hoy.getDate()).padStart(2, '0');
             const fecha = `${año}-${mes}-${dia}`;
-            try {if (this.proyecto.nombre === "") {
+            try {
+                if (this.proyecto.nombre === "") {
                     this.data.nombre = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.nombre);
@@ -197,7 +199,7 @@ export default {
                     return
                 }
                 var date = moment(this.proyecto.fechainicio).format("yyyy-MM-DD")
-                if(date < fecha){
+                if (date < fecha) {
                     this.data.val_fi = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.fechaiv);
@@ -242,16 +244,16 @@ export default {
                     });
                     return
                 }
-                try{
+                try {
                     const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
                     const Carrera = resCar.data.data
                     this.proyecto.carrera_clave = Carrera.clave
-                    try{
+                    try {
                         const response = await this.$axios.put(`/proyectos/${this.proyecto.id}`, this.proyecto)
                         this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                         this.$router.push('/proyectos')
                     } catch (error) {
-                       this.$nuxt.$emit('show-snackbar', 'red', error.message) 
+                        this.$nuxt.$emit('show-snackbar', 'red', error.message)
                     }
                 } catch (error) {
                     this.data.carr_nom = true
@@ -259,7 +261,7 @@ export default {
                         this.scrollHaciaAlerta(this.$refs.carrerav);
                     });
                     return
-                } 
+                }
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
@@ -297,6 +299,7 @@ export default {
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
 }
+
 .textarea-custom .v-label::before {
     content: unset;
     transform: translateY(-10px);

@@ -2,12 +2,14 @@
 <template>
     <v-container>
         <v-container v-if="access" justify-center align-center>
-            <v-card style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 20px black;">
-                <v-card-title><b>Acceso denegado</b></v-card-title>
+            <v-form class="custom-v-form-edit">
+                <v-card>
+                <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
                 <v-card-text>
                     <b>No tienes el rol necesario para acceder a esta página.</b>
                 </v-card-text>
             </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-container v-if="ver === 'true'" class="mt-5">
@@ -68,15 +70,20 @@
                     </v-card-title>
                     <v-card-text>
                         <v-alert ref="nombre" v-show="data.nombre" color="error" icon="$error">
-                            El nombre de la tarea es necesaria.
+                            El nombre de la tarea es obligatorio.
                         </v-alert>
 
                         <v-alert ref="fecha" v-show="data.fecha" color="error" icon="$error">
-                            La fecha de entrega de la tarea es necesaria.
+                            La fecha de entrega de la tarea es obligatoria.
+                        </v-alert>
+
+                        <v-alert ref="fechaC" v-show="data.val_fi" color="error" icon="$error">
+                            La fecha de entrega debe ser posterior o igual a la fecha actual
+                            y no puede ser posterior a la fecha de entrega final del proyecto ({{ dateE }}).
                         </v-alert>
 
                         <v-alert ref="hora" v-show="data.hora" color="error" icon="$error">
-                            La hora de entrega de la tarea es necesaria.
+                            La hora de entrega de la tarea es obligatoria.
                         </v-alert>
 
                         <v-row>
@@ -97,7 +104,7 @@
                         </v-row>
 
                         <v-alert ref="descripcion" v-show="data.descripcion" color="error" icon="$error">
-                            La descripcion de la tarea es necesaria.
+                            La descripcion de la tarea es obligatoria.
                         </v-alert>
 
                         <v-textarea v-model="tarea.descripcion" outlined class="textarea-custom" label="Descripcion"
@@ -112,15 +119,15 @@
 
                         <v-card outlined
                             style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 2px black;">
-                            <v-text style="font-size: larger;">Subir material de apoyo</v-text>
+                            <v-text style="font-size: larger;">Subir material de apoyo.</v-text>
                             <br>
-                            <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb</v-text>
+                            <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb.</v-text>
                             <v-file-input v-model="archivo" label="Seleccionar archivo"
                                 :rules="[$validations.isFileLessThan50MB]"></v-file-input>
                         </v-card>
                         <br>
                         <v-alert ref="estado" v-show="data.activo" color="error" icon="$error">
-                            El Estado de la tarea en nesesario.
+                            El estado de la tarea en obligatorio.
                         </v-alert>
 
                         <v-combobox v-model="estado" outlined label="Estado de la tarea" :items="['Activo', 'Inactivo']"
@@ -150,7 +157,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import moment from 'moment';
 export default {
     name: 'TareasUpdate',
     middleware: 'auth',
@@ -170,13 +177,16 @@ export default {
             fecha: false,
             hora: false,
             activo: false,
-            file: false
+            file: false,
+            val_fi: false,
         },
+        proyec: "",
+        dateE: "",
         access: false,
         archivo: null,
         tareaId: 0,
         estado: "",
-        proyecto: "",
+        proyecto: {},
         id: "",
         Proyectos: [""],
         nombre: "",
@@ -195,6 +205,7 @@ export default {
                 this.data.hora = false
                 this.data.activo = false
                 this.data.file = false
+                this.data.val_fi = false
             }
         },
         estado: {
@@ -225,6 +236,7 @@ export default {
             this.tarea = response.data.data
             const respon = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
             this.id = this.tarea.Proyecto_id
+            this.proyec = respon.data.data
             this.proyecto = respon.data.data.nombre
             if (this.ver === "true") {
                 try {
@@ -287,6 +299,20 @@ export default {
                     });
                     return
                 }
+                const hoy = new Date();
+                const año = hoy.getFullYear();
+                const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dia = String(hoy.getDate()).padStart(2, '0');
+                const fecha = `${año}-${mes}-${dia}`;
+                var date = moment(this.tarea.fecha_limite).format("yyyy-MM-DD")
+                this.dateE = moment(this.proyec.fechafinal).format("yyyy-MM-DD")
+                if (date < fecha || this.dateE < this.tarea.fecha_limite) {
+                    this.data.val_fi = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.fechaC);
+                    });
+                    return
+                }
                 if (this.tarea.descripcion === "") {
                     this.data.descripcion = true
                     this.$nextTick(() => {
@@ -318,7 +344,9 @@ export default {
                         return this.$nuxt.$emit('show-snackbar', 'red', "Ya existe una tarea con ese nombre")
                     }
                 }
-            } catch { }
+            } catch (error) {
+                return this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            }
             this.guardar()
         },
 
@@ -331,14 +359,10 @@ export default {
                     this.tarea.activo = 0
                 }
                 const response = await this.$axios.put(`/Tareas/${this.tarea.id}`, this.tarea)
-                console.log(response.data.tareaActualizada.id)
-                debugger
                 this.tareaId = response.data.tareaActualizada.id
-                debugger
                 this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
                 this.enviarArchivo()
             } catch (error) {
-                console.log(this.tareaId)
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
         },

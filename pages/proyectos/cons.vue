@@ -5,12 +5,14 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno'" justify-center align-center>
-            <v-card>
-                <v-card-title>Acceso Denegado</v-card-title>
-                <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-row>
@@ -27,9 +29,9 @@
                 <b>Alumnos participantes</b>
             </v-card-title>
             <v-card outlined>
-                
+
                 <v-data-table :items="aluPart" class="rows-green" :headers="headers" :header-props="headerProps"
-                    :footer-props="{itemsPerPageText: 'Alumnos por página', pageText: '{0} - {1} de {2}'}">
+                    :footer-props="{ itemsPerPageText: 'Alumnos por página', pageText: '{0} - {1} de {2}' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn color="green" text small @click="contPro(item.codigo)">
                             <v-icon dark small>
@@ -47,7 +49,7 @@
 <script lang="ts">
 
 // @ts-nocheck
-import {jsPDF} from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { clave } from '@/plugins/globals';
 import { encabezado, piepagina } from '@/plugins/imagesbase64';
 const CryptoJS = require("crypto-js");
@@ -76,6 +78,7 @@ export default {
         try {
             const responseR = await this.$axios.get('/login')
             this.rol = responseR.data.rol
+            if (this.rol === 'alumno') { return }
             const responseP = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = responseP.data.data
             this.aluPart = this.proyecto.Alumnos
@@ -94,7 +97,7 @@ export default {
             const img2 = new Image()
             const hoy = new Date();
             const año = hoy.getFullYear();
-            const mes = new Intl.DateTimeFormat('es-ES', { month: 'long'}).format(new Date())
+            const mes = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(new Date())
             const dia = String(hoy.getDate()).padStart(2, '0');
             img.src = encabezado
             img2.src = piepagina
@@ -123,25 +126,25 @@ export default {
                     doc.save(`Certificado - ${nombre}.pdf`);
                 },
             })
-            doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, {maxWidth: 160, align: "justify"})
+            doc.text(`Se extiende la presente a petición del interesado, para los fines legales a que ella convenga.`, 25, 140, { maxWidth: 160, align: "justify" })
             doc.setFontSize(12)
             doc.setFont("Courier", "bold")
-            doc.text(`ATENTAMENTE`, width/2, 160, {align: "center"})
+            doc.text(`ATENTAMENTE`, width / 2, 160, { align: "center" })
             doc.setFont("Courier", "normal")
-            doc.text(`“Piensa y Trabaja”`, width/2, 164, {align: "center"})
+            doc.text(`“Piensa y Trabaja”`, width / 2, 164, { align: "center" })
             doc.setFontSize(13)
             doc.setFont("Courier", "bold")
-            doc.text(`“${año}, Año del fomento a la formación integral con una`, width/2, 168, {align: "center"})
-            doc.text(`Red de Centros y Sistemas Multitemáticos”`, width/2, 172, {align: "center"})
+            doc.text(`“${año}, Año del fomento a la formación integral con una`, width / 2, 168, { align: "center" })
+            doc.text(`Red de Centros y Sistemas Multitemáticos”`, width / 2, 172, { align: "center" })
             doc.setFontSize(12)
             doc.setFont("Courier", "normal")
-            doc.text(`Ameca, Jalisco, ${dia} de ${mes} del ${año}`, width/2, 176, {align: "center"})
+            doc.text(`Ameca, Jalisco, ${dia} de ${mes} del ${año}`, width / 2, 176, { align: "center" })
             doc.setFontSize(13)
             doc.setFont("Courier", "bold")
-            doc.text(`Dr. Héctor Huerta Avila`, width/2, 186, {align: "center"})
+            doc.text(`Dr. Héctor Huerta Avila`, width / 2, 186, { align: "center" })
             doc.setFont("Courier", "normal")
-            doc.text(`Jefe de Departamento`, width/2, 190, {align: "center"})
-            doc.addImage(img2, 'PNG', 50, 270, 110, 16, {align: "center"});
+            doc.text(`Jefe de Departamento`, width / 2, 190, { align: "center" })
+            doc.addImage(img2, 'PNG', 50, 270, 110, 16, { align: "center" });
         },
 
         cancelar() {
@@ -153,6 +156,12 @@ export default {
 </script>
 
 <style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+}
 
 .rows-green .v-data-table-header {
     background-color: #66BB6A;

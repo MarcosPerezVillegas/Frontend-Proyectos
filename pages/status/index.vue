@@ -4,12 +4,14 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card class="custom-v-card">
-                <v-card-title>Acceso Denegado</v-card-title>
-                <v-card-text>
-                    <p>No tienes el rol necesario para acceder a esta página.</p>
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-card">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-card-title class="headline">
@@ -25,7 +27,7 @@
                 </v-btn>
             </v-row>
             <br>
-            <v-form class="custom-v-card" style="background-color: #c7eeff;" v-if="btn === 1">
+            <v-form class="custom-v-card" v-if="btn === 1">
                 <v-card>
                     <v-card-title>
                         Crear nuevo estado
@@ -61,7 +63,7 @@
             <v-card-title>
                 Estados
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="estados" :headers="headers" class="custom-data-table-status"
                     :header-props="headerProps"
                     :footer-props="{ itemsPerPageText: 'Estados por página', pageText: '{0} - {1} de {2}' }">
@@ -69,16 +71,17 @@
                         <v-menu offset-y v-if="item.id !== 1 && item.id !== 2 && item.id !== 3">
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-list-item-action>
-                                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3"
-                                            color="blue" text small @click="CambiarBT(item.id, item.Estado)">
+                                        <v-btn v-if="item.id !== 1 && item.id !== 2 && item.id !== 3" color="blue" text
+                                            small @click="CambiarBT(item.id, item.Estado)">
                                             <v-icon small>
                                                 mdi-border-color
                                             </v-icon>
@@ -103,10 +106,10 @@
                 </v-data-table>
             </v-card>
             <br>
-            <v-form class="custom-v-card" style="background-color: #c7eeff;" v-if="bt === 1">
+            <v-form class="custom-v-card" v-if="bt === 1">
                 <v-card>
                     <v-card-title>
-                        Editar estado ' {{ this.Estado }} '
+                        Editar estado ' {{ Estado }} '
                     </v-card-title>
                     <v-card-text>
                         <v-alert ref="estado3" v-show="data.Estado" color="error" icon="$error">
@@ -178,7 +181,7 @@ export default Vue.extend({
             deep: true,
             handler() {
                 this.data.Estado = false,
-                this.data.val_est = false
+                    this.data.val_est = false
             }
         },
     },
@@ -188,10 +191,12 @@ export default Vue.extend({
         this.$store.commit('setTitle', 'Status')
         const response = await this.$axios.get('/login')
         this.rol = response.data.rol
+        if (this.rol !== 'administrador') {
+            return
+        }
         try {
             const response = await this.$axios.get('/Status')
             this.estados = response.data.data
-            console.log(this.estados)
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)
         }
@@ -285,7 +290,7 @@ export default Vue.extend({
 .custom-v-card {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #c7eeff;
     box-shadow: 0 0 20px black;
 }
 

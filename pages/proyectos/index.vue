@@ -45,10 +45,10 @@
                                 </v-icon>
                             </v-btn>
                         </template>
-                        <v-list>
+                        <v-list style="background-color: white; border-width: 5px; border-color: #66BB6A; border-style: solid;">
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
+                                    <v-btn color="blue" text small :to="`/Proyectos/${item.id}`">
                                         <v-icon small>
                                             mdi-border-color
                                         </v-icon>
@@ -65,7 +65,7 @@
                             </v-list-item>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn text small color="green" text small @click="genProg(item.id)">
+                                    <v-btn color="green" text small @click="genProg(item.id)">
                                         <v-icon small>
                                             mdi-chart-box-outline
                                         </v-icon>
@@ -75,7 +75,7 @@
                             </v-list-item>
                             <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado === 'Terminado'">
                                 <v-list-item-action>
-                                    <v-btn text small color="green" text small @click="contPro(item.id)">
+                                    <v-btn color="green" text small @click="contPro(item.id)">
                                         <v-icon small>
                                             mdi-file-document-outline
                                         </v-icon>
@@ -95,7 +95,7 @@
                             </v-list-item>
                         </v-list>
                     </v-menu>
-                    <v-btn v-if="roles.rol == 'alumno'" @click="selecID(item.id)"" color="green" text small>
+                    <v-btn v-if="roles.rol == 'alumno'" @click="selecID(item.id)" color="green" text small>
                         <v-icon small>
                             mdi-book
                         </v-icon>
@@ -139,7 +139,7 @@
                                 </v-icon>
                             </v-btn>
                         </template>
-                        <v-list>
+                        <v-list style="background-color: white; border-width: 5px; border-color: #66BB6A; border-style: solid;">
                             <v-list-item>
                                 <v-list-item-action>
                                     <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
@@ -254,7 +254,7 @@
                                 </v-icon>
                             </v-btn>
                         </template>
-                        <v-list>
+                        <v-list style="background-color: white; border-width: 5px; border-color: #FFA726; border-style: solid;">
                             <v-list-item>
                                 <v-list-item-action>
                                     <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">

@@ -38,6 +38,14 @@
                         No se encontraron resultados de "{{ search }}".
                     </v-alert>
                 </template>
+                <template v-slot:item.actions="{item,index}">
+                    <v-btn @click="selecID(item.id)" color="green" text small>
+                        <v-icon small>
+                            mdi-book
+                        </v-icon>
+                        Ver proyecto
+                    </v-btn>
+                </template>
             </v-data-table>
         </v-card>
     </v-container>
@@ -46,7 +54,8 @@
 <script lang="ts">
 
 // @ts-nocheck
-
+import { clave } from '@/plugins/globals';
+const CryptoJS = require("crypto-js");
 export default {
     name: 'ProyectosDisponibles',
     layout: 'inicio',
@@ -61,7 +70,8 @@ export default {
             { text: 'Nombre', value: 'nombre' },
             { text: 'Estado actual del proyecto', value: 'statuses' },
             { text: 'Cupos restantes', value: 'alumnos' },
-            { text: 'Objetivos del proyecto', value: 'objetivos' }
+            { text: 'Objetivos del proyecto', value: 'objetivos' },
+            { text: 'Acciones', value: 'actions' },
         ]
     }),
 
@@ -71,7 +81,7 @@ export default {
         try {
             await this.$axios.get('/login')
             this.$router.push('/Proyectos')
-        } catch { }
+        } catch {}
         try {
             const response = await this.$axios.get('/Proyectos')
             this.proyectos = response.data.data.filter(proyecto => {
@@ -87,6 +97,13 @@ export default {
 
     },
     methods: {
+        selecID(index: number) {
+            const idPro = index.toString()
+            const idCifrado = CryptoJS.AES.encrypt(idPro, clave).toString();
+            localStorage.setItem('proId', idCifrado)
+            this.$router.push('/Proyectos/Seleccion')
+        },
+
         getColor (estado) {
             if (estado === 'Activo') return 'green'
             else if (estado === 'Terminado') return 'red'

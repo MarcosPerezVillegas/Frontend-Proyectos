@@ -7,7 +7,7 @@
                     <b>{{proyecto.nombre}}</b>
                 </font>
                 </v-card-title>
-                <v-card-text v-if="estado === 'Activo'">
+                <v-card-text v-if="estado === 'Activo' || !log">
                 <font size=3>
                     <b>Objetivos:</b>  {{proyecto.objetivos}}
                     <v-spacer />
@@ -45,7 +45,7 @@
                         </v-icon>
                         Cancelar
                     </v-btn>
-                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== 0 && estado === 'Activo'" 
+                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== 0 && estado === 'Activo' && log" 
                         :description="`¿Está seguro de querer unirce al proyecto '${proyecto.nombre}'? Esta acción no se puede deshacer.`"
                         :itemUrl="`/alumnos/${roles.codigo}`" :index="proyecto.id" :item="`${proyecto.id}`"/>
                 </v-card-actions>
@@ -63,10 +63,10 @@ import ConfirmDialog from "@/components/ConfirmDialog.vue";
 
 export default {
     name: 'ProyectosSelect',
-    middleware: 'auth',
     data: () => ({
         roles: {},
         proyecto: {},
+        log: false,
         maestro: "",
         carrera: "",
         id: "",
@@ -81,6 +81,9 @@ export default {
         this.id = idDescifrado
         
         try {
+            const responseR = await this.$axios.get('/login')
+            this.roles = responseR.data
+            this.log = true
             const response = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = response.data.data
             this.proyecto.fechainicio= new Date(this.proyecto.fechainicio).toISOString().split('T')[0]
@@ -88,16 +91,17 @@ export default {
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
             this.estado = this.proyecto.statuses[this.proyecto.statuses.length-1].Estado
-            const responseR = await this.$axios.get('/login')
-            this.roles = responseR.data
         } catch (error) {
-            this.$nuxt.$emit('show-snackbar', 'red', error.message)
+            this.log= false
+            const response = await this.$axios.get(`/proyectos/${this.id}`)
+            this.proyecto = response.data.data
+            this.$nuxt.setLayout('inicio');
         }
     },
 
     methods: {
         cancelar() {
-            this.$router.push('/proyectos')
+            window.history.back()
         }
     }
 }

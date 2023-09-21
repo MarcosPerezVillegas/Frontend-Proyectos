@@ -4,12 +4,14 @@
 <template>
     <v-container>
         <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-card style="margin-top: 0px; padding: 20px; background-color: #c7eeff; box-shadow: 0 0 20px black;">
-                <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
-                <v-card-text>
-                    <b>No tienes el rol necesario para acceder a esta página.</b>
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-card">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
         </v-container>
         <v-container v-else>
             <v-card-title class="headline" style="font-size: large;">
@@ -28,27 +30,28 @@
             <v-card-title>
                 <b>Administradores</b>
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="administradores" :headers="headers" class="custom-data-table"
                     :header-props="headerProps" :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                <v-btn color="#64B5F6" text v-on="on">
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <RestoreDialog
-                                        :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
+                                        :description="`¿Está seguro de querer restaurar el usuario '${item.nombre}'?`"
                                         :itemUrl="`/Maestros/Restaurar/${item.codigo}`" :index="index"
                                         list="Administradores" />
                                 </v-list-item>
                                 <v-list-item>
-                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'
+                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el usuario '${item.nombre}'
                                     de manera permanente? esta acción no se puede deshacer`" :index="index"
                                         :item="item.codigo" :itemUrl="`/Maestros/Eliminados/${item.codigo}`"
                                         :list="'Administradores'" />
@@ -69,26 +72,27 @@
             <v-card-title>
                 Maestros
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="maestros" :headers="headers" class="custom-data-table" :header-props="headerProps"
                     :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                <v-btn color="#64B5F6" text v-on="on">
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <RestoreDialog
-                                        :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
+                                        :description="`¿Está seguro de querer restaurar el usuario '${item.nombre}'?`"
                                         :itemUrl="`/Maestros/Restaurar/${item.codigo}`" :index="index" list="Maestros" />
                                 </v-list-item>
                                 <v-list-item>
-                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'
+                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el usuario '${item.nombre}'
                                     de manera permanente? esta acción no se puede deshacer`" :index="index"
                                         :item="item.codigo" :itemUrl="`/Maestros/Eliminados/${item.codigo}`"
                                         :list="'Maestros'" />
@@ -109,26 +113,27 @@
             <v-card-title>
                 Alumnos
             </v-card-title>
-            <v-card outlined class="custom-v-card" style="background-color: #c7eeff;">
+            <v-card outlined class="custom-v-card">
                 <v-data-table :items="alumnos" :headers="headers" class="custom-data-table" :header-props="headerProps"
                     :footer-props="{ 'items-per-page-text': 'Elementos por pagina' }">
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon small>
+                                <v-btn color="#64B5F6" text v-on="on">
+                                    <v-icon>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: #c7eeff;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <RestoreDialog
-                                        :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
+                                        :description="`¿Está seguro de querer restaurar el usuario '${item.nombre}'?`"
                                         :itemUrl="`/Alumnos/Restaurar/${item.codigo}`" :index="index" list="Alumnos" />
                                 </v-list-item>
                                 <v-list-item>
-                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el Usuario '${item.nombre}'
+                                    <DeleteDialog :description="`¿Está seguro de querer eliminar el usuario '${item.nombre}'
                                     de manera permanente? esta acción no se puede deshacer`" :index="index"
                                         :item="item.codigo" :itemUrl="`/Alumnos/Eliminados/${item.codigo}`"
                                         :list="'Alumnos'" />
@@ -236,7 +241,7 @@ export default {
 .custom-v-card {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #c7eeff;
     box-shadow: 0 0 20px black;
 }
 
@@ -272,5 +277,4 @@ export default {
 
 .custom-data-table .v-data-table-header {
     color: white;
-}
-</style>
+}</style>

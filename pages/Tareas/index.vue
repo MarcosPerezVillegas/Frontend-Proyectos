@@ -54,7 +54,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text small v-on="on">
-                                    <v-icon>
+                                    <v-icon> small
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -62,7 +62,7 @@
                             <v-list>
                                 <v-list-item>
                                     <v-btn color="green" text small @click="verItem(item)">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-clipboard-text
                                         </v-icon>
                                         Ver
@@ -70,7 +70,7 @@
                                 </v-list-item>
                                 <v-list-item>
                                     <v-btn color="blue" text small @click="editItem(item)">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-border-color
                                         </v-icon>
                                         Editar
@@ -78,7 +78,7 @@
                                 </v-list-item>
                                 <v-list-item v-if="item.activo === 'Oculta'">
                                     <v-btn color="green" text small @click="state(item)">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-lock-open
                                         </v-icon>
                                         Activar
@@ -86,7 +86,7 @@
                                 </v-list-item>
                                 <v-list-item v-else>
                                     <v-btn color="red" text small @click="state(item)">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-lock
                                         </v-icon>
                                         Desactivar
@@ -128,7 +128,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text small v-on="on">
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -136,7 +136,7 @@
                             <v-list>
                                 <v-list-item>
                                     <v-btn color="green" text small @click="verItem(item)">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-clipboard-text
                                         </v-icon>
                                         Ver
@@ -144,7 +144,7 @@
                                 </v-list-item>
                                 <v-list-item>
                                     <v-btn color="blue" text small @click="editItem(item)">
-                                        <v-icon>
+                                        <v-icon small>
                                             mdi-border-color
                                         </v-icon>
                                         Editar
@@ -187,7 +187,7 @@
                     </template>
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn color="blue" text small @click="entregaTarea(item.id)">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-clipboard-text
                             </v-icon>
                             Ver tarea
@@ -218,7 +218,7 @@
                     </template>
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn color="blue" text small @click="entregaTarea(item.id)">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-clipboard-text
                             </v-icon>
                             Ver tarea
@@ -247,7 +247,7 @@
                     </template>
                     <template v-slot:item.actions="{ item, index }">
                         <v-btn color="blue" text small @click="entregaTarea(item.id)">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-clipboard-text
                             </v-icon>
                             Ver tarea

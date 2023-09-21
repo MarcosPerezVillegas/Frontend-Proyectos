@@ -23,7 +23,6 @@
                         style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 5px black; border-radius: 2%;">
                         <div style="border-color: #64B5F6; border-width: 3px; border-style: solid;">
                             <h3>Proyecto: {{ proyecto.nombre }}</h3>
-                            <p>{{ proyecto.statuses[proyecto.statuses.length - 1].Estado }}</p>
                         </div>
                         <div>
                             <v-btn v-text="'Ver tareas'" color="blue" text small @click="selProyecto(proyecto)" />

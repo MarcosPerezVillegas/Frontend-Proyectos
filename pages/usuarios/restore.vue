@@ -34,9 +34,13 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
                                     <RestoreDialog
                                         :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
@@ -71,9 +75,13 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
                                     <RestoreDialog
                                         :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"
@@ -107,9 +115,13 @@
                     <template v-slot:item.actions="{ item, index }">
                         <v-menu offset-y>
                             <template #activator="{ on }">
-                                <v-btn v-text="'Acciones'" color="orange" text small v-on="on" />
+                                <v-btn color="#64B5F6" text v-on="on" small>
+                                    <v-icon>
+                                        mdi-format-list-bulleted-square
+                                    </v-icon>
+                                </v-btn>
                             </template>
-                            <v-list>
+                            <v-list style="background-color: #c7eeff;">
                                 <v-list-item>
                                     <RestoreDialog
                                         :description="`¿Está seguro de querer restaurar el Usuario '${item.nombre}'?`"

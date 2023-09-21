@@ -4,7 +4,7 @@
             <v-row>
                 <v-spacer />
                 <v-btn dark rounded to="/login" color="#FF0000">
-                    <v-icon>
+                    <v-icon small>
                         mdi-keyboard-backspace
                     </v-icon>
                     Cancelar

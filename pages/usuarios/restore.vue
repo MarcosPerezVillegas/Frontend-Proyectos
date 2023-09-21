@@ -18,7 +18,7 @@
             <v-row>
                 <v-spacer />
                 <v-btn dark rounded color="#FF0000 " to="/Usuarios">
-                    <v-icon>
+                    <v-icon small>
                         mdi-cancel
                     </v-icon>
                     Cancelar
@@ -35,7 +35,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -76,7 +76,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -116,7 +116,7 @@
                         <v-menu offset-y>
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>

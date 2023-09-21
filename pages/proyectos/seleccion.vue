@@ -1,9 +1,7 @@
 <template>
     <v-container>
-        <v-form @submit.prevent="guardar">
-            <v-card outlined 
-                style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
-                padding: 20px; border-radius: 1%;">
+        <v-form @submit.prevent="guardar" class="custom-v-form">
+            <v-card>
                 <v-card-title class="justify-center">
                 <font size=5>
                     <b>{{proyecto.nombre}}</b>
@@ -41,7 +39,10 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn style="color: white" rounded @click="cancelar()" color="red" small>
+                    <v-btn style="color: white" rounded @click="cancelar()" color="red">
+                        <v-icon small>
+                            mdi-cancel
+                        </v-icon>
                         Cancelar
                     </v-btn>
                     <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== 0 && estado === 'Activo'" 
@@ -102,3 +103,12 @@ export default {
 }
 
 </script>
+
+<style>
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+}
+</style>

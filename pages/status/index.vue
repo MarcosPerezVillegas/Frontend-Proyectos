@@ -18,7 +18,7 @@
             <v-row>
                 <v-spacer />
                 <v-btn dark rounded v-if="btn === 0" @click="CambiarBTN()" color="green">
-                    <v-icon dark>
+                    <v-icon small dark>
                         mdi-plus
                     </v-icon>
                     Agregar estado
@@ -43,13 +43,13 @@
                     <v-card-actions>
                         <v-spacer />
                         <v-btn dark rounded color="red" @click="CambiarBTN()">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
                         <v-btn dark rounded @click="CrearEstado()" color="green">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-checkbox-marked-circle
                             </v-icon>
                             Guardar
@@ -69,7 +69,7 @@
                         <v-menu offset-y v-if="item.id !== 1 && item.id !== 2 && item.id !== 3">
                             <template #activator="{ on }">
                                 <v-btn color="#64B5F6" text v-on="on" small>
-                                    <v-icon>
+                                    <v-icon small>
                                         mdi-format-list-bulleted-square
                                     </v-icon>
                                 </v-btn>
@@ -121,13 +121,13 @@
                     <v-card-actions>
                         <v-spacer />
                         <v-btn dark rounded color="red" @click="cancelar()">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-cancel
                             </v-icon>
                             Cancelar
                         </v-btn>
                         <v-btn dark rounded @click="ActEstado()" color="green">
-                            <v-icon>
+                            <v-icon small>
                                 mdi-checkbox-marked-circle
                             </v-icon>
                             Guardar

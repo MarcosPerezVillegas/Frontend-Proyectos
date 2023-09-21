@@ -32,7 +32,7 @@
                                 <h3 align="center">Formato Exel</h3>
                                 <v-btn @click="createExel" text small color="green">
                                     <v-icon dark small>
-                                        mdi-file
+                                        mdi-file-excel-box
                                     </v-icon>
                                     Descargar
                                 </v-btn>
@@ -46,7 +46,7 @@
                                 <h3 align="center">Formato PDF</h3>
                                 <v-btn @click="createPDF" text small color="red">
                                     <v-icon dark small>
-                                        mdi-file
+                                        mdi-file-document-outline
                                     </v-icon>
                                     Descargar
                                 </v-btn>
@@ -60,9 +60,12 @@
                                 <h3 align="center">Descargar Exel y PDF</h3>
                                 <v-btn @click="descarExPDF" text small color="blue">
                                     <v-icon dark small>
-                                        mdi-file
+                                        mdi-file-document-outline
                                     </v-icon>
                                     Descargar
+                                    <v-icon dark small>
+                                        mdi-file-excel-box
+                                    </v-icon>
                                 </v-btn>
                             </div>
                         </v-card>

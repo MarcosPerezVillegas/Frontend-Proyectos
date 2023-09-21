@@ -48,7 +48,12 @@
                         <v-list>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`" />
+                                    <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
+                                        <v-icon small>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item>
@@ -60,17 +65,32 @@
                             </v-list-item>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
+                                    <v-btn text small color="green" text small @click="genProg(item.id)">
+                                        <v-icon small>
+                                            mdi-chart-box-outline
+                                        </v-icon>
+                                        Progreso
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado === 'Terminado'">
                                 <v-list-item-action>
-                                    <v-btn v-text="'Constancia'" color="green" text small @click="contPro(item.id)" />
+                                    <v-btn text small color="green" text small @click="contPro(item.id)">
+                                        <v-icon small>
+                                            mdi-file-document-outline
+                                        </v-icon>
+                                        Constancia
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
+                                    <v-btn @click="selecPro(item.id)" color="green" text small>
+                                        <v-icon small>
+                                            mdi-book
+                                        </v-icon>
+                                        Ver proyecto
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                         </v-list>
@@ -118,7 +138,12 @@
                         <v-list>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`" />
+                                    <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
+                                        <v-icon small>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item>
@@ -130,17 +155,32 @@
                             </v-list-item>
                             <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado !== 'En espera'">
                                 <v-list-item-action>
-                                    <v-btn v-text="'Progreso'" color="green" text small @click="genProg(item.id)" />
+                                    <v-btn text small color="green" text small @click="genProg(item.id)">
+                                        <v-icon small>
+                                            mdi-chart-box-outline
+                                        </v-icon>
+                                        Progreso
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item v-if="item.statuses[item.statuses.length - 1].Estado === 'Terminado'">
                                 <v-list-item-action>
-                                    <v-btn v-text="'Constancia'" color="green" text small @click="contPro(item.id)" />
+                                    <v-btn text small color="green" text small @click="contPro(item.id)">
+                                        <v-icon small>
+                                            mdi-file-document-outline
+                                        </v-icon>
+                                        Constancia
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item v-if="item.statuses.some(estado => estado.Estado !== 'En espera')">
                                 <v-list-item-action>
-                                    <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
+                                    <v-btn @click="selecPro(item.id)" color="green" text small>
+                                        <v-icon small>
+                                            mdi-book
+                                        </v-icon>
+                                        Ver proyecto
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                         </v-list>
@@ -198,7 +238,12 @@
                         <v-list>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn v-text="'Editar'" color="blue" text small :to="`/proyectos/${item.id}`" />
+                                    <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
+                                        <v-icon small>
+                                            mdi-border-color
+                                        </v-icon>
+                                        Editar
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                             <v-list-item>
@@ -210,15 +255,16 @@
                             </v-list-item>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn @click="selecPro(item.id)" v-text="'ver proyecto'" color="green" text small />
+                                    <v-btn @click="selecPro(item.id)" color="green" text small >
+                                        <v-icon small>
+                                            mdi-book
+                                        </v-icon>
+                                        Ver proyecto
+                                    </v-btn>
                                 </v-list-item-action>
                             </v-list-item>
                         </v-list>
                     </v-menu>
-                    <v-btn v-if="roles.rol == 'maestro'" v-text="'Progreso'" color="green" text small
-                        @click="genProg(item.id)" />
-                    <v-btn v-if="roles.rol == 'maestro'" @click="selecPro(item.id)" v-text="'ver proyecto'" color="green"
-                        text small />
                 </template>
                 <template v-slot:no-results>
                     <v-alert :value="true" color="error">

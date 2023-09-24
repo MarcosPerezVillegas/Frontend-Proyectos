@@ -107,7 +107,7 @@ export default {
             if(item.alumnos !== "0"){
                 return item.statuses[item.statuses.length - 1].Estado
             }
-            return "No disponible"
+            return "Sin cupos"
         },
         getColor (item) {
             if (item.statuses[item.statuses.length - 1].Estado === 'Activo' && item.alumnos !== "0") return 'green'

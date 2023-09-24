@@ -84,7 +84,7 @@ export default {
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
             this.log = true
-            const response = await this.$axios.get(`/proyectos/${this.id}`)
+            const response = await this.$axios.get(`/Proyectos/${this.id}`)
             this.proyecto = response.data.data
             this.proyecto.fechainicio= new Date(this.proyecto.fechainicio).toISOString().split('T')[0]
             this.proyecto.fechafinal= new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
@@ -93,8 +93,10 @@ export default {
             this.estado = this.proyecto.statuses[this.proyecto.statuses.length-1].Estado
         } catch (error) {
             this.log= false
-            const response = await this.$axios.get(`/proyectos/${this.id}`)
+            const response = await this.$axios.get(`/Proyectos/${this.id}`)
             this.proyecto = response.data.data
+            this.carrera = this.proyecto.Carrera.nombre
+            this.maestro = this.proyecto.encargado.nombre
             this.$nuxt.setLayout('inicio');
         }
     },

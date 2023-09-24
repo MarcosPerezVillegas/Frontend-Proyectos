@@ -8,7 +8,8 @@
         <v-form @submit.prevent="guardar">
             <v-row>
                 <v-spacer />
-                <v-btn rounded dark v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()" color="red">
+                <v-btn rounded dark v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" @click="cancelar()"
+                    color="red">
                     <v-icon>
                         mdi-arrow-left
                     </v-icon>
@@ -43,42 +44,44 @@
                 </v-menu>
             </v-row>
             <br>
-            <v-card outlined style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
-                padding: 20px; border-radius: 1%; box-shadow: 0 0 10px black;">
-                <v-card-title>
-                    {{ proyecto.nombre }}
-                </v-card-title>
-                <v-card-text>
-                    <b>Maestro encargado:</b> {{ maestro }}
-                    <v-spacer />
-                    <b>Carrera:</b> {{ carrera }}
-                </v-card-text>
-                <v-card-text>
-                    <b>Alumnos Participantes:</b>
-                    <v-card-text v-if="participantes.length == 0"> Ninguno </v-card-text>
-                    <br>
-                    <li v-for="item in participantes">
-                        {{ item.nombre }}
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title>
+                        {{ proyecto.nombre }}
+                    </v-card-title>
+                    <v-card-text>
+                        <b>Maestro encargado:</b> {{ maestro }}
+                        <v-spacer />
+                        <b>Carrera:</b> {{ carrera }}
+                    </v-card-text>
+                    <v-card-text>
+                        <b>Alumnos Participantes:</b>
+                        <v-card-text v-if="participantes.length == 0"> Ninguno </v-card-text>
                         <br>
-                    </li>
-                </v-card-text>
-            </v-card>
+                        <li v-for="item in participantes">
+                            {{ item.nombre }}
+                            <br>
+                        </li>
+                    </v-card-text>
+                </v-card>
+            </v-form>
             <br>
-            <v-card outlined style="margin-top: 0px; background-color: #66BB6A; border-width: 1px; border-style: solid; 
-                padding: 20px; border-radius: 1%; box-shadow: 0 0 10px black;">
-                <v-card-title>
-                    Objetivos
-                </v-card-title>
-                <v-card-text>
-                    {{ proyecto.objetivos }}
-                </v-card-text>
-                <v-card-title>
-                    Fecha de Entrega
-                </v-card-title>
-                <v-card-text>
-                    {{ proyecto.fechafinal }}
-                </v-card-text>
-            </v-card>
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title>
+                        Objetivos
+                    </v-card-title>
+                    <v-card-text>
+                        {{ proyecto.objetivos }}
+                    </v-card-text>
+                    <v-card-title>
+                        Fecha de Entrega
+                    </v-card-title>
+                    <v-card-text>
+                        {{ proyecto.fechafinal }}
+                    </v-card-text>
+                </v-card>
+            </v-form>
             <br>
             <v-card-title v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <b>Tareas</b>

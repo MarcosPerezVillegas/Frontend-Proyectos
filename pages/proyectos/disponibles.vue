@@ -28,8 +28,8 @@
                 :footer-props="{itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}'}">
                 <template v-slot:item.statuses="item, index">
                     <span>
-                        <v-chip :color="getColor(item.item.statuses[item.item.statuses.length - 1].Estado)" style="color: white">
-                            {{ item.item.statuses[item.item.statuses.length - 1].Estado }}
+                        <v-chip :color="getColor(item.item)" style="color: white">
+                            {{ getStatus(item.item) }}
                         </v-chip>
                     </span>
                 </template>
@@ -103,10 +103,15 @@ export default {
             localStorage.setItem('proId', idCifrado)
             this.$router.push('/Proyectos/Seleccion')
         },
-
-        getColor (estado) {
-            if (estado === 'Activo') return 'green'
-            else if (estado === 'Terminado') return 'red'
+        getStatus(item){
+            if(item.alumnos !== "0"){
+                return item.statuses[item.statuses.length - 1].Estado
+            }
+            return "No disponible"
+        },
+        getColor (item) {
+            if (item.statuses[item.statuses.length - 1].Estado === 'Activo' && item.alumnos !== "0") return 'green'
+            else if (item.statuses[item.statuses.length - 1].Estado === 'Terminado') return 'red'
             else return 'orange'
         },
     }

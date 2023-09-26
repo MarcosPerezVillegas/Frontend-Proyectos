@@ -4,7 +4,17 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <!-- eslint-disable vue/v-slot-style -->
 <template>
-    <v-container>
+    <v-container v-if="load">
+        <v-form class="custom-v-form">
+            <v-card>
+                <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                <v-card-text>
+                    <b>Por favor espere....</b>
+                </v-card-text>
+            </v-card>
+        </v-form>
+    </v-container>
+    <v-container v-else>
         <v-btn rounded dark color="red" to="/">
             <v-icon>
                 mdi-arrow-left
@@ -61,6 +71,7 @@ export default {
     layout: 'inicio',
 
     data: () => ({
+        load: true,
         proyectos: [],
         search: "",
         headerProps: {
@@ -91,6 +102,7 @@ export default {
                 // Verifica si el último estado es "En espera" y excluye el proyecto si es cierto
                 return (ultimoEstado && ultimoEstado.Estado === "Activo");
             });
+        this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -120,6 +132,14 @@ export default {
 </script>
 
 <style>
+
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+    border-radius: 10px;
+}
 
 .rows-green .v-data-table-header {
     background-color: #66BB6A;

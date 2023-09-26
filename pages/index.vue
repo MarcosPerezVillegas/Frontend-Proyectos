@@ -22,7 +22,7 @@
 
 export default {
   name: 'Index',
-  layout:'default',
+  layout:'empty',
   data() {
     return {
       log: false
@@ -36,6 +36,7 @@ export default {
     try {
       await this.$axios.get('/login')
       this.log = true
+      this.$nuxt.setLayout('default');
     } catch {
       this.$nuxt.setLayout('inicio');
     }

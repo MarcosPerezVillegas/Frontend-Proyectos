@@ -4,7 +4,7 @@
         <v-toolbar-title>{{ title }}
         </v-toolbar-title>
           <v-spacer/>
-          <v-btn class="elevation-0" to="login">Iniciar sesion</v-btn>
+          <v-btn class="elevation-0" to="/login">Iniciar sesion</v-btn>
       </v-app-bar>
       <v-main>
         <v-container>

@@ -278,6 +278,12 @@ export default {
     logout() {
       localStorage.clear()
       this.$auth.logout();
+      if (this.$route.path === '/'){
+        location.reload()
+      }
+      else{
+        this.$router.push('/')
+      }
     },
   },
 };

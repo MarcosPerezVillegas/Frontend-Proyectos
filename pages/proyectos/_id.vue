@@ -1,6 +1,16 @@
 <template>
     <v-container>
-        <v-container v-if="rol === 'alumno'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol === 'alumno'" justify-center align-center>
             <v-form class="custom-v-form">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -103,6 +113,7 @@ export default {
     name: 'ProyectosUpdate',
     middleware: 'auth',
     data: () => ({
+        load: true,
         rol: "",
         proyecto: {
             nombre: "",
@@ -150,11 +161,15 @@ export default {
         try {
             const responseR = await this.$axios.get('/login')
             this.rol = responseR.data.rol
-            if (this.rol === 'alumno') { return }
+            if (this.rol === 'alumno') {
+                this.load = false
+                return
+            }
             const response = await this.$axios.get(`/proyectos/${id}`)
             this.proyecto = response.data.data
             this.carrera_nombre = this.proyecto.Carrera.nombre
             this.cargarCarreras()
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -298,6 +313,7 @@ export default {
     padding: 20px;
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .textarea-custom .v-label::before {

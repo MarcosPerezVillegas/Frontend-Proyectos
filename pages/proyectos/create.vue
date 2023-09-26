@@ -1,6 +1,16 @@
 <template>
     <v-container>
-        <v-container v-if="roles.rol === 'alumno'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="roles.rol === 'alumno'" justify-center align-center>
             <v-form class="custom-v-form">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -117,6 +127,7 @@ export default {
     middleware: 'auth',
 
     data: () => ({
+        load: true,
         roles: {},
         proyecto: {
             nombre: "",
@@ -169,13 +180,16 @@ export default {
         try {
             const response = await this.$axios.get('/login')
             this.roles = response.data
-            if (this.roles.rol === 'alumno') { return }
+            if (this.roles.rol === 'alumno') {
+                this.load = false
+                return
+            }
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
-
         this.cargarEncargados()
         this.cargarCarreras()
+        this.load = false
     },
 
 
@@ -360,6 +374,7 @@ export default {
     padding: 20px;
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 .textarea-custom .v-label::before {
     content: unset;

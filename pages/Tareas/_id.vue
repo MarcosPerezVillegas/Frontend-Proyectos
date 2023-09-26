@@ -1,14 +1,24 @@
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
     <v-container>
-        <v-container v-if="access" justify-center align-center>
+        <v-container v-if="load">
             <v-form class="custom-v-form-edit">
                 <v-card>
-                <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
-                <v-card-text>
-                    <b>No tienes el rol necesario para acceder a esta página.</b>
-                </v-card-text>
-            </v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="access" justify-center align-center>
+            <v-form class="custom-v-form-edit">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
             </v-form>
         </v-container>
         <v-container v-else>
@@ -162,6 +172,7 @@ export default {
     name: 'TareasUpdate',
     middleware: 'auth',
     data: () => ({
+        load: true,
         tarea: {
             Proyecto_id: "",
             nombre: "",
@@ -229,6 +240,7 @@ export default {
         this.rol = res.data.rol
         if (this.rol === 'alumno') {
             this.access = true
+            this.load = false
             return
         }
         try {
@@ -259,6 +271,7 @@ export default {
                 const proyectos = respons.data.data.map(proyecto => proyecto.nombre)
                 this.Proyectos = proyectos
             }
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -415,6 +428,7 @@ export default {
     padding: 20px;
     background-color: #e1fffd;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .textarea-custom .v-label::before {

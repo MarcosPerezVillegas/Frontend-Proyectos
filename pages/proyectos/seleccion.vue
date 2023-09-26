@@ -1,5 +1,15 @@
 <template>
-    <v-container>
+    <v-container v-if="load">
+        <v-form class="custom-v-form">
+            <v-card>
+                <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                <v-card-text>
+                    <b>Por favor espere...</b>
+                </v-card-text>
+            </v-card>
+        </v-form>
+    </v-container>
+    <v-container v-else>
         <v-form @submit.prevent="guardar" class="custom-v-form">
             <v-card>
                 <v-card-title class="justify-center">
@@ -64,6 +74,7 @@ import ConfirmDialog from "@/components/ConfirmDialog.vue";
 export default {
     name: 'ProyectosSelect',
     data: () => ({
+        load: true,
         roles: {},
         proyecto: {},
         log: false,
@@ -99,6 +110,7 @@ export default {
             this.maestro = this.proyecto.encargado.nombre
             this.$nuxt.setLayout('inicio');
         }
+        this.load = false
     },
 
     methods: {
@@ -116,5 +128,6 @@ export default {
     padding: 20px;
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 </style>

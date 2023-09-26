@@ -1,6 +1,16 @@
 <template>
     <v-container>
-        <v-container v-if="rol === 'alumno'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-form-create">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol === 'alumno'" justify-center align-center>
             <v-form class="custom-v-form-create">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -113,6 +123,7 @@ export default {
 
 
     data: () => ({
+        load: true,
         rol: "",
         archivo: null,
         tarea: {
@@ -171,6 +182,7 @@ export default {
             const res = await this.$axios.get('/Login')
             this.rol = res.data.rol
             if (this.rol === 'alumno') {
+                this.load = false
                 return
             }
             await this.$axios.get(`/Proyectos/Usuario/${res.data.codigo}`)
@@ -179,7 +191,7 @@ export default {
             this.tarea.Proyecto_id = bytes.toString(CryptoJS.enc.Utf8);
             const resp = await this.$axios.get(`/Proyectos/${this.tarea.Proyecto_id}`)
             this.proyecto = resp.data.data
-
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -234,8 +246,10 @@ export default {
                 const mes = String(hoy.getMonth() + 1).padStart(2, '0');
                 const dia = String(hoy.getDate()).padStart(2, '0');
                 const fecha = `${año}-${mes}-${dia}`;
-                var date = moment(this.tarea.fecha_limite).format("yyyy-MM-DD")
+                const date = moment(this.tarea.fecha_limite).format("yyyy-MM-DD")
                 this.dateE = moment(this.proyecto.fechafinal).format("yyyy-MM-DD")
+                console.log(this.proyecto.fechafinal)
+                console.log(this.tarea.fecha_limite)
                 if (date < fecha || this.dateE < this.tarea.fecha_limite) {
                     this.data.val_fi = true
                     this.$nextTick(() => {
@@ -311,6 +325,7 @@ export default {
     padding: 20px;
     background-color: #e1fffd;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .textarea-custom .v-label::before {

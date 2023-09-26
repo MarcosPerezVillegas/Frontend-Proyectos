@@ -1,6 +1,16 @@
 <template>
-    <v-container>
-        <v-form class="custom-v-form" style="border-radius: 2%;">
+    <v-container v-if="load">
+        <v-form class="custom-v-form" style="background-color: #e1fffd;">
+            <v-card>
+                <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                <v-card-text>
+                    <b>Por favor espere...</b>
+                </v-card-text>
+            </v-card>
+        </v-form>
+    </v-container>
+    <v-container v-else>
+        <v-form class="custom-v-form">
             <v-container v-if="entregada === 1">
                 <v-card>
                     <v-card-title class="text-center">
@@ -106,6 +116,7 @@ export default {
     name: 'TareaEntrega',
     middleware: 'auth',
     data: () => ({
+        load: true,
         roles: {},
         archivo: null,
         id: "",
@@ -170,6 +181,7 @@ export default {
                 })
                 this.Material = true
             } catch { }
+            this.load = false
 
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
@@ -254,6 +266,7 @@ export default {
     padding: 20px;
     background-color: #ace7ff;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .textarea-custom .v-label::before {

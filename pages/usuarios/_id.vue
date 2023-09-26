@@ -1,7 +1,25 @@
 <template>
     <v-container>
-        <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
-            <v-form v-if="co" class="custom-v-form">
+        <v-container v-if="load">
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere....</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
+            <v-form v-if="!co" class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
+                    <v-card-text>
+                        <b>No tienes el rol necesario para acceder a esta página.</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+            <v-form v-else class="custom-v-form">
                 <v-card>
                     <v-card-title class="headline">
                         <b>Información del Usuario</b>
@@ -66,10 +84,9 @@
                                     <v-icon v-else small>
                                         mdi-checkbox-marked-circle
                                     </v-icon>
-                                {{ editar ?
-                                    'Guardar' : 'Editar' }}</v-btn>
-                                <v-btn @click="cancelarEditar" dark rounded class="white--text"
-                                    color="#FF0000">
+                                    {{ editar ?
+                                        'Guardar' : 'Editar' }}</v-btn>
+                                <v-btn @click="cancelarEditar" dark rounded class="white--text" color="#FF0000">
                                     <v-icon small>
                                         mdi-cancel
                                     </v-icon>
@@ -78,14 +95,6 @@
                         </v-form>
                     </v-card-text>
                 </v-card>
-            </v-form>
-            <v-form v-else class="custom-v-form">
-                <v-card>
-                <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
-                <v-card-text>
-                    <b>No tienes el rol necesario para acceder a esta página.</b>
-                </v-card-text>
-            </v-card>
             </v-form>
         </v-container>
         <v-container v-else>
@@ -220,6 +229,7 @@ export default {
     name: 'UsuariosUpdate',
     middleware: 'auth',
     data: () => ({
+        load: true,
         usuario: {
             codigo: "",
             nombre: "",
@@ -289,6 +299,7 @@ export default {
             const codi = this.$route.params.id
             if (codi !== this.codigo && this.rol !== 'administrador') {
                 this.co = false
+                this.load = false
                 return
             }
             const url = localStorage.getItem("url")
@@ -310,6 +321,7 @@ export default {
             if (this.cod === this.usuario.codigo) {
                 this.co = true
             }
+            this.load = false
         } catch (error) {
         }
     },
@@ -327,7 +339,7 @@ export default {
             if (this.editar) {
                 this.editar = !this.editar
             }
-            else{
+            else {
                 window.history.back()
             }
         },
@@ -488,7 +500,8 @@ export default {
 .custom-v-form {
     margin-top: 0px;
     padding: 20px;
-    background-color: #c7eeff;
+    background-color: #64B5F6;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 </style>

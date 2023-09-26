@@ -250,5 +250,6 @@ export default {
     padding: 20px;
     background-color: #c7eeff;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 </style>

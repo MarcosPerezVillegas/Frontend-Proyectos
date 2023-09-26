@@ -4,7 +4,17 @@
 <!-- eslint-disable vue/v-slot-style -->
 <!-- eslint-disable vue/require-v-for-key -->
 <template>
-    <v-container>
+    <v-container v-if="load">
+        <v-form class="custom-v-form">
+            <v-card>
+                <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                <v-card-text>
+                    <b>Por favor espere....</b>
+                </v-card-text>
+            </v-card>
+        </v-form>
+    </v-container>
+    <v-container v-else>
         <v-form @submit.prevent="guardar">
             <v-row>
                 <v-spacer />
@@ -199,6 +209,7 @@ export default {
     name: 'ProyectosDatos',
     middleware: 'auth',
     data: () => ({
+        load: true,
         estatus: 0,
         roles: {},
         proyecto: {},
@@ -272,6 +283,7 @@ export default {
             this.tareas2 = this.tareas.filter(item => item.activo === 1);
             const responseR = await this.$axios.get('/login');
             this.roles = responseR.data;
+            this.load = false
         }
         catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message);
@@ -421,6 +433,7 @@ export default {
     padding: 20px;
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .rows-green .v-data-table-header {

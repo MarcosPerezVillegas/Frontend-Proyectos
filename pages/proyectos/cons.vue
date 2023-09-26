@@ -4,7 +4,17 @@
 <!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
-        <v-container v-if="rol === 'alumno'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol === 'alumno'" justify-center align-center>
             <v-form class="custom-v-form">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -17,8 +27,8 @@
         <v-container v-else>
             <v-row>
                 <v-spacer />
-                <v-btn dark @click="cancelar()" color="red" small>
-                    <v-icon>
+                <v-btn rounded dark @click="cancelar()" color="red">
+                    <v-icon small>
                         mdi-arrow-left
                     </v-icon>
                     Proyectos
@@ -56,6 +66,7 @@ const CryptoJS = require("crypto-js");
 
 export default {
     data: () => ({
+        load: true,
         rol: "",
         proyecto: {},
         id: "",
@@ -78,11 +89,15 @@ export default {
         try {
             const responseR = await this.$axios.get('/login')
             this.rol = responseR.data.rol
-            if (this.rol === 'alumno') { return }
+            if (this.rol === 'alumno') {
+                this.load = false
+                return
+            }
             const responseP = await this.$axios.get(`/proyectos/${this.id}`)
             this.proyecto = responseP.data.data
             this.aluPart = this.proyecto.Alumnos
             this.carrera = this.proyecto.Carrera.nombre
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -161,6 +176,7 @@ export default {
     padding: 20px;
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .rows-green .v-data-table-header {

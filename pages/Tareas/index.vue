@@ -2,7 +2,17 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <!-- eslint-disable vue/no-v-text-v-html-on-component -->
 <template>
-    <v-container fluid class="text-center">
+    <v-container v-if="load">
+        <v-form class="custom-v-card">
+            <v-card>
+                <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                <v-card-text>
+                    <b>Por favor espere...</b>
+                </v-card-text>
+            </v-card>
+        </v-form>
+    </v-container>
+    <v-container v-else fluid class="text-center">
         <v-btn rounded v-if="seleccionado" color="primary" @click="sel()">
             <v-icon>
                 mdi-book
@@ -20,13 +30,14 @@
 
         <p v-if="(usuario.rol === 'maestro' || usuario.rol === 'administrador') && !seleccionado && proyectos.length !== 0"
             style="font-size: larger ;">
-            <b>Selecciona uno de tus proyectos para mostrarte las tareas.</b></p>
+            <b>Selecciona uno de tus proyectos para mostrarte las tareas.</b>
+        </p>
 
         <p v-if="(usuario.rol === 'maestro' || usuario.rol === 'administrador') && !seleccionado && proyectos.length === 0"
             style="font-size: larger;"><b>No tienes ningún proyecto al cual se le puedan asignar o ver tareas.</b></p>
 
         <br>
-        <v-form style=" padding: 20px; background-color: #e1fffd; box-shadow: 0 0 1px black; border-radius: 5px;">
+        <v-form class="custom-v-card">
             <div v-if="proyectos.length === 0" justify="center">
                 <v-icon large>
                     mdi-grid-off
@@ -73,7 +84,8 @@
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="green" text small @click="verItem(item)">
                                         <v-icon small>
@@ -147,7 +159,8 @@
                                     </v-icon>
                                 </v-btn>
                             </template>
-                            <v-list style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
+                            <v-list
+                                style="background-color: white; border-width: 5px; border-color: #c7eeff; border-style: solid;">
                                 <v-list-item>
                                     <v-btn color="green" text small @click="verItem(item)">
                                         <v-icon small>
@@ -286,6 +299,7 @@ export default {
     middleware: 'auth',
 
     data: () => ({
+        load: true,
         date: "",
         usuario: "",
         tareas: [],
@@ -411,6 +425,7 @@ export default {
                 });
                 this.tareasEnt = this.tareas.filter((tarea) => tarea.entregada === 1);
             }
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -511,8 +526,9 @@ export default {
 .custom-v-card {
     margin-top: 0px;
     padding: 20px;
-    background-color: whitesmoke;
+    background-color: #e1fffd;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .custom-data-table {
@@ -550,21 +566,20 @@ export default {
 }
 
 .project-card {
-  margin-top: 20px;
-  padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
 }
 
 .project-header {
-  border-bottom: 3px solid #64B5F6;
-  padding-bottom: 10px;
+    border-bottom: 3px solid #64B5F6;
+    padding-bottom: 10px;
 }
 
 .project-actions {
-  margin-top: 10px;
-  text-align: center;
+    margin-top: 10px;
+    text-align: center;
 }
-
 </style>

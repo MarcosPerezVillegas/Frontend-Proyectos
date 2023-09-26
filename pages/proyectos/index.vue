@@ -4,11 +4,21 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <!-- eslint-disable vue/v-slot-style -->
 <template>
-    <v-container>
+    <v-container v-if="load">
+        <v-form class="custom-v-form">
+            <v-card>
+                <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                <v-card-text>
+                    <b>Por favor espere...</b>
+                </v-card-text>
+            </v-card>
+        </v-form>
+    </v-container>
+    <v-container v-else>
         <v-row>
             <v-spacer />
-            <v-btn style="color: white" v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" 
-                rounded color="green" to="/proyectos/create">
+            <v-btn style="color: white" v-if="roles.rol == 'maestro' || roles.rol == 'administrador'" rounded color="green"
+                to="/proyectos/create">
                 <v-icon dark>
                     mdi-plus
                 </v-icon>
@@ -19,16 +29,12 @@
         <v-card-title class="headline" v-if="roles.rol == 'alumno' || roles.rol == 'administrador'">
             <b>Todos los Proyectos</b>
             <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search"
-                label="Buscar proyecto"
-                single-line
-                hide-details
-            ></v-text-field>
+            <v-text-field v-model="search" label="Buscar proyecto" single-line hide-details></v-text-field>
         </v-card-title>
         <v-card outlined v-if="roles.rol == 'alumno' || roles.rol == 'administrador'">
-            <v-data-table :items="proyectos" :headers="headers" class="rows-green" :search="search" :header-props="headerProps"
-                :footer-props="{itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}'}">
+            <v-data-table :items="proyectos" :headers="headers" class="rows-green" :search="search"
+                :header-props="headerProps"
+                :footer-props="{ itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}' }">
                 <template v-slot:item.statuses="item, index">
                     <span>
                         <v-chip :color="getColor(item.item)" style="color: white">
@@ -39,13 +45,14 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-menu offset-y v-if="roles.rol == 'administrador'">
                         <template v-slot:activator="{ on }">
-                            <v-btn style="color: #66BB6A" text v-on="on" small> 
+                            <v-btn style="color: #66BB6A" text v-on="on" small>
                                 <v-icon>
                                     mdi-format-list-bulleted-square
                                 </v-icon>
                             </v-btn>
                         </template>
-                        <v-list style="background-color: white; border-width: 5px; border-color: #66BB6A; border-style: solid;">
+                        <v-list
+                            style="background-color: white; border-width: 5px; border-color: #66BB6A; border-style: solid;">
                             <v-list-item>
                                 <v-list-item-action>
                                     <v-btn color="blue" text small :to="`/Proyectos/${item.id}`">
@@ -110,19 +117,17 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card-title class="headline" v-if="roles.rol == 'maestro' && proMaes.length > 0 || roles.rol == 'administrador' && proMaes.length > 0">
+        <v-card-title class="headline"
+            v-if="roles.rol == 'maestro' && proMaes.length > 0 || roles.rol == 'administrador' && proMaes.length > 0">
             <b>Mis Proyectos</b>
             <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search2"
-                label="Buscar proyecto"
-                single-line
-                hide-details
-            ></v-text-field>
+            <v-text-field v-model="search2" label="Buscar proyecto" single-line hide-details></v-text-field>
         </v-card-title>
-        <v-card outlined v-if="roles.rol == 'maestro' && proMaes.length > 0 || roles.rol == 'administrador' && proMaes.length > 0">
-            <v-data-table :items="proMaes" :headers="headers" class="rows-green" :search="search2" :header-props="headerProps"
-                :footer-props="{itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}'}">
+        <v-card outlined
+            v-if="roles.rol == 'maestro' && proMaes.length > 0 || roles.rol == 'administrador' && proMaes.length > 0">
+            <v-data-table :items="proMaes" :headers="headers" class="rows-green" :search="search2"
+                :header-props="headerProps"
+                :footer-props="{ itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}' }">
                 <template v-slot:item.statuses="item, index">
                     <span>
                         <v-chip :color="getColor(item.item)" style="color: white">
@@ -133,13 +138,14 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-menu offset-y v-if="roles.rol == 'administrador'">
                         <template v-slot:activator="{ on }">
-                            <v-btn style="color: #66BB6A" text v-on="on" small> 
+                            <v-btn style="color: #66BB6A" text v-on="on" small>
                                 <v-icon>
                                     mdi-format-list-bulleted-square
                                 </v-icon>
                             </v-btn>
                         </template>
-                        <v-list style="background-color: white; border-width: 5px; border-color: #66BB6A; border-style: solid;">
+                        <v-list
+                            style="background-color: white; border-width: 5px; border-color: #66BB6A; border-style: solid;">
                             <v-list-item>
                                 <v-list-item-action>
                                     <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
@@ -196,8 +202,8 @@
                         </v-icon>
                         Editar
                     </v-btn>
-                    <v-btn v-if="roles.rol == 'maestro' && item.statuses.some(estado => estado.Estado !== 'En espera')"
-                        text small color="green" @click="genProg(item.id)">
+                    <v-btn v-if="roles.rol == 'maestro' && item.statuses.some(estado => estado.Estado !== 'En espera')" text
+                        small color="green" @click="genProg(item.id)">
                         <v-icon small>
                             mdi-chart-box-outline
                         </v-icon>
@@ -228,16 +234,12 @@
         <v-card-title class="headline" v-if="roles.rol == 'administrador'">
             <b>Proyectos sin Validar</b>
             <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search3"
-                label="Buscar proyecto"
-                single-line
-                hide-details
-            ></v-text-field>
+            <v-text-field v-model="search3" label="Buscar proyecto" single-line hide-details></v-text-field>
         </v-card-title>
         <v-card outlined v-if="roles.rol == 'administrador'">
-            <v-data-table :items="proyectosV" :headers="headers" class="rows-orange" :search="search3" :header-props="headerProps"
-                :footer-props="{itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}'}">
+            <v-data-table :items="proyectosV" :headers="headers" class="rows-orange" :search="search3"
+                :header-props="headerProps"
+                :footer-props="{ itemsPerPageText: 'Proyectos por página', pageText: '{0} - {1} de {2}' }">
                 <template v-slot:item.statuses="item, index">
                     <span>
                         <v-chip :color="getColor(item.item)" style="color: white">
@@ -248,13 +250,14 @@
                 <template v-slot:item.actions="{ item, index }">
                     <v-menu offset-y>
                         <template v-slot:activator="{ on }">
-                            <v-btn style="color: #FFA726" text v-on="on" small> 
+                            <v-btn style="color: #FFA726" text v-on="on" small>
                                 <v-icon>
                                     mdi-format-list-bulleted-square
                                 </v-icon>
                             </v-btn>
                         </template>
-                        <v-list style="background-color: white; border-width: 5px; border-color: #FFA726; border-style: solid;">
+                        <v-list
+                            style="background-color: white; border-width: 5px; border-color: #FFA726; border-style: solid;">
                             <v-list-item>
                                 <v-list-item-action>
                                     <v-btn text small color="blue" text small :to="`/proyectos/${item.id}`">
@@ -274,7 +277,7 @@
                             </v-list-item>
                             <v-list-item>
                                 <v-list-item-action>
-                                    <v-btn @click="selecPro(item.id)" color="green" text small >
+                                    <v-btn @click="selecPro(item.id)" color="green" text small>
                                         <v-icon small>
                                             mdi-book
                                         </v-icon>
@@ -293,7 +296,8 @@
             </v-data-table>
         </v-card>
         <br>
-        <v-card outlined v-if="roles.rol == 'maestro' && proMaes.length == 0 || roles.rol == 'administrador' && proMaes.length == 0">
+        <v-card outlined
+            v-if="roles.rol == 'maestro' && proMaes.length == 0 || roles.rol == 'administrador' && proMaes.length == 0">
             <v-card-title>
                 <b>No tienes ningun proyecto</b>
             </v-card-title>
@@ -313,6 +317,7 @@ export default {
     middleware: 'auth',
 
     data: () => ({
+        load: true,
         roles: {},
         alum: {},
         search: '',
@@ -356,6 +361,7 @@ export default {
                 const resmaest = await this.$axios.get(`/proyectos/usuario/${this.roles.codigo}`)
                 this.proMaes = resmaest.data.data
             }
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -363,13 +369,13 @@ export default {
     },
 
     methods: {
-        getStatus(item){
-            if(item.alumnos !== "0"){
+        getStatus(item) {
+            if (item.alumnos !== "0") {
                 return item.statuses[item.statuses.length - 1].Estado
             }
             return "Sin cupos"
         },
-        getColor (item) {
+        getColor(item) {
             if (item.statuses[item.statuses.length - 1].Estado === 'Activo' && item.alumnos !== "0") return 'green'
             else if (item.statuses[item.statuses.length - 1].Estado === 'Terminado') return 'red'
             else return 'orange'
@@ -408,7 +414,6 @@ export default {
 </script>
 
 <style>
-
 .rows-green .v-data-table-header {
     background-color: #66BB6A;
 }
@@ -429,4 +434,11 @@ export default {
     border-color: #FFA726;
 }
 
+.custom-v-form {
+    margin-top: 0px;
+    padding: 20px;
+    background-color: #66BB6A;
+    box-shadow: 0 0 20px black;
+    border-radius: 10px;
+}
 </style>

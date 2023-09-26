@@ -3,7 +3,17 @@
 <!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
-        <v-container v-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-card">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol === 'alumno' || rol === 'maestro'" justify-center align-center>
             <v-form class="custom-v-card">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -186,6 +196,7 @@ export default Vue.extend({
     middleware: 'auth',
 
     data: () => ({
+        load: true,
         rol: "",
         administradores: [],
         maestros: [],
@@ -211,6 +222,7 @@ export default Vue.extend({
             const response = await this.$axios.get('/login')
             this.rol = response.data.rol
             if (this.rol !== 'administrador') {
+                this.load = false
                 return
             }
         } catch (error) {
@@ -234,7 +246,7 @@ export default Vue.extend({
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)
         }
-
+        this.load = false
 
     },
 
@@ -276,6 +288,7 @@ export default Vue.extend({
     padding: 20px;
     background-color: #c7eeff;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 
 .custom-data-table-usuario {

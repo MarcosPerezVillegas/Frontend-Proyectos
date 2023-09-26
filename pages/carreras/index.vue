@@ -3,7 +3,17 @@
 <!-- eslint-disable vue/v-slot-style -->
 <template>
     <v-container>
-        <v-container v-if="rol !== 'administrador'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol !== 'administrador'" justify-center align-center>
             <v-form class="custom-v-form">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -179,6 +189,7 @@ export default Vue.extend({
 
     data() {
         return {
+            load: true,
             clave: "",
             rol: "",
             carreras: [],
@@ -224,6 +235,7 @@ export default Vue.extend({
         const responseR = await this.$axios.get('/login')
         this.rol = responseR.data.rol
         if (this.rol !== 'administrador') {
+            this.load = false
             return
         }
         try {
@@ -232,6 +244,7 @@ export default Vue.extend({
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error)
         }
+        this.load = false
     },
 
     methods: {

@@ -1,6 +1,16 @@
 <template>
     <v-container>
-        <v-container v-if="rol.rol === 'alumno'" justify-center align-center>
+        <v-container v-if="load">
+            <v-form class="custom-v-form">
+                <v-card>
+                    <v-card-title class="headline"><b>Cargando...</b></v-card-title>
+                    <v-card-text>
+                        <b>Por favor espere...</b>
+                    </v-card-text>
+                </v-card>
+            </v-form>
+        </v-container>
+        <v-container v-else-if="rol.rol === 'alumno'" justify-center align-center>
             <v-form class="custom-v-form">
                 <v-card>
                     <v-card-title class="headline"><b>Acceso denegado</b></v-card-title>
@@ -90,6 +100,7 @@ const CryptoJS = require("crypto-js");
 
 export default {
     data: () => ({
+        load: true,
         rol: {},
         proyecto: {},
         tareas: [],
@@ -106,7 +117,10 @@ export default {
     async beforeMount() {
         const response = await this.$axios.get('/login')
         this.rol = response.data
-        if (this.rol === 'alumno') { return }
+        if (this.rol === 'alumno') {
+            this.load = false
+            return
+        }
         const idCifrado = localStorage.getItem("proId")
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
@@ -117,6 +131,7 @@ export default {
             this.proyecto = responseP.data.data
             const resTar = await this.$axios.get(`/tareas/proyecto/${this.id}`)
             this.tareas = resTar.data.data
+            this.load = false
         } catch (error) {
             this.$nuxt.$emit('show-snackbar', 'red', error.message)
         }
@@ -246,5 +261,6 @@ export default {
     padding: 20px;
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
+    border-radius: 10px;
 }
 </style>

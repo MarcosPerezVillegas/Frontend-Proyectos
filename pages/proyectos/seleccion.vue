@@ -55,7 +55,7 @@
                         </v-icon>
                         Cancelar
                     </v-btn>
-                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== 0 && estado === 'Activo' && log" 
+                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== '0' && estado === 'Activo' && log && alumo === null"
                         :description="`¿Está seguro de querer unirce al proyecto '${proyecto.nombre}'? Esta acción no se puede deshacer.`"
                         :itemUrl="`/alumnos/${roles.codigo}`" :index="proyecto.id" :item="`${proyecto.id}`"/>
                 </v-card-actions>
@@ -82,6 +82,7 @@ export default {
         carrera: "",
         id: "",
         estado: "",
+        alumo: null,
     }),
 
     async beforeMount() {
@@ -95,6 +96,10 @@ export default {
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
             this.log = true
+            if (this.roles.rol === 'alumno') {
+                const responseA = await this.$axios.get(`/Alumnos/${this.roles.codigo}`)
+                this.alumo = responseA.data.data.proyecto_id
+            }
             const response = await this.$axios.get(`/Proyectos/${this.id}`)
             this.proyecto = response.data.data
             this.proyecto.fechainicio= new Date(this.proyecto.fechainicio).toISOString().split('T')[0]

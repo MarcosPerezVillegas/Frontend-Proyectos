@@ -21,7 +21,7 @@
             {{ nombre }}
           </v-span>
           <v-col class="text-center mt-4" cols="12">
-            <v-span>Asesor: Erick Jorge Roberto Guerrero Muños</v-span>
+            <v-span>Asesor: Erick Jorge Roberto Guerrero Muñoz</v-span>
           </v-col>
       </v-row>
     </v-footer>

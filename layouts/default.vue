@@ -95,7 +95,7 @@
       </v-container>
     </v-main>
     <v-footer :absolute="!fixed" app>
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <span>&copy;CUValles {{ new Date().getFullYear() }}</span>
     </v-footer>
     <v-snackbar v-model="snackbar" :color="snackbarColor">
       {{ snackbarMessage }}

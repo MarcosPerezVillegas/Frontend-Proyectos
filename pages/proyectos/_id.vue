@@ -76,7 +76,7 @@
                                     <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
                                         :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
-                                <v-col cols="12" md="8">
+                                <v-col cols="12" md="12">
                                     <v-textarea v-model="proyecto.objetivos" outlined class="textarea-custom"
                                         label="Objetivos" :rules="[$validations.notEmpty]"></v-textarea>
                                 </v-col>

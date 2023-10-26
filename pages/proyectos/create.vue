@@ -88,7 +88,7 @@
                                     <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados" type="integer"
                                     :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
-                                <v-col cols="12" md="8">
+                                <v-col cols="12" md="12">
                                     <v-textarea outlined class="textarea-custom" v-model="proyecto.objetivos" label="Objetivos"
                                     :rules="[$validations.notEmpty]"></v-textarea>
                                 </v-col>

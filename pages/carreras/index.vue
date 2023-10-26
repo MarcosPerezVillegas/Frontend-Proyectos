@@ -266,8 +266,8 @@ export default Vue.extend({
         CambiarBT(Carrera: Object) {
             this.btn = 0
             this.bt = this.bt === 0 ? 1 : 1;
-            this.carrera.clave = ""
-            this.carrera.nombre = ""
+            this.carrera.clave = Carrera.clave
+            this.carrera.nombre = Carrera.nombre
             this.clave = Carrera.clave
             this.Carrera = Carrera.nombre
             window.scrollTo(0, 1000)

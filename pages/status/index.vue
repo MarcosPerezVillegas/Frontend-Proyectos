@@ -240,7 +240,7 @@ export default Vue.extend({
         CambiarBT(id: number, Estado: string) {
             this.btn = 0
             this.bt = this.bt === 0 ? 1 : 1;
-            this.estado.Estado = ""
+            this.estado.Estado = Estado
             this.id = id
             this.Estado = Estado
             window.scrollTo(0, 1000)

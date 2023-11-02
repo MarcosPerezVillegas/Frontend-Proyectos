@@ -50,7 +50,7 @@
                                 La fecha de fin debe ser posterior a la fecha de inicio y no menor a 6 meses.
                             </v-alert>
                             <v-alert ref="participantes" v-show="data.alumnos" color="error" icon="$error">
-                                El número de participantes es necesario y solo debe contener números.
+                                El número de participantes es necesario y solo debe contener números enteros.
                             </v-alert>
                             <v-alert ref="objetivos" v-show="data.objetivos" color="error" icon="$error">
                                 Los objetivos del proyecto son necesarios.
@@ -66,7 +66,7 @@
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.alumnos" outlined label="Cupos"
-                                        :rules="[$validations.notEmpty]"></v-text-field>
+                                        :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio"
@@ -123,6 +123,8 @@ export default {
             carrera_clave: "",
             alumnos: "",
         },
+        fecha_i: "",
+        fecha_f: "",
         data: {
             nombre: false,
             objetivos: false,
@@ -167,6 +169,8 @@ export default {
             }
             const response = await this.$axios.get(`/proyectos/${id}`)
             this.proyecto = response.data.data
+            this.fecha_i = this.proyecto.fechainicio
+            this.fecha_f = this.proyecto.fechafinal
             this.carrera_nombre = this.proyecto.Carrera.nombre
             this.cargarCarreras()
             this.load = false
@@ -215,11 +219,13 @@ export default {
                 }
                 var date = moment(this.proyecto.fechainicio).format("yyyy-MM-DD")
                 if (date < fecha) {
-                    this.data.val_fi = true
-                    this.$nextTick(() => {
-                        this.scrollHaciaAlerta(this.$refs.fechaiv);
-                    });
-                    return
+                    if (this.fecha_i !== this.proyecto.fechainicio) {
+                        this.data.val_fi = true
+                        this.$nextTick(() => {
+                            this.scrollHaciaAlerta(this.$refs.fechaiv);
+                        });
+                        return
+                    }
                 }
                 if (this.proyecto.fechafinal === "") {
                     this.data.fechafinal = true
@@ -245,7 +251,8 @@ export default {
                     });
                     return
                 }
-                if (isNaN(Number(this.proyecto.alumnos))) {
+                const number = Number(this.proyecto.alumnos);
+                if (!(!isNaN(number) && Number.isInteger(number) && number >= 0)) {
                     this.data.alumnos = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.participantes);

@@ -9,7 +9,7 @@ export default (context, inject) => {
         },
         notNumber(value) {
             const number = Number(value);
-            if (!isNaN(number) && Number.isInteger(number) && number >= 1) {
+            if (!isNaN(number) && Number.isInteger(number) && number >= 0) {
                 return true; // Es un número entero mayor o igual a 1
             } else {
                 return 'Solo se admiten números enteros mayores o iguales a 1';

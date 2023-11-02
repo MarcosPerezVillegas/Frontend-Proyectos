@@ -36,19 +36,32 @@
                         <v-card-text style="font-size: large ;border-width: 1px; border-style: solid; border-color: gray;">
                             <p></p>
                             <b style="font-size: medium;">Descripción de la tarea:</b>
-                            <p>{{ tar.descripcion }}</p>
+                            <p></p>
+                            <v-row>
+                                <v-col cols="12" md="12">
+                                    <v-textarea style="content: unset; transform: translateY(-10px);"
+                                        v-model="tar.descripcion" outlined readonly></v-textarea>
+                                </v-col>
+                            </v-row>
                         </v-card-text>
                         <br>
                         <v-card-text v-if="tar.comentarios !== ''"
                             style="font-size: large ;border-width: 1px; border-style: solid; border-color: gray;">
                             <p></p>
                             <b style="font-size: large;">Comentarios del profesor:</b>
-                            <p>{{ tar.comentarios }}</p>
+                            <p></p>
+                            <v-row>
+                                <v-col cols="12" md="12">
+                                    <v-textarea style="content: unset; transform: translateY(-10px);"
+                                        v-model="tar.comentarios" outlined readonly></v-textarea>
+                                </v-col>
+                            </v-row>
                         </v-card-text>
                         <br>
                         <v-row justify="center">
-                            <v-text v-if="!Material" style="font-size: large;">No hay material de apoyo para esta
-                                tarea</v-text>
+                            <v-card-text v-if="!Material" align="center" style="font-size: large ;border-width: 1px; border-style: solid; border-color: gray;">
+                                <v-text>No hay material de apoyo para esta tarea</v-text>
+                            </v-card-text>
                             <v-btn rounded color="primary" v-if="Material" @click="descargarArchivo">Descargar material de
                                 apoyo</v-btn>
                         </v-row>

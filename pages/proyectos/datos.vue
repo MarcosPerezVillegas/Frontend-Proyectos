@@ -81,9 +81,11 @@
                     <v-card-title>
                         Objetivos
                     </v-card-title>
-                    <v-card-text>
-                        {{ proyecto.objetivos }}
-                    </v-card-text>
+                    <v-row>
+                        <v-col cols="12" md="12">
+                            <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined readonly></v-textarea>
+                        </v-col>
+                    </v-row>
                     <v-card-title>
                         Fecha de Entrega
                     </v-card-title>

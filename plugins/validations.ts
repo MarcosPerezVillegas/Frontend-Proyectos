@@ -7,9 +7,14 @@ export default (context, inject) => {
         notEmpty(value: String) {
             return value !== '' && value !== null || 'El campo es obligatorio';
         },
-        notNumber(value: String) {
-            return !isNaN(Number(value)) || 'Solo se admiten números'
-        },
+        notNumber(value) {
+            const number = Number(value);
+            if (!isNaN(number) && Number.isInteger(number) && number >= 1) {
+                return true; // Es un número entero mayor o igual a 1
+            } else {
+                return 'Solo se admiten números enteros mayores o iguales a 1';
+            }
+        },        
         notPhone(value: String) {
             if(value.length!==0){
                 if((value.length!==10 || isNaN(Number(value)))){

@@ -56,7 +56,7 @@
                                 La fecha de fin debe ser posterior a la fecha de inicio y no menor a 6 meses.
                             </v-alert>
                             <v-alert ref="participantes" v-show="data.alumnos" color="error" icon="$error">
-                                El número de participantes es necesario y solo debe contener números.
+                                El número de participantes es necesario y solo debe contener números enteros positivos.
                             </v-alert>
                             <v-alert ref="objetivos" v-show="data.objetivos" color="error" icon="$error">
                                 Los objetivos del proyecto son necesarios.
@@ -86,7 +86,7 @@
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados" type="integer"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                    :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="12">
                                     <v-textarea outlined class="textarea-custom" v-model="proyecto.objetivos" label="Objetivos"
@@ -121,6 +121,7 @@
 // @ts-nocheck
 
 import moment from 'moment';
+import validations from '~/plugins/validations';
 
 export default {
     name: 'ProyectosCreate',
@@ -263,13 +264,14 @@ export default {
                     });
                     return
                 }
-                if (isNaN(Number(this.proyecto.alumnos))) {
+                const number = Number(this.proyecto.alumnos);
+                if (!(!isNaN(number) && Number.isInteger(number) && number >= 1)) {
                     this.data.alumnos = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.participantes);
                     });
                     return
-                }
+                    }
                 if (this.encargado_nombre === "") {
                     this.data.codigo = true
                     this.$nextTick(() => {

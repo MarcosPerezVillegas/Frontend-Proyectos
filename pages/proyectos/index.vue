@@ -42,6 +42,11 @@
                         </v-chip>
                     </span>
                 </template>
+                <template v-slot:item.objetivos="{ item, index }">
+                    <div style="max-height: 10em; overflow: hidden; text-overflow: ellipsis;">
+                        {{ item.objetivos | limitLines(3) }}
+                    </div>
+                </template>
                 <template v-slot:item.actions="{ item, index }">
                     <v-menu offset-y v-if="roles.rol == 'administrador'">
                         <template v-slot:activator="{ on }">
@@ -134,6 +139,11 @@
                             {{ getStatus(item.item) }}
                         </v-chip>
                     </span>
+                </template>
+                <template v-slot:item.objetivos="{ item, index }">
+                    <div style="max-height: 10em; overflow: hidden; text-overflow: ellipsis;">
+                        {{ item.objetivos | limitLines(3) }}
+                    </div>
                 </template>
                 <template v-slot:item.actions="{ item, index }">
                     <v-menu offset-y v-if="roles.rol == 'administrador'">
@@ -247,6 +257,11 @@
                         </v-chip>
                     </span>
                 </template>
+                <template v-slot:item.objetivos="{ item, index }">
+                    <div style="max-height: 10em; overflow: hidden; text-overflow: ellipsis;">
+                        {{ item.objetivos | limitLines(3) }}
+                    </div>
+                </template>
                 <template v-slot:item.actions="{ item, index }">
                     <v-menu offset-y>
                         <template v-slot:activator="{ on }">
@@ -314,6 +329,22 @@ const CryptoJS = require("crypto-js");
 
 export default {
     name: 'Proyectos',
+    filters: {
+        limitLines: function (text, maxLines) {
+            if (typeof text !== 'string') {
+                return ''; // Manejar casos donde text no es una cadena
+            }
+
+            // Eliminar espacios en blanco y saltos de línea en blanco
+            text = text.trim();
+
+            const lines = text.split('\n');
+            if (lines.length <= maxLines) {
+                return text;
+            }
+            return lines.slice(0, maxLines).join('\n') + '...'; // Limita a maxLines líneas
+        }
+    },
     middleware: 'auth',
 
     data: () => ({

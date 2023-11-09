@@ -40,7 +40,7 @@
                         </v-btn>
                     </template>
                     <v-list>
-                        <v-list-item v-if="estado !== 'Terminado'">
+                        <v-list-item v-if="estado !== 'Terminado' && estado !== 'En espera'">
                             <v-list-item-action>
                                 <v-btn v-text="'Terminar Proyecto'" color="blue" text small @click="TerProg()" />
                             </v-list-item-action>
@@ -56,22 +56,39 @@
             <br>
             <v-form class="custom-v-form">
                 <v-card>
-                    <v-card-title>
-                        {{ proyecto.nombre }}
+                    <v-card-title class="justify-center">
+                        <font size=5>
+                            {{ proyecto.nombre }}
+                        </font>
                     </v-card-title>
-                    <v-card-text>
-                        <b>Maestro encargado:</b> {{ maestro }}
+                    <v-card-text style="font-size: large;">
+                        <font size=5>
+                            <b>Maestro encargado:</b>
+                        </font>
+                        {{ maestro }}
                         <v-spacer />
-                        <b>Carrera:</b> {{ carrera }}
-                    </v-card-text>
-                    <v-card-text>
-                        <b>Alumnos Participantes:</b>
-                        <v-card-text v-if="participantes.length == 0"> Ninguno </v-card-text>
+                        <font size=5>
+                            <b>Carrera:</b>
+                        </font>
+                        {{ carrera }}
+                        <br>
+                        <br>
+                        <font size=5>
+                            <b>Alumnos Participantes:</b>
+                        </font>
+
+                        <v-card-text style="font-size: large;" v-if="participantes.length == 0"> Ninguno </v-card-text>
                         <br>
                         <li v-for="item in participantes">
                             {{ item.nombre }}
                             <br>
                         </li>
+                        <br>
+                            <font size=5>
+                                <b>Fecha de Entrega</b>
+                            </font>
+                            <br>
+                        {{ proyecto.fechafinal }}
                     </v-card-text>
                 </v-card>
             </v-form>
@@ -81,17 +98,15 @@
                     <v-card-title>
                         Objetivos
                     </v-card-title>
-                    <v-row>
-                        <v-col cols="12" md="12">
-                            <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined readonly></v-textarea>
+                    <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined
+                        readonly></v-textarea>
+                    <v-row justify="center">
+                        <v-col cols="12" sm="4">
+                            <v-btn rounded color="primary" v-if="roles.rol === 'administrador' && estado !== 'Activo' && prop === true"
+                                @click="descargarArchivo">Descargar la propuesta del proyecto</v-btn>
                         </v-col>
                     </v-row>
-                    <v-card-title>
-                        Fecha de Entrega
-                    </v-card-title>
-                    <v-card-text>
-                        {{ proyecto.fechafinal }}
-                    </v-card-text>
+                    <br>
                 </v-card>
             </v-form>
             <br>
@@ -212,6 +227,7 @@ export default {
     middleware: 'auth',
     data: () => ({
         load: true,
+        prop: true,
         estatus: 0,
         roles: {},
         proyecto: {},
@@ -247,7 +263,8 @@ export default {
             estado: "",
             nota: "",
             status_id: 0
-        }
+        },
+        res: null,
     }),
     async beforeMount() {
         this.$store.commit('setTitle', 'Proyectos');
@@ -285,6 +302,13 @@ export default {
             this.tareas2 = this.tareas.filter(item => item.activo === 1);
             const responseR = await this.$axios.get('/login');
             this.roles = responseR.data;
+            try {
+                this.res = await this.$axios.get(`/Proyectos/Cargar/${this.id}`, {
+                    responseType: 'arraybuffer',
+                })
+            } catch (error) {
+                this.prop=false
+            }
             this.load = false
         }
         catch (error) {
@@ -418,6 +442,19 @@ export default {
             this.estatus = this.estatus === 0 ? 1 : 0;
             this.est.estado = "";
             this.est.nota = "";
+        },
+        descargarArchivo() {
+            const contentType = this.res.headers['content-type']
+            const ext = contentType.split('/')[1];
+            const blob = new Blob([this.res.data], { type: contentType })
+            const url = URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = url
+            link.target = '_blank'
+            link.download = `${this.proyecto.id}-${this.proyecto.nombre}-Propuesta.${ext}`
+            link.click()
+            URL.revokeObjectURL(url)
         },
         deleteElement(index: number) {
             this.estados.splice(index, 1);

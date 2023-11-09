@@ -13,39 +13,62 @@
         <v-form @submit.prevent="guardar" class="custom-v-form">
             <v-card>
                 <v-card-title class="justify-center">
-                <font size=5>
-                    <b>{{proyecto.nombre}}</b>
-                </font>
+                    <font size=5>
+                        <b>{{ proyecto.nombre }}</b>
+                    </font>
                 </v-card-title>
-                <v-card-text v-if="estado === 'Activo' || !log">
-                <font size=3>
-                    <b>Objetivos:</b>  {{proyecto.objetivos}}
+                <v-card-text v-if="estado === 'Activo' || !log" style="font-size: large;">
+                    <font size=5>
+                        <b>Objetivos:</b>
+                    </font>
+                    <br>
+                    <p></p>
+                    <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined
+                        readonly></v-textarea>
+                    <font size=5>
+                        <b>Carrera:</b>
+                    </font>
+                    {{ carrera }}
+                    <br>
                     <v-spacer />
-                    <b>Carrera:</b> {{carrera}} 
+                    <font size=5>
+                        <b>Encargado:</b>
+                    </font>
+                    {{ maestro }}
+                    <br>
                     <v-spacer />
-                    <b>Encargado:</b> {{maestro}} </h3>
+                    <font size=5>
+                        <b>Fecha de inicio:</b>
+                    </font>
+                    {{ proyecto.fechainicio }}
+                    <br>
                     <v-spacer />
-                    <b>Fecha de inicio:</b> {{proyecto.fechainicio}} </h3>
-                    <v-spacer />
-                    <b>Fecha de termino:</b> {{proyecto.fechafinal}} </h3>
-                    <v-spacer />
-                    <b>Cupos restantes:</b> {{proyecto.alumnos}} </h3>
-                </font>
+                    <font size=5>
+                        <b>Fecha de termino:</b>
+                    </font>
+                    {{ proyecto.fechafinal }}
+                    <br>
+                    <font size=5>
+                        <b>Cupos restantes:</b>
+                    </font>
+                    {{ proyecto.alumnos }}
+                    <br>
+
                 </v-card-text>
                 <v-card-text v-if="estado === 'Terminado'">
-                <font size=3>
-                    <b>Objetivos:</b> {{proyecto.objetivos}} 
-                    <v-spacer />
-                    <b>Carrera:</b> {{carrera}} 
-                    <v-spacer />
-                    <b>Encargado:</b> {{maestro}}
-                    <v-spacer />
-                    <b>Fecha de inicio:</b> {{proyecto.fechainicio}}
-                    <v-spacer />
-                    <b>Fecha de termino:</b> {{proyecto.fechafinal}}
-                    <v-spacer />
-                    <b>Estado:</b> {{estado}}
-                </font>
+                    <font size=3>
+                        <b>Objetivos:</b> {{ proyecto.objetivos }}
+                        <v-spacer />
+                        <b>Carrera:</b> {{ carrera }}
+                        <v-spacer />
+                        <b>Encargado:</b> {{ maestro }}
+                        <v-spacer />
+                        <b>Fecha de inicio:</b> {{ proyecto.fechainicio }}
+                        <v-spacer />
+                        <b>Fecha de termino:</b> {{ proyecto.fechafinal }}
+                        <v-spacer />
+                        <b>Estado:</b> {{ estado }}
+                    </font>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -55,9 +78,10 @@
                         </v-icon>
                         Cancelar
                     </v-btn>
-                    <ConfirmDialog v-if="roles.rol === 'alumno' && proyecto.alumnos !== '0' && estado === 'Activo' && log && alumo === null"
+                    <ConfirmDialog
+                        v-if="roles.rol === 'alumno' && proyecto.alumnos !== '0' && estado === 'Activo' && log && alumo === null"
                         :description="`¿Está seguro de querer unirce al proyecto '${proyecto.nombre}'? Esta acción no se puede deshacer.`"
-                        :itemUrl="`/alumnos/${roles.codigo}`" :index="proyecto.id" :item="`${proyecto.id}`"/>
+                        :itemUrl="`/alumnos/${roles.codigo}`" :index="proyecto.id" :item="`${proyecto.id}`" />
                 </v-card-actions>
             </v-card>
         </v-form>
@@ -91,7 +115,7 @@ export default {
         const bytes = CryptoJS.AES.decrypt(idCifrado, clave);
         const idDescifrado = bytes.toString(CryptoJS.enc.Utf8);
         this.id = idDescifrado
-        
+
         try {
             const responseR = await this.$axios.get('/login')
             this.roles = responseR.data
@@ -102,13 +126,13 @@ export default {
             }
             const response = await this.$axios.get(`/Proyectos/${this.id}`)
             this.proyecto = response.data.data
-            this.proyecto.fechainicio= new Date(this.proyecto.fechainicio).toISOString().split('T')[0]
-            this.proyecto.fechafinal= new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
+            this.proyecto.fechainicio = new Date(this.proyecto.fechainicio).toISOString().split('T')[0]
+            this.proyecto.fechafinal = new Date(this.proyecto.fechafinal).toISOString().split('T')[0]
             this.carrera = this.proyecto.Carrera.nombre
             this.maestro = this.proyecto.encargado.nombre
-            this.estado = this.proyecto.statuses[this.proyecto.statuses.length-1].Estado
+            this.estado = this.proyecto.statuses[this.proyecto.statuses.length - 1].Estado
         } catch (error) {
-            this.log= false
+            this.log = false
             const response = await this.$axios.get(`/Proyectos/${this.id}`)
             this.proyecto = response.data.data
             this.carrera = this.proyecto.Carrera.nombre

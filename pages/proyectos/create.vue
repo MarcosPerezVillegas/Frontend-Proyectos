@@ -58,39 +58,57 @@
                             <v-alert ref="participantes" v-show="data.alumnos" color="error" icon="$error">
                                 El número de participantes es necesario y solo debe contener números enteros positivos.
                             </v-alert>
-                            <v-alert ref="objetivos" v-show="data.objetivos" color="error" icon="$error">
-                                Los objetivos del proyecto son necesarios.
-                            </v-alert>
                             <v-row>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.nombre" outlined label="Nombre"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                        :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text v-if="roles.rol === 'maestro'" outlined>Encargado <br></v-text>
-                                    <v-text v-if="roles.rol === 'maestro'" outlined style="font-size: larger;">{{ encargado_nombre }}</v-text>
-                                    <v-combobox v-if="roles.rol === 'administrador'" outlined v-model="encargado_nombre" label="Encargado"
-                                    :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
+                                    <v-text v-if="roles.rol === 'maestro'" outlined style="font-size: larger;">{{
+                                        encargado_nombre }}</v-text>
+                                    <v-combobox v-if="roles.rol === 'administrador'" outlined v-model="encargado_nombre"
+                                        label="Encargado" :items="encargados" :rules="[$validations.notEmpty]"></v-combobox>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-combobox v-model="carrera_nombre" outlined label="Carrera" :items="carreras"
-                                    :rules="[$validations.notEmpty]"></v-combobox>
+                                        :rules="[$validations.notEmpty]"></v-combobox>
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio" type="date"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                    <v-text-field v-model="proyecto.fechainicio" outlined label="Fecha de inicio"
+                                        type="date" :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <v-text-field v-model="proyecto.fechafinal" outlined label="Fecha final" type="date"
-                                    :rules="[$validations.notEmpty]"></v-text-field>
+                                        :rules="[$validations.notEmpty]"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="4">
-                                    <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados" type="integer"
-                                    :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
+                                    <v-text-field v-model="proyecto.alumnos" outlined label="Alumnos solicitados"
+                                        type="integer"
+                                        :rules="[$validations.notEmpty, $validations.notNumber]"></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-alert ref="file" v-show="data.file" color="error" icon="$error">
+                                        El archivo no debe superar los 50mb.
+                                    </v-alert>
+                                    <v-card outlined
+                                        style="margin-top: 0px; padding: 20px; background-color: whitesmoke; box-shadow: 0 0 2px black;">
+                                        <v-text style="font-size: larger;">Subir documento de la propuesta del
+                                            proyecto.</v-text>
+                                        <br>
+                                        <v-text style="font-size: small; font-style: oblique;">No mayor a 50mb</v-text>
+                                        <v-file-input v-model="archivo" label="Seleccionar archivo"
+                                            :rules="[$validations.isFileLessThan50MB]"></v-file-input>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-alert ref="objetivos" v-show="data.objetivos" color="error" icon="$error">
+                                        Los objetivos del proyecto son necesarios.
+                                    </v-alert>
                                 </v-col>
                                 <v-col cols="12" md="12">
-                                    <v-textarea outlined class="textarea-custom" v-model="proyecto.objetivos" label="Objetivos"
-                                    :rules="[$validations.notEmpty]"></v-textarea>
+                                    <v-textarea outlined class="textarea-custom" v-model="proyecto.objetivos"
+                                        label="Objetivos" :rules="[$validations.notEmpty]"></v-textarea>
                                 </v-col>
                             </v-row>
                         </v-form>
@@ -130,6 +148,7 @@ export default {
     data: () => ({
         load: true,
         roles: {},
+        archivo: null,
         proyecto: {
             nombre: "",
             objetivos: "",
@@ -149,8 +168,9 @@ export default {
             alumnos: false,
             carr_nom: false,
             enc_nom: false,
-            val_fi: false, 
-            val_ff: false
+            val_fi: false,
+            val_ff: false,
+            file: false
         },
         encargado_nombre: "",
         carrera_nombre: "",
@@ -173,6 +193,7 @@ export default {
                 this.data.enc_nom = false
                 this.data.val_fi = false
                 this.data.val_ff = false
+                this.data.file = false
             }
         },
     },
@@ -218,10 +239,10 @@ export default {
                     });
                     return
                 }
-                if (this.proyecto.objetivos === "") {
-                    this.data.objetivos = true
+                if (this.carrera_nombre === "") {
+                    this.data.carrera_clave = true
                     this.$nextTick(() => {
-                        this.scrollHaciaAlerta(this.$refs.objetivos);
+                        this.scrollHaciaAlerta(this.$refs.carrera);
                     });
                     return
                 }
@@ -233,7 +254,7 @@ export default {
                     return
                 }
                 var date = moment(this.proyecto.fechainicio).format("yyyy-MM-DD")
-                if(date < fecha){
+                if (date < fecha) {
                     this.data.val_fi = true
                     this.$nextTick(() => {
                         this.scrollHaciaAlerta(this.$refs.fechaiv);
@@ -271,7 +292,7 @@ export default {
                         this.scrollHaciaAlerta(this.$refs.participantes);
                     });
                     return
-                    }
+                }
                 if (this.encargado_nombre === "") {
                     this.data.codigo = true
                     this.$nextTick(() => {
@@ -279,25 +300,44 @@ export default {
                     });
                     return
                 }
-                if (this.carrera_nombre === "") {
-                    this.data.carrera_clave = true
+                if (!this.archivo) {
                     this.$nextTick(() => {
-                        this.scrollHaciaAlerta(this.$refs.carrera);
+                        this.scrollHaciaAlerta(this.$refs.file);
+                    });
+                    this.$nuxt.$emit('show-snackbar', 'red', 'No has agregado la propuesta del proyecto.');
+                    return;
+                }
+                if (this.archivo) {
+                    const tamañoMaximo = 50 * 1024 * 1024; // 50 MB (ajusta según tus necesidades)
+                    if (this.archivo.size > tamañoMaximo) {
+                        this.data.file = true
+                        this.$nextTick(() => {
+                            this.scrollHaciaAlerta(this.$refs.file);
+                        });
+                        return
+                    }
+                }
+                if (this.proyecto.objetivos === "") {
+                    this.data.objetivos = true
+                    this.$nextTick(() => {
+                        this.scrollHaciaAlerta(this.$refs.objetivos);
                     });
                     return
                 }
-                try{
+                try {
                     const resCar = await this.$axios.get(`/Carreras/Nombre/${this.carrera_nombre}`)
                     const Carrera = resCar.data.data
                     this.proyecto.carrera_clave = Carrera.clave
-                    try{
+                    try {
                         const resEnca = await this.$axios.get(`/Maestros/Nombre/${this.encargado_nombre}`)
                         const Encargado = resEnca.data.data
                         this.proyecto.codigo = Encargado.codigo
-                        try{
-                            const response = await this.$axios.post('/proyectos', this.proyecto)
+                        try {
+                            const response = await this.$axios.post('/Proyectos', this.proyecto)
+                            const formData = new FormData()
+                            formData.append('archivo', this.archivo)
+                            const resPropuesta = await this.$axios.post(`/Proyectos/Propuesta/${response.data.data.id}`, formData)
                             this.$nuxt.$emit('show-snackbar', 'green', response.data.message)
-                            this.$router.push('/proyectos')
                         } catch (error) {
                             this.$nuxt.$emit('show-snackbar', 'red', error.message)
                         }
@@ -318,9 +358,10 @@ export default {
             } catch (error) {
                 this.$nuxt.$emit('show-snackbar', 'red', error.message)
             }
+            this.$router.push('/Proyectos')
         },
         cancelar() {
-            this.$router.push('/proyectos')
+            this.$router.push('/Proyectos')
         },
         async getEncargados() {
             try {
@@ -378,6 +419,7 @@ export default {
     box-shadow: 0 0 20px black;
     border-radius: 10px;
 }
+
 .textarea-custom .v-label::before {
     content: unset;
     transform: translateY(-10px);

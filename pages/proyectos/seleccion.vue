@@ -17,7 +17,7 @@
                         <b>{{ proyecto.nombre }}</b>
                     </font>
                 </v-card-title>
-                <v-card-text v-if="estado === 'Activo' || !log" style="font-size: large;">
+                <v-card-text style="font-size: large;">
                     <font size=5>
                         <b>Objetivos:</b>
                     </font>
@@ -25,6 +25,14 @@
                     <p></p>
                     <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined
                         readonly></v-textarea>
+                        <v-row justify="center">
+                        <v-col cols="12" sm="4">
+                            <v-btn rounded color="primary" v-if="prop === true"
+                                @click="descargarArchivo">Descargar la propuesta del proyecto</v-btn>
+                        </v-col>
+                    </v-row>
+                    <br>
+                    <br>
                     <font size=5>
                         <b>Carrera:</b>
                     </font>
@@ -54,21 +62,6 @@
                     {{ proyecto.alumnos }}
                     <br>
 
-                </v-card-text>
-                <v-card-text v-if="estado === 'Terminado'">
-                    <font size=3>
-                        <b>Objetivos:</b> {{ proyecto.objetivos }}
-                        <v-spacer />
-                        <b>Carrera:</b> {{ carrera }}
-                        <v-spacer />
-                        <b>Encargado:</b> {{ maestro }}
-                        <v-spacer />
-                        <b>Fecha de inicio:</b> {{ proyecto.fechainicio }}
-                        <v-spacer />
-                        <b>Fecha de termino:</b> {{ proyecto.fechafinal }}
-                        <v-spacer />
-                        <b>Estado:</b> {{ estado }}
-                    </font>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer />
@@ -107,6 +100,8 @@ export default {
         id: "",
         estado: "",
         alumo: null,
+        res: null,
+        prop: true,
     }),
 
     async beforeMount() {
@@ -139,10 +134,30 @@ export default {
             this.maestro = this.proyecto.encargado.nombre
             this.$nuxt.setLayout('inicio');
         }
+        try {
+                this.res = await this.$axios.get(`/Proyectos/Cargar/${this.id}`, {
+                    responseType: 'arraybuffer',
+                })
+            } catch (error) {
+                this.prop=false
+            }
         this.load = false
     },
 
     methods: {
+        descargarArchivo() {
+            const contentType = this.res.headers['content-type']
+            const ext = contentType.split('/')[1];
+            const blob = new Blob([this.res.data], { type: contentType })
+            const url = URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = url
+            link.target = '_blank'
+            link.download = `${this.proyecto.id}-${this.proyecto.nombre}-Propuesta.${ext}`
+            link.click()
+            URL.revokeObjectURL(url)
+        },
         cancelar() {
             window.history.back()
         }

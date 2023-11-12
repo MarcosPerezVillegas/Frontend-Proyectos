@@ -102,7 +102,7 @@
                         readonly></v-textarea>
                     <v-row justify="center">
                         <v-col cols="12" sm="4">
-                            <v-btn rounded color="primary" v-if="roles.rol === 'administrador' && estado !== 'Activo' && prop === true"
+                            <v-btn rounded color="primary" v-if="prop === true"
                                 @click="descargarArchivo">Descargar la propuesta del proyecto</v-btn>
                         </v-col>
                     </v-row>

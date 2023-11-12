@@ -21,18 +21,21 @@
                     <font size=5>
                         <b>Objetivos:</b>
                     </font>
-                    <br>
                     <p></p>
-                    <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined
-                        readonly></v-textarea>
+                    <div>
+                        <v-textarea class="text-justify-center"
+                            style=" font-size: 120%; content: unset; transform: translateY(-10px);"
+                            v-model="proyecto.objetivos" outlined readonly auto-grow></v-textarea>
+                    </div>
+                    <v-div v-if="prop === true">
                         <v-row justify="center">
-                        <v-col cols="12" sm="4">
-                            <v-btn rounded color="primary" v-if="prop === true"
-                                @click="descargarArchivo">Descargar la propuesta del proyecto</v-btn>
-                        </v-col>
-                    </v-row>
-                    <br>
-                    <br>
+                            <v-col cols="12" sm="4">
+                                <v-btn rounded color="primary" @click="descargarArchivo">Descargar la propuesta del
+                                    proyecto</v-btn>
+                            </v-col>
+                            <br><br><br><br>
+                        </v-row>
+                    </v-div>
                     <font size=5>
                         <b>Carrera:</b>
                     </font>
@@ -135,12 +138,12 @@ export default {
             this.$nuxt.setLayout('inicio');
         }
         try {
-                this.res = await this.$axios.get(`/Proyectos/Cargar/${this.id}`, {
-                    responseType: 'arraybuffer',
-                })
-            } catch (error) {
-                this.prop=false
-            }
+            this.res = await this.$axios.get(`/Proyectos/Cargar/${this.id}`, {
+                responseType: 'arraybuffer',
+            })
+        } catch (error) {
+            this.prop = false
+        }
         this.load = false
     },
 
@@ -173,5 +176,10 @@ export default {
     background-color: #66BB6A;
     box-shadow: 0 0 20px black;
     border-radius: 10px;
+}
+
+.text-justify-center textarea {
+    text-align: center;
+    /* Centrar el texto */
 }
 </style>

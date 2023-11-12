@@ -98,18 +98,22 @@
                     <v-card-title>
                         Objetivos
                     </v-card-title>
-                    <v-textarea style="content: unset; transform: translateY(-10px);" v-model="proyecto.objetivos" outlined
-                        readonly></v-textarea>
-                    <v-row justify="center">
-                        <v-col cols="12" sm="4">
-                            <v-btn rounded color="primary" v-if="prop === true"
-                                @click="descargarArchivo">Descargar la propuesta del proyecto</v-btn>
-                        </v-col>
-                    </v-row>
-                    <br>
+                    <div>
+                        <v-textarea class="text-justify-center"
+                            style=" font-size: 130%; content: unset; transform: translateY(-10px);"
+                            v-model="proyecto.objetivos" outlined readonly auto-grow></v-textarea>
+                    </div>
+                    <v-div v-if="prop === true">
+                        <v-row justify="center">
+                            <v-col cols="12" sm="4">
+                                <v-btn rounded color="primary" @click="descargarArchivo">Descargar la propuesta del
+                                    proyecto</v-btn>
+                            </v-col>
+                            <br><br><br><br>
+                        </v-row>
+                    </v-div>
                 </v-card>
             </v-form>
-            <br>
             <v-card-title v-if="roles.rol == 'maestro' || roles.rol == 'administrador'">
                 <b>Tareas</b>
             </v-card-title>
@@ -483,5 +487,9 @@ export default {
     border-style: solid;
     border-width: 2px;
     border-color: #66BB6A;
+}
+.text-justify-center textarea {
+    text-align: center;
+    /* Centrar el texto */
 }
 </style>
